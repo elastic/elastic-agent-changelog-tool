@@ -9,6 +9,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// commands holds all commands created for elastic-agent-changelog
+var commands = []*cobra.Command{
+	setupFindPRCommand(),
+}
+
 // RootCmd creates and returns root cmd for elastic-agent-changelog.
 func RootCmd() *cobra.Command {
 
@@ -16,6 +21,10 @@ func RootCmd() *cobra.Command {
 		Use:          "elastic-agent-changelog",
 		Short:        "elastic-agent-changelog - Command line tool used for managing the change log for Elastic Agent and related components, including Beats.",
 		SilenceUsage: true,
+	}
+
+	for _, cmd := range commands {
+		rootCmd.AddCommand(cmd)
 	}
 
 	return rootCmd
