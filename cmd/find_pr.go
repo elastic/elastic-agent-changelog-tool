@@ -6,8 +6,12 @@
 package cmd
 
 import (
+	"context"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	"github.com/elastic/elastic-agent-changelog/internal/github"
 )
 
 const commitHashLen = 40
@@ -54,7 +58,24 @@ func findPRCommandAction(cmd *cobra.Command, args []string) error {
 		repo = defaultRepo
 	}
 
-	cmd.Println(repo, commit)
+	// Setup GitHub
+	err = github.EnsureAuthConfigured()
+	if err != nil {
+		return errors.Wrap(err, "GitHub auth configuration failed")
+	}
+
+	githubClient, err := github.Client()
+	if err != nil {
+		return errors.Wrap(err, "creating GitHub client failed")
+	}
+
+	//TODO heuristics in case of backport label
+	pullRequest, _, err := githubClient.PullRequests.ListPullRequestsWithCommit(context.Background(), defaultOwner, repo, commit, nil)
+	if err != nil {
+		return errors.Wrap(err, "fetching GitHub API data failed")
+	}
+
+	cmd.Printf("%s:%d\n", commit, *pullRequest[0].Number)
 
 	return nil
 }
