@@ -2,7 +2,10 @@ module github.com/elastic/elastic-agent-changelog
 
 go 1.17
 
-require github.com/spf13/cobra v1.3.0
+require (
+	github.com/pkg/errors v0.8.1
+	github.com/spf13/cobra v1.3.0
+)
 
 require (
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
