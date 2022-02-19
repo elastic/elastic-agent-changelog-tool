@@ -5,8 +5,17 @@
 
 package main
 
-import "fmt"
+import (
+	"os"
+
+	"github.com/elastic/elastic-agent-changelog-tool/cmd"
+)
 
 func main() {
-	fmt.Println("hello world")
+	rootCmd := cmd.RootCmd()
+
+	err := rootCmd.Execute()
+	if err != nil {
+		os.Exit(1)
+	}
 }
