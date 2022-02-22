@@ -37,6 +37,7 @@ pipeline {
         withGithubNotify(context: "Lint") {
           dir("${BASE_DIR}"){
             withGoEnv(){
+              setEnvVar('GO_VERSION', readFile(".go-version").trim())
               sh(label: 'lint', script: '''
                 go mod tidy && git diff --exit-code
                 gofmt -l . | read && echo "Code differs from gofmt's style. Run 'gofmt -w .'" 1>&2 && exit 1 || true
@@ -57,15 +58,11 @@ pipeline {
             name 'PLATFORM'
             values 'macosx && x86_64', 'ubuntu-20.04 && immutable', 'windows-2019 && windows-immutable'
           }
-          axis {
-            name 'GO_VERSION'
-            values '1.14', '1.15', '1.16'
-          }
         }
         stages {
           stage('build'){
             steps {
-              withGithubNotify(context: "Build-${GO_VERSION}-${PLATFORM}") {
+              withGithubNotify(context: "Build-${PLATFORM}") {
                 deleteDir()
                 unstash 'source'
                 dir("${BASE_DIR}"){
@@ -78,7 +75,7 @@ pipeline {
           }
           stage('Test') {
             steps {
-              withGithubNotify(context: "Test-${GO_VERSION}-${PLATFORM}") {
+              withGithubNotify(context: "Test-${PLATFORM}") {
                 deleteDir()
                 unstash 'source'
                 dir("${BASE_DIR}"){
