@@ -7,6 +7,9 @@ require (
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/viper v1.10.1
 	github.com/stretchr/testify v1.7.0
+	github.com/google/go-github/v32 v32.1.0
+	github.com/pkg/errors v0.9.1
+	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
 )
 
 require (
@@ -28,4 +31,10 @@ require (
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	github.com/golang/protobuf v1.4.2 // indirect
+	github.com/google/go-querystring v1.0.0 // indirect
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9 // indirect
+	golang.org/x/net v0.0.0-20200822124328-c89045814202 // indirect
+	google.golang.org/appengine v1.6.6 // indirect
+	google.golang.org/protobuf v1.25.0 // indirect
 )
