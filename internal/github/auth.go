@@ -10,8 +10,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 const (
@@ -23,8 +21,8 @@ const (
 func EnsureAuthConfigured() error {
 	_, err := AuthToken()
 	if err != nil {
-		return errors.Wrapf(err, "GitHub authorization token is missing. Please use either environment variable %s or ~/%s",
-			envAuth, authTokenFile)
+		return fmt.Errorf("GitHub authorization token is missing. Please use either environment variable %s or ~/%s: %w",
+			envAuth, authTokenFile, err)
 	}
 	return nil
 }
@@ -39,13 +37,13 @@ func AuthToken() (string, error) {
 
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
-		return "", errors.Wrap(err, "reading user home directory failed")
+		return "", fmt.Errorf("reading user home directory failed: %w", err)
 	}
 
 	githubTokenPath := filepath.Join(homeDir, authTokenFile)
 	token, err := os.ReadFile(githubTokenPath)
 	if err != nil {
-		return "", errors.Wrapf(err, "reading Github token file failed (path: %s)", githubTokenPath)
+		return "", fmt.Errorf("reading Github token file failed (path: %s): %w", githubTokenPath, err)
 	}
 	return strings.TrimSpace(string(token)), nil
 }
