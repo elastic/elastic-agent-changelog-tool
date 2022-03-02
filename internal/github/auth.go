@@ -42,7 +42,7 @@ func AuthToken() (string, error) {
 		return "", errors.Wrap(err, "reading user home directory failed")
 	}
 
-	githubTokenPath := filepath.Join(homeDir, ".elastic/github.token")
+	githubTokenPath := filepath.Join(homeDir, authTokenFile)
 	token, err := os.ReadFile(githubTokenPath)
 	if err != nil {
 		return "", errors.Wrapf(err, "reading Github token file failed (path: %s)", githubTokenPath)
