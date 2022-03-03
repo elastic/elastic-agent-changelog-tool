@@ -10,6 +10,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/spf13/afero"
 )
 
 const (
@@ -18,18 +20,31 @@ const (
 )
 
 // EnsureAuthConfigured method ensures that GitHub auth token is available.
-func EnsureAuthConfigured() error {
-	_, err := AuthToken()
-	if err != nil {
+func (f *AuthToken) EnsureAuthConfigured() error {
+	if _, err := f.AuthToken(); err != nil {
 		return fmt.Errorf("GitHub authorization token is missing. Please use either environment variable %s or ~/%s: %w",
 			envAuth, authTokenFile, err)
 	}
+
 	return nil
 }
 
+type AuthToken struct {
+	fs *afero.Afero
+}
+
+func NewAuthToken(fs afero.Fs) *AuthToken {
+	return &AuthToken{
+		fs: &afero.Afero{
+			Fs: fs,
+		},
+	}
+}
+
 // AuthToken method finds and returns the GitHub authorization token.
-func AuthToken() (string, error) {
+func (f *AuthToken) AuthToken() (string, error) {
 	githubTokenVar := os.Getenv(envAuth)
+
 	if githubTokenVar != "" {
 		fmt.Println("Using GitHub token from environment variable.")
 		return githubTokenVar, nil
@@ -41,9 +56,11 @@ func AuthToken() (string, error) {
 	}
 
 	githubTokenPath := filepath.Join(homeDir, authTokenFile)
-	token, err := os.ReadFile(githubTokenPath)
+
+	token, err := f.fs.ReadFile(githubTokenPath)
 	if err != nil {
 		return "", fmt.Errorf("reading Github token file failed (path: %s): %w", githubTokenPath, err)
 	}
+
 	return strings.TrimSpace(string(token)), nil
 }
