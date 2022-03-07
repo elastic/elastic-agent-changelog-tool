@@ -3,19 +3,17 @@
 // 2.0; you may not use this file except in compliance with the Elastic License
 // 2.0.
 
-package main
+package cmd
 
 import (
-	"os"
-
-	"github.com/elastic/elastic-agent-changelog-tool/cmd"
+	"testing"
 )
 
-func main() {
-	rootCmd := cmd.RootCmd()
+func TestRootCmd(t *testing.T) {
+	cmd := RootCmd()
 
-	err := rootCmd.Execute()
+	err := cmd.Execute()
 	if err != nil {
-		os.Exit(1)
+		t.Fatal(err)
 	}
 }
