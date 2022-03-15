@@ -9,9 +9,12 @@ import (
 	"os"
 
 	"github.com/elastic/elastic-agent-changelog-tool/cmd"
+	"github.com/elastic/elastic-agent-changelog-tool/internal/settings"
 )
 
 func main() {
+	settings.Init()
+
 	rootCmd := cmd.RootCmd()
 
 	err := rootCmd.Execute()
