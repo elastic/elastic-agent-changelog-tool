@@ -19,6 +19,7 @@ package fragment
 
 import (
 	"fmt"
+	"path"
 	"strings"
 	"time"
 
@@ -58,7 +59,7 @@ func (f FragmentCreator) filename(slug string) string {
 }
 
 // Create marshal changelog fragment and persist it to file.
-func (c FragmentCreator) Create(slug string) error {
+func (c FragmentCreator) Create(location, slug string) error {
 	frg := Fragment{}
 
 	data, err := yaml.Marshal(&frg)
@@ -66,7 +67,7 @@ func (c FragmentCreator) Create(slug string) error {
 		return err
 	}
 
-	return afero.WriteFile(c.fs, c.filename(slug), data, 0660)
+	return afero.WriteFile(c.fs, path.Join(location, c.filename(slug)), data, 0660)
 }
 
 // sanitizeFilename takes care of removing dangerous elements from a string so it can be safely

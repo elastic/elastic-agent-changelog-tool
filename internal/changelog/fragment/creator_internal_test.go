@@ -18,6 +18,7 @@
 package fragment
 
 import (
+	"path"
 	"reflect"
 	"testing"
 
@@ -58,10 +59,11 @@ func TestSanitizeFilename(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 	fc := TestNewCreator()
+	location := afero.GetTempDir(fc.fs, "testdata")
 
-	fc.Create("foobar")
+	fc.Create(location, "foobar")
 
-	content, err := afero.ReadFile(fc.fs, fc.filename("foobar"))
+	content, err := afero.ReadFile(fc.fs, path.Join(location, fc.filename("foobar")))
 	require.Nil(t, err)
 
 	expected := `breaking_changes: []
