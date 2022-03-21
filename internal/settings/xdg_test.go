@@ -6,7 +6,7 @@ import (
 
 	"github.com/OpenPeeDeeP/xdg"
 	"github.com/spf13/viper"
-	"gotest.tools/assert"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/settings"
 )
