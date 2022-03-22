@@ -53,11 +53,14 @@ func TestCreate(t *testing.T) {
 	require.Nil(t, err)
 
 	expected := `breaking_changes: []
-enhancements: []
-bugfixes: []
-security_fixes: []
-known_issues: []
 deprecations: []
+bugfixes: []
+enhancements: []
+features: []
+known_issues: []
+security: []
+upgrades: []
+other: []
 `
 	got := string(content)
 	assert.Equal(t, expected, got)

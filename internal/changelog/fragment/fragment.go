@@ -5,10 +5,13 @@
 package fragment
 
 type Fragment struct {
-	Major         []string `yaml:"breaking_changes"`
-	Minor         []string `yaml:"enhancements"`
-	Patch         []string `yaml:"bugfixes"`
-	SecurityFixes []string `yaml:"security_fixes"`
-	KnownIssues   []string `yaml:"known_issues"`
-	Deprecations  []string `yaml:"deprecations"`
+	BreakingChanges []string `yaml:"breaking_changes"`
+	Deprecations    []string `yaml:"deprecations"`
+	Bugfixes        []string `yaml:"bugfixes"`
+	Enhancements    []string `yaml:"enhancements"`
+	Features        []string `yaml:"features"`
+	KnownIssues     []string `yaml:"known_issues"`
+	Security        []string `yaml:"security"`
+	Upgrades        []string `yaml:"upgrades"`
+	Other           []string `yaml:"other"`
 }
