@@ -7,11 +7,11 @@ package cmd
 
 import (
 	"errors"
-	"os"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog/fragment"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var errNewCmdMissingArg = errors.New("new requires title argument")
@@ -29,16 +29,10 @@ func NewCmd() *cobra.Command {
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			title := args[0]
+			location := viper.GetString("fragment_location")
+			fc := fragment.NewCreator(afero.NewOsFs(), location)
 
-			// TODO: this should be a meaningful location
-			location, err := os.Getwd()
-			if err != nil {
-				return err
-			}
-
-			fc := fragment.NewCreator(afero.NewOsFs())
-
-			if err := fc.Create(location, title); err != nil {
+			if err := fc.Create(title); err != nil {
 				return err
 			}
 
