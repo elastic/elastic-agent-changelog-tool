@@ -4,6 +4,7 @@
 *.dll
 *.so
 *.dylib
+elastic-agent-changelog-tool
 
 # Test binary, built with `go test -c`
 *.test
