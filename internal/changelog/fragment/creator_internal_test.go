@@ -46,11 +46,10 @@ func TestSanitizeFilename(t *testing.T) {
 
 func TestCreate(t *testing.T) {
 	fc := TestNewCreator()
-	location := afero.GetTempDir(fc.fs, "testdata")
 
-	fc.Create(location, "foobar")
+	fc.Create("foobar")
 
-	content, err := afero.ReadFile(fc.fs, path.Join(location, fc.filename("foobar")))
+	content, err := afero.ReadFile(fc.fs, path.Join(fc.location, fc.filename("foobar")))
 	require.Nil(t, err)
 
 	expected := `breaking_changes: []

@@ -6,6 +6,7 @@ package fragment
 
 import (
 	"fmt"
+	"os"
 	"path"
 	"strings"
 	"time"
@@ -18,24 +19,30 @@ import (
 // It's used to allow replacing the value with a known one during testing.
 type timestamp func() int64
 
-func NewCreator(fs afero.Fs) FragmentCreator {
+func NewCreator(fs afero.Fs, location string) FragmentCreator {
 	return FragmentCreator{
 		fs:        fs,
+		location:  location,
 		timestamp: time.Now().Unix,
 	}
 }
 
 // TestNewCreator sets up a FragmentCreator configured to be used in testing.
 func TestNewCreator() FragmentCreator {
-	f := NewCreator(afero.NewMemMapFs())
+	f := NewCreator(afero.NewMemMapFs(), "testdata")
 	f.timestamp = func() int64 { return 1647345675 }
 	return f
 }
 
 type FragmentCreator struct {
-	fs afero.Fs
+	fs       afero.Fs
+	location string
 	// timestamp allow overriding value in tests
 	timestamp timestamp
+}
+
+func (c FragmentCreator) Location() string {
+	return c.location
 }
 
 // filename computes the filename for the changelog fragment to be created.
@@ -45,8 +52,11 @@ func (f FragmentCreator) filename(slug string) string {
 	return filename
 }
 
+var fragmentLocPerm = os.FileMode(0770)
+var fragmentPerm = os.FileMode(0660)
+
 // Create marshal changelog fragment and persist it to file.
-func (c FragmentCreator) Create(location, slug string) error {
+func (c FragmentCreator) Create(slug string) error {
 	frg := Fragment{}
 
 	data, err := yaml.Marshal(&frg)
@@ -54,7 +64,11 @@ func (c FragmentCreator) Create(location, slug string) error {
 		return err
 	}
 
-	return afero.WriteFile(c.fs, path.Join(location, c.filename(slug)), data, 0660)
+	if err := c.fs.MkdirAll(c.location, fragmentLocPerm); err != nil {
+		return fmt.Errorf("cannot create fragment location folder: %v", err)
+	}
+
+	return afero.WriteFile(c.fs, path.Join(c.location, c.filename(slug)), data, fragmentPerm)
 }
 
 // sanitizeFilename takes care of removing dangerous elements from a string so it can be safely
