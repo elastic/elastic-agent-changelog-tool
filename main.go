@@ -15,6 +15,7 @@ func main() {
 	settings.Init()
 
 	rootCmd := cmd.RootCmd()
+	rootCmd.AddCommand(cmd.BuildCmd())
 	rootCmd.AddCommand(cmd.NewCmd())
 	rootCmd.AddCommand(cmd.FindPRCommand())
 	rootCmd.AddCommand(cmd.VersionCmd())
