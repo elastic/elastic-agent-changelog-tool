@@ -1,7 +1,12 @@
 package settings
 
 import (
+	"log"
+	"os"
+	"path"
+
 	"github.com/OpenPeeDeeP/xdg"
+	"github.com/elastic/elastic-agent-changelog-tool/internal/gitreporoot"
 	"github.com/spf13/viper"
 )
 
@@ -18,6 +23,20 @@ func setDefaults() {
 	viper.SetDefault("cache_dir", xdg.CacheHome())
 	viper.SetDefault("config_dir", xdg.ConfigHome())
 	viper.SetDefault("data_dir", xdg.DataHome())
+
+	root, err := gitreporoot.Find()
+	if err != nil {
+		log.Printf("git repo root not found, $GIT_REPO_ROOT will be empty: %v\n", err)
+	} else {
+		os.Setenv("GIT_REPO_ROOT", root)
+	}
+
+	// fragment_root supports env var expansion
+	viper.SetDefault("fragment_root", "$GIT_REPO_ROOT")
+	viper.SetDefault("fragment_path", "changelog/fragments")
+	viper.SetDefault("fragment_location", path.Join(
+		os.ExpandEnv(viper.GetString("fragment_root")),
+		viper.GetString("fragment_path")))
 }
 
 func setConstants() {
