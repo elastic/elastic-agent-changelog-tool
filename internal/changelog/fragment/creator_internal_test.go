@@ -47,7 +47,8 @@ func TestSanitizeFilename(t *testing.T) {
 func TestCreate(t *testing.T) {
 	fc := TestNewCreator()
 
-	fc.Create("foobar")
+	err := fc.Create("foobar")
+	require.Nil(t, err)
 
 	content, err := afero.ReadFile(fc.fs, path.Join(fc.location, fc.filename("foobar")))
 	require.Nil(t, err)
