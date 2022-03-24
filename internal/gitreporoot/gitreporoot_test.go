@@ -14,7 +14,7 @@ func TestFind(t *testing.T) {
 	require.Nil(t, err)
 
 	// NOTE: git rev-parse --show-toplevel doesn't seem to play out nice with repo in repo structures
-	// to avoid makind this more complex than needed, the current repo is leveraged, but this test
+	// to avoid making this more complex than needed, the current repo is leveraged, but this test
 	// is a bit brittle.
 	require.Equal(t, path.Join(os.Getenv("PWD"), "..", ".."), p)
 }
