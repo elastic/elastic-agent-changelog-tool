@@ -13,6 +13,8 @@ kind: feature
 summary: 
 # Long description; in case the summary is not enough to describe the change this field accomodate a description without length limits.
 # description: 
+# Affected component; a word indicating the component this changeset affects.
+component:
 # PR number; optional; the PR number that added the changeset.
 # If not present is automatically filled by the tooling finding the PR where this changelog fragment has been added.
 # NOTE: the tooling supports backports, so it's able to fill the original PR number instead of the backport PR number.
