@@ -13,27 +13,42 @@ import (
 	"github.com/google/go-github/v32/github"
 )
 
-type githubClient struct {
+type GithubClient struct {
 	client Client
 }
 
-func NewClient(gclient Client) (*githubClient, error) {
-	return &githubClient{
+func NewClient(gclient Client) (*GithubClient, error) {
+	return &GithubClient{
 		client: gclient,
 	}, nil
 }
 
-func NewUnauthorizedClient() *githubClient {
-	return &githubClient{
+func NewUnauthorizedClient() *GithubClient {
+	return &GithubClient{
 		client: NewWrapper(github.NewClient(new(http.Client))),
 	}
 }
 
-func (c *githubClient) User() (string, error) {
+func (c *GithubClient) User() (string, error) {
 	user, _, err := c.client.UsersGet(context.Background(), "")
 	if err != nil {
 		return "", fmt.Errorf("fetching authenticated user failed: %w", err)
 	}
 
 	return *user.Login, nil
+}
+
+func (c *GithubClient) ListPullRequestsWithCommit(
+	ctx context.Context,
+	owner string,
+	repo string,
+	sha string,
+	opts *github.PullRequestListOptions,
+) ([]*github.PullRequest, *github.Response, error) {
+	pr, resp, err := c.client.ListPullRequestsWithCommit(ctx, owner, repo, sha, opts)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to list pull requests with commit: %w", err)
+	}
+
+	return pr, resp, nil
 }

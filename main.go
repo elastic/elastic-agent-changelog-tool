@@ -17,6 +17,7 @@ func main() {
 
 	rootCmd := cmd.RootCmd()
 	rootCmd.AddCommand(cmd.NewCmd())
+	rootCmd.AddCommand(cmd.FindPRCommand())
 
 	err := rootCmd.Execute()
 	if err != nil {
