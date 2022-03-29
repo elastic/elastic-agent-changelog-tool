@@ -29,6 +29,7 @@ func TestNewClient(t *testing.T) {
 	require.NoError(t, err)
 
 	bb, err := AuthToken.AuthToken()
+	require.Nil(t, err)
 
 	githubClient, err := NewClient(NewWrapper(github.NewClient(oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: bb}),
