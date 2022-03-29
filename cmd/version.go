@@ -33,7 +33,7 @@ func VersionCmd() *cobra.Command {
 			sb.WriteString(fmt.Sprintf("(build time: %s)", version.BuildTimeFormatted()))
 
 			// NOTE: allow replacing stdout for testing
-			fmt.Fprintln(cmd.OutOrStdout(), sb.String())
+			fmt.Fprint(cmd.OutOrStdout(), sb.String())
 
 			return nil
 		},
