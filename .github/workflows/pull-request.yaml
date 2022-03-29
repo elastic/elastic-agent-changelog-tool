@@ -1,5 +1,5 @@
 ---
-name: lint commits in PR
+name: Pull request checks
 
 on: [pull_request]
 
@@ -28,3 +28,23 @@ jobs:
         uses: golangci/golangci-lint-action@v2
         with:
           version: v1.33
+
+  license:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - run: |
+          gv=$(cat .go-version)
+          echo "::set-output name={go}::{$gv}"
+        id: version
+
+      - name: install Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: "${{steps.version.outputs.go}}"
+
+      - name: check license
+        # -d returns files without proper header
+        run: "go run github.com/elastic/go-licenser -license Elasticv2 -d"
