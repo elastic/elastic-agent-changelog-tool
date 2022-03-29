@@ -13,7 +13,8 @@ import (
 // Init initalize settings and default values
 func Init() {
 	viper.AutomaticEnv()
-	viper.BindEnv("ELASTIC_AGENT_CHANGELOG")
+	// NOTE: err value is ignored as it only checks for missing argument
+	_ = viper.BindEnv("ELASTIC_AGENT_CHANGELOG")
 
 	setDefaults()
 	setConstants()
