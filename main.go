@@ -16,6 +16,7 @@ func main() {
 
 	rootCmd := cmd.RootCmd()
 	rootCmd.AddCommand(cmd.NewCmd())
+	rootCmd.AddCommand(cmd.VersionCmd())
 
 	err := rootCmd.Execute()
 	if err != nil {
