@@ -37,6 +37,28 @@ func TestBuildTimeFormatted_valid(t *testing.T) {
 	version.BuildTime = "unknown"
 }
 
+func TestSourceTimeFormattedDefault(t *testing.T) {
+	// NOTE: this test is order sensitive, as it tests the default value
+	v := version.SourceTimeFormatted()
+	require.Equal(t, "unknown", v)
+}
+
+func TestSourceTimeFormatted_invalid(t *testing.T) {
+	version.SourceDateEpoch = "foobar"
+	v := version.SourceTimeFormatted()
+	require.Equal(t, "invalid", v)
+	// NOTE: reset value to default to avoid test order issues
+	version.SourceDateEpoch = ""
+}
+
+func TestSourceTimeFormatted_valid(t *testing.T) {
+	version.SourceDateEpoch = "1648570012"
+	v := version.SourceTimeFormatted()
+	require.Equal(t, "2022-03-29T16:06:52Z", v)
+	// NOTE: reset value to default to avoid test order issues
+	version.SourceDateEpoch = ""
+}
+
 func TestTagDefault(t *testing.T) {
 	require.Empty(t, version.Tag)
 }
