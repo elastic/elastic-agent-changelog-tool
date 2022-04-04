@@ -5,13 +5,11 @@
 package fragment
 
 type Fragment struct {
-	BreakingChanges []string `yaml:"breaking_changes"`
-	Deprecations    []string `yaml:"deprecations"`
-	Bugfixes        []string `yaml:"bugfixes"`
-	Enhancements    []string `yaml:"enhancements"`
-	Features        []string `yaml:"features"`
-	KnownIssues     []string `yaml:"known_issues"`
-	Security        []string `yaml:"security"`
-	Upgrades        []string `yaml:"upgrades"`
-	Other           []string `yaml:"other"`
+	Kind        string `yaml:"kind"`
+	Summary     string `yaml:"summary"`
+	Description string `yaml:"description"`
+	Component   string `yaml:"component"`
+	Pr          int    `yaml:"pr"`
+	Issue       int    `yaml:"issue"`
+	Repository  string `yaml:"repository"`
 }
