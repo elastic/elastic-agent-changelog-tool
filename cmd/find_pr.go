@@ -10,6 +10,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 
 	gb "github.com/elastic/elastic-agent-changelog-tool/internal/github"
 	"github.com/google/go-github/v32/github"
@@ -56,18 +57,29 @@ func FindPRCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			authToken := gb.NewAuthToken(&afero.OsFs{})
 
-			githubAccessToken, err := authToken.AuthToken()
-			if err != nil {
-				log.Fatal(err)
-			}
+			var GithubClient *gb.GithubClient
 
-			GithubClient, err := gb.NewClient(gb.NewWrapper(github.NewClient(oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(
-				&oauth2.Token{
-					AccessToken: githubAccessToken,
-				}),
-			))))
-			if err != nil {
+			githubAccessToken, err := authToken.AuthToken()
+			switch {
+			case errors.Is(err, os.ErrNotExist):
+				// Github authorization token is not found
+				// we continue using an unauthorized github client
+				GithubClient = gb.NewUnauthorizedClient()
+
+			case err != nil:
+				// If github token is found but couldn't read it's content
 				log.Fatal(err)
+
+			default:
+				// Github token is found and read successfully
+				GithubClient, err = gb.NewClient(gb.NewWrapper(github.NewClient(oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(
+					&oauth2.Token{
+						AccessToken: githubAccessToken,
+					}),
+				))))
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 
 			var commit string
