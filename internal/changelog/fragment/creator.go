@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/spf13/afero"
-	"gopkg.in/yaml.v3"
 )
 
 // timestamp represent a function providing a timestamp.
@@ -57,9 +56,7 @@ var fragmentPerm = os.FileMode(0660)
 
 // Create marshal changelog fragment and persist it to file.
 func (c FragmentCreator) Create(slug string) error {
-	frg := Fragment{}
-
-	data, err := yaml.Marshal(&frg)
+	data, err := Template()
 	if err != nil {
 		return err
 	}

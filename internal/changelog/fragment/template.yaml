@@ -1,59 +1,4 @@
-// Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
-// or more contributor license agreements. Licensed under the Elastic License 2.0;
-// you may not use this file except in compliance with the Elastic License 2.0.
-
-package fragment
-
-import (
-	"path"
-	"reflect"
-	"testing"
-
-	"github.com/spf13/afero"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-)
-
-func TestFilename(t *testing.T) {
-	fc := TestNewCreator()
-
-	expected := "1647345675-foobar.yaml"
-	got := fc.filename("foobar")
-	assert.Equal(t, expected, got)
-}
-
-func TestSanitizeFilename(t *testing.T) {
-	type test struct {
-		input string
-		want  string
-	}
-
-	tests := []test{
-		{input: "foo bar", want: "foo-bar"},
-		{input: "foo bar foobar", want: "foo-bar-foobar"},
-		{input: "foo/bar", want: "foo-bar"},
-		{input: "foo\\bar", want: "foo-bar"},
-		{input: "foo bar/foobar\\", want: "foo-bar-foobar-"},
-	}
-
-	for _, tc := range tests {
-		got := sanitizeFilename(tc.input)
-		if !reflect.DeepEqual(tc.want, got) {
-			t.Fatalf("expected: %v, got: %v", tc.want, got)
-		}
-	}
-}
-
-func TestCreate(t *testing.T) {
-	fc := TestNewCreator()
-
-	err := fc.Create("foobar")
-	require.Nil(t, err)
-
-	content, err := afero.ReadFile(fc.fs, path.Join(fc.location, fc.filename("foobar")))
-	require.Nil(t, err)
-
-	expected := `# one of:
+# one of:
 # - breaking-change: a change to previously-documented behavior
 # - deprecation: functionality that is being removed in a later release
 # - bug-fix: fixes a problem in a previous version
@@ -81,7 +26,3 @@ component:
 # Repository URL; optional; the repository URL related to this changeset and pr and issue numbers.
 # If not present is automatically filled by the tooling based on the repository this file has been committed in.
 # repository: https://github.com/elastic/elastic-agent-changelog-tool
-`
-	got := string(content)
-	assert.Equal(t, expected, got)
-}
