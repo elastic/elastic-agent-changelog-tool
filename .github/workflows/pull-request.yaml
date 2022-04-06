@@ -10,9 +10,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - run: |
+      - name: get go version
+        run: |
           gv=$(cat .go-version)
-          echo "::set-output name={go}::{$gv}"
+          echo "::set-output name=go::$gv"
         id: version
 
       - name: install Go
@@ -39,9 +40,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - run: |
+      - name: get go version
+        run: |
           gv=$(cat .go-version)
-          echo "::set-output name={go}::{$gv}"
+          echo "::set-output name=go::$gv"
         id: version
 
       - name: install Go
