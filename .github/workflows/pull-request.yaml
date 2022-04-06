@@ -85,6 +85,9 @@ jobs:
         with:
           go-version: "${{steps.version.outputs.go}}"
 
+      - name: install go-licenser
+        run: "go get github.com/elastic/go-licenser"
+
       - name: check license
         # -d returns files without proper header
         run: "go run github.com/elastic/go-licenser -license Elasticv2 -d"
