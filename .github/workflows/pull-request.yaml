@@ -4,15 +4,37 @@ name: Pull request checks
 on: [pull_request]
 
 jobs:
-  lint:
+  gomod:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - run: |
+      - name: get go version
+        run: |
           gv=$(cat .go-version)
-          echo "::set-output name={go}::{$gv}"
+          echo "::set-output name=go::$gv"
+        id: version
+
+      - name: install Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: "${{steps.version.outputs.go}}"
+
+      - name: check go.mod
+        # tidy go mod and check for differences
+        run: "go mod tidy && git diff --exit-code"
+
+  gofmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: get go version
+        run: |
+          gv=$(cat .go-version)
+          echo "::set-output name=go::$gv"
         id: version
 
       - name: install Go
@@ -24,10 +46,27 @@ jobs:
         # exit with 0 only if gofmt returns 0 lines
         run: "exit $(gofmt | wc -l)"
 
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: get go version
+        run: |
+          gv=$(cat .go-version)
+          echo "::set-output name=go::$gv"
+        id: version
+
+      - name: install Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: "${{steps.version.outputs.go}}"
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.33
+          version: v1.45
 
   license:
     runs-on: ubuntu-latest
@@ -35,15 +74,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - run: |
+      - name: get go version
+        run: |
           gv=$(cat .go-version)
-          echo "::set-output name={go}::{$gv}"
+          echo "::set-output name=go::$gv"
         id: version
 
       - name: install Go
         uses: actions/setup-go@v1
         with:
           go-version: "${{steps.version.outputs.go}}"
+
+      - name: install go-licenser
+        run: "go get github.com/elastic/go-licenser"
 
       - name: check license
         # -d returns files without proper header

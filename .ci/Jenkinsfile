@@ -33,23 +33,6 @@ pipeline {
         stash allowEmpty: true, name: 'source', useDefaultExcludes: false
       }
     }
-    stage('Lint'){
-      options { skipDefaultCheckout() }
-      steps {
-        withGithubNotify(context: "Lint") {
-          dir("${BASE_DIR}"){
-            withGoEnv(){
-              setEnvVar('GO_VERSION', readFile(".go-version").trim())
-              sh(label: 'lint', script: '''
-                go mod tidy && git diff --exit-code
-                gofmt -l . | read && echo "Code differs from gofmt's style. Run 'gofmt -w .'" 1>&2 && exit 1 || true
-              ''')
-              sh(label: 'Go vet', script: 'go vet')
-            }
-          }
-        }
-      }
-    }
     stage('build'){
       options { skipDefaultCheckout() }
       steps {
