@@ -20,6 +20,10 @@ jobs:
         with:
           go-version: "${{steps.version.outputs.go}}"
 
+      - name: check go.mod
+        # tidy go mod and check for differences
+        run: "go mod tidy && git diff --exit-code"
+
       - name: check format
         # exit with 0 only if gofmt returns 0 lines
         run: "exit $(gofmt | wc -l)"
