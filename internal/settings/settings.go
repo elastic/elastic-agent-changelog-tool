@@ -16,6 +16,7 @@ import (
 )
 
 const envPrefix = "ELASTIC_AGENT_CHANGELOG"
+const configFileFolder = "elastic-agent-changelog-tool"
 
 // Init initalize settings and default values
 func Init() {
@@ -25,12 +26,22 @@ func Init() {
 
 	setDefaults()
 	setConstants()
+
+	viper.AddConfigPath(viper.GetString("config_file"))
+
+	// TODO: better error handling (skip missing file error)
+	if err := viper.ReadInConfig(); err == nil {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	} else {
+		fmt.Println(err)
+	}
 }
 
 func setDefaults() {
 	viper.SetDefault("cache_dir", xdg.CacheHome())
 	viper.SetDefault("config_dir", xdg.ConfigHome())
 	viper.SetDefault("data_dir", xdg.DataHome())
+	viper.SetDefault("config_file", path.Join(xdg.ConfigHome(), configFileFolder))
 
 	root, err := gitreporoot.Find()
 	if err != nil {
