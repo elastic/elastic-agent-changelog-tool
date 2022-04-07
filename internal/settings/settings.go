@@ -38,9 +38,6 @@ func Init() {
 }
 
 func setDefaults() {
-	viper.SetDefault("cache_dir", xdg.CacheHome())
-	viper.SetDefault("config_dir", xdg.ConfigHome())
-	viper.SetDefault("data_dir", xdg.DataHome())
 	viper.SetDefault("config_file", path.Join(xdg.ConfigHome(), configFileFolder))
 
 	// try to compute GIT_REPO_ROOT value if empty
