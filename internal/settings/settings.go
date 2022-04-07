@@ -43,11 +43,14 @@ func setDefaults() {
 	viper.SetDefault("data_dir", xdg.DataHome())
 	viper.SetDefault("config_file", path.Join(xdg.ConfigHome(), configFileFolder))
 
-	root, err := gitreporoot.Find()
-	if err != nil {
-		log.Printf("git repo root not found, $GIT_REPO_ROOT will be empty: %v\n", err)
-	} else {
-		os.Setenv("GIT_REPO_ROOT", root)
+	// try to compute GIT_REPO_ROOT value if empty
+	if os.Getenv("GIT_REPO_ROOT") == "" {
+		root, err := gitreporoot.Find()
+		if err != nil {
+			log.Printf("git repo root not found, $GIT_REPO_ROOT will be empty: %v\n", err)
+		} else {
+			os.Setenv("GIT_REPO_ROOT", root)
+		}
 	}
 
 	// fragment_root supports env var expansion
