@@ -12,6 +12,13 @@ import (
 
 type Client interface {
 	UsersGet(ctx context.Context, user string) (*github.User, *github.Response, error)
+	ListPullRequestsWithCommit(
+		ctx context.Context,
+		owner string,
+		repo string,
+		sha string,
+		opts *github.PullRequestListOptions,
+	) ([]*github.PullRequest, *github.Response, error)
 }
 
 type Wrapper struct {
@@ -26,4 +33,14 @@ func NewWrapper(client *github.Client) *Wrapper {
 
 func (gw *Wrapper) UsersGet(ctx context.Context, user string) (*github.User, *github.Response, error) {
 	return gw.client.Users.Get(ctx, user)
+}
+
+func (gw *Wrapper) ListPullRequestsWithCommit(
+	ctx context.Context,
+	owner string,
+	repo string,
+	sha string,
+	opts *github.PullRequestListOptions,
+) ([]*github.PullRequest, *github.Response, error) {
+	return gw.client.PullRequests.ListPullRequestsWithCommit(ctx, owner, repo, sha, opts)
 }
