@@ -5,6 +5,7 @@
 package settings
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -14,11 +15,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+const envPrefix = "ELASTIC_AGENT_CHANGELOG"
+
 // Init initalize settings and default values
 func Init() {
 	viper.AutomaticEnv()
 	// NOTE: err value is ignored as it only checks for missing argument
-	_ = viper.BindEnv("ELASTIC_AGENT_CHANGELOG")
+	_ = viper.BindEnv(envPrefix)
 
 	setDefaults()
 	setConstants()
