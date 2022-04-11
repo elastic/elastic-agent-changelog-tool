@@ -9,11 +9,12 @@ import (
 	"fmt"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog"
+	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-func BuildCmd() *cobra.Command {
+func BuildCmd(fs afero.Fs) *cobra.Command {
 
 	buildCmd := &cobra.Command{
 		Use:  "build",
@@ -26,7 +27,7 @@ func BuildCmd() *cobra.Command {
 			src := viper.GetString("fragment_location")
 			dest := viper.GetString("changelog_destination")
 
-			b := changelog.NewBuilder(filename, "8.2.1", src, dest)
+			b := changelog.NewBuilder(fs, filename, "8.2.1", src, dest)
 
 			if err := b.Build(); err != nil {
 				return fmt.Errorf("cannot build changelog: %w", err)

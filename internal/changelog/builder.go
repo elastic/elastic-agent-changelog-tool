@@ -22,11 +22,11 @@ type Builder struct {
 	dest string
 }
 
-func NewBuilder(filename, version, src, dest string) *Builder {
+func NewBuilder(fs afero.Fs, filename, version, src, dest string) *Builder {
 	return &Builder{
 		changelog: Changelog{Version: version},
 		filename:  filename,
-		fs:        afero.NewOsFs(),
+		fs:        fs,
 		src:       src,
 		dest:      dest,
 	}
