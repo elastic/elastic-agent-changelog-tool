@@ -16,20 +16,21 @@ import (
 
 // timestamp represent a function providing a timestamp.
 // It's used to allow replacing the value with a known one during testing.
-type timestamp func() int64
+type timestamp func() time.Time
 
 func NewCreator(fs afero.Fs, location string) FragmentCreator {
 	return FragmentCreator{
 		fs:        fs,
 		location:  location,
-		timestamp: time.Now().Unix,
+		timestamp: time.Now,
 	}
 }
 
 // TestNewCreator sets up a FragmentCreator configured to be used in testing.
 func TestNewCreator() FragmentCreator {
 	f := NewCreator(afero.NewMemMapFs(), "testdata")
-	f.timestamp = func() int64 { return 1647345675 }
+	tz, _ := time.LoadLocation("MST")
+	f.timestamp = func() time.Time { return time.Date(2006, time.January, 2, 15, 4, 5, 0, tz) }
 	return f
 }
 
@@ -47,7 +48,7 @@ func (c FragmentCreator) Location() string {
 // filename computes the filename for the changelog fragment to be created.
 // To provide unique names the provided slug is prepended with current timestamp.
 func (f FragmentCreator) filename(slug string) string {
-	filename := fmt.Sprintf("%d-%s.yaml", f.timestamp(), sanitizeFilename(slug))
+	filename := fmt.Sprintf("%d-%s.yaml", f.timestamp().Unix(), sanitizeFilename(slug))
 	return filename
 }
 

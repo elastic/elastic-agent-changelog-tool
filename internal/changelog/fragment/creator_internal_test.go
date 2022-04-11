@@ -5,9 +5,11 @@
 package fragment
 
 import (
+	"log"
 	"path"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -17,9 +19,26 @@ import (
 func TestFilename(t *testing.T) {
 	fc := TestNewCreator()
 
-	expected := "1647345675-foobar.yaml"
+	expected := "1136239445-foobar.yaml"
 	got := fc.filename("foobar")
 	assert.Equal(t, expected, got)
+}
+
+func TestTimestamp_default(t *testing.T) {
+	// NOTE: using sleep to test timestamp default function ability to return different values.
+	// Sleeping 1 second to test UNIX timestamp (with second resolution).
+	log.Println("SLOW TEST, it sleeps")
+	testFs := afero.NewMemMapFs()
+	fc := NewCreator(testFs, "foobar")
+
+	t1 := fc.timestamp()
+	time.Sleep(1 * time.Second)
+	t2 := fc.timestamp()
+	time.Sleep(1 * time.Second)
+	t3 := fc.timestamp()
+
+	require.Greater(t, t2.Unix(), t1.Unix())
+	require.Greater(t, t3.Unix(), t2.Unix())
 }
 
 func TestSanitizeFilename(t *testing.T) {
