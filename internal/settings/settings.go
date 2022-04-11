@@ -5,6 +5,7 @@
 package settings
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -14,26 +15,39 @@ import (
 	"github.com/spf13/viper"
 )
 
+const envPrefix = "ELASTIC_AGENT_CHANGELOG"
+const configFileFolder = "elastic-agent-changelog-tool"
+
 // Init initalize settings and default values
 func Init() {
 	viper.AutomaticEnv()
 	// NOTE: err value is ignored as it only checks for missing argument
-	_ = viper.BindEnv("ELASTIC_AGENT_CHANGELOG")
+	_ = viper.BindEnv(envPrefix)
 
 	setDefaults()
 	setConstants()
+
+	viper.AddConfigPath(viper.GetString("config_file"))
+
+	// TODO: better error handling (skip missing file error)
+	if err := viper.ReadInConfig(); err == nil {
+		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	} else {
+		fmt.Println(err)
+	}
 }
 
 func setDefaults() {
-	viper.SetDefault("cache_dir", xdg.CacheHome())
-	viper.SetDefault("config_dir", xdg.ConfigHome())
-	viper.SetDefault("data_dir", xdg.DataHome())
+	viper.SetDefault("config_file", path.Join(xdg.ConfigHome(), configFileFolder))
 
-	root, err := gitreporoot.Find()
-	if err != nil {
-		log.Printf("git repo root not found, $GIT_REPO_ROOT will be empty: %v\n", err)
-	} else {
-		os.Setenv("GIT_REPO_ROOT", root)
+	// try to compute GIT_REPO_ROOT value if empty
+	if os.Getenv("GIT_REPO_ROOT") == "" {
+		root, err := gitreporoot.Find()
+		if err != nil {
+			log.Printf("git repo root not found, $GIT_REPO_ROOT will be empty: %v\n", err)
+		} else {
+			os.Setenv("GIT_REPO_ROOT", root)
+		}
 	}
 
 	// fragment_root supports env var expansion

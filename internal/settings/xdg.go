@@ -5,17 +5,17 @@
 package settings
 
 import (
-	"github.com/spf13/viper"
+	"github.com/OpenPeeDeeP/xdg"
 )
 
 func CacheDir() string {
-	return viper.GetString("cache_dir")
+	return xdg.CacheHome()
 }
 
 func ConfigDir() string {
-	return viper.GetString("config_dir")
+	return xdg.ConfigHome()
 }
 
 func DataDir() string {
-	return viper.GetString("data_dir")
+	return xdg.DataHome()
 }
