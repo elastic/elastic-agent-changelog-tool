@@ -21,19 +21,6 @@ type Entry struct {
 	File        FragmentFileInfo `yaml:"file"`
 }
 
-const (
-	// NOTE: Kind values should be aligned with supported type from doc.elastic.co
-	kindBreakingChange = "breaking-change"
-	kindDeprecation    = "deprecation"
-	kindBugfix         = "bug-fix"
-	kindEnhancement    = "enhancement"
-	kindFeature        = "feature"
-	kindKnownIssue     = "known-issue"
-	kindSecurity       = "security"
-	kindUpgrade        = "upgrade"
-	kindOther          = "other"
-)
-
 // EntriesFromFragment returns one or more entries based on the fragment File.
 // A single Fragment can contain multiple Changelog entries.
 func EntryFromFragment(f fragment.File) Entry {

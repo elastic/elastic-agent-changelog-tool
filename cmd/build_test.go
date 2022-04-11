@@ -22,17 +22,19 @@ import (
 func TestBuildCmd_default(t *testing.T) {
 	testFs := afero.NewMemMapFs()
 	c := fragment.NewCreator(testFs, viper.GetString("fragment_location"))
-	c.Create("foo")
+	err := c.Create("foo")
+	require.Nil(t, err)
 	// NOTE: sleeping to produce different fragment's timestamps
 	time.Sleep(1 * time.Second)
-	c.Create("bar")
+	err = c.Create("bar")
+	require.Nil(t, err)
 
 	cmd := cmd.BuildCmd(testFs)
 
 	b := new(bytes.Buffer)
 	cmd.SetOut(b)
 
-	err := cmd.Execute()
+	err = cmd.Execute()
 	require.Nil(t, err)
 
 	content, err := afero.ReadFile(testFs, viper.GetString("changelog_destination"))
