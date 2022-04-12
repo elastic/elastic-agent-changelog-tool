@@ -20,8 +20,6 @@ var errListPRCmdMissingCommitHash = errors.New("find-pr requires commit hash arg
 const defaultOwner = "elastic"
 const defaultRepo = "beats"
 
-const repoFlagName = "repo"
-const repoFlagDescription = "target repository"
 const findPRLongDescription = `Use this command to find the original PR that included the commit in the repository.
 
 argument with commit hash is required
@@ -46,7 +44,7 @@ func FindPRCommand() *cobra.Command {
 
 			c := github.NewClient(hc)
 
-			repo, err := cmd.Flags().GetString(repoFlagName)
+			repo, err := cmd.Flags().GetString("repo")
 			if err != nil {
 				return fmt.Errorf("repo flag malformed: %w", err)
 			}
@@ -70,7 +68,7 @@ func FindPRCommand() *cobra.Command {
 		},
 	}
 
-	findPRCommand.Flags().String(repoFlagName, "", repoFlagDescription)
+	findPRCommand.Flags().String("repo", defaultRepo, "target repository")
 
 	return findPRCommand
 }
