@@ -1,64 +1,91 @@
 package github_test
 
 import (
-	"io/fs"
+	"errors"
+	"log"
+	"net/http"
 	"os"
-	"path/filepath"
+	"path"
 	"testing"
+	"time"
 
+	"github.com/dnaeon/go-vcr/cassette"
+	"github.com/dnaeon/go-vcr/recorder"
 	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
+	"golang.org/x/oauth2"
 )
 
-func TestTokenLocation(t *testing.T) {
-	home, err := os.UserHomeDir()
-	require.NoError(t, err)
+// getHttpClient instantiate a http.Client backed by a recorder.Recorder to be used in testing
+// scenarios.
+// As GitHub may require authentication, this function leverages AuthToken functionality to load
+// GitHub token from env or file; when missing instantiate an unauthenticated client.
+// NOTE: always remember to call (recorder.Recorder).Stop() in your test case.
+func getHttpClient(t *testing.T) (*recorder.Recorder, *http.Client) {
+	t.Helper()
+	var err error
 
+	testFs := afero.NewOsFs()
 	tkloc, err := github.TokenLocation()
 	require.NoError(t, err, "cannot get token location")
-	require.Equal(t, filepath.Join(home, ".elastic", "github.token"), tkloc)
-}
 
-func TestEnsureAuthConfigured(t *testing.T) {
-	expectedToken := "ghp_tuQprmeVXWdaMhatQiw8pJdEXPxHWm9tkTJb"
-	testFs := afero.MemMapFs{}
+	tk := github.NewAuthToken(testFs, tkloc)
+	token, err := tk.AuthToken()
 
-	tokenLocation, err := github.TokenLocation()
-	require.NoError(t, err, "cannot get token location")
-	afero.WriteFile(&testFs, tokenLocation, []byte(expectedToken), fs.ModeAppend)
+	if err != nil && !errors.Is(err, os.ErrNotExist) {
+		log.Fatalf("unexpected failure getting GitHub token: %v", err)
+	}
 
-	tk := github.NewAuthToken(&testFs, tokenLocation)
+	var rec *recorder.Recorder
+	var hc *http.Client
 
-	ok, err := github.EnsureAuthConfigured(tk)
+	if err != nil && errors.Is(err, os.ErrNotExist) {
+		// NOTE: the auth token was not present (nor in the env nor in the file) so we
+		// initialize an unauthenticated http client and plain recorder.
+		rec, err = recorder.New(path.Join("testdata", "fixtures", t.Name()))
+		hc = &http.Client{
+			Transport: rec,
+			Timeout:   2 * time.Second,
+		}
+		require.NoError(t, err)
+
+		return rec, hc
+	}
+
+	if token == "" {
+		log.Fatal("GitHub authorization token value was read but it is empty")
+	}
+
+	// NOTE: at this point the token is present, so we initialize a oauth2 http client
+	// and the corresponding recorder; this is necessary to pass the authentication credentials
+	// to the http client transport.
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: token},
+	)
+
+	tr := &oauth2.Transport{
+		Base:   http.DefaultTransport,
+		Source: oauth2.ReuseTokenSource(nil, ts),
+	}
+
+	rec, err = recorder.NewAsMode(path.Join("testdata", "fixtures", t.Name()), recorder.ModeReplaying, tr)
 	require.NoError(t, err)
-	require.True(t, ok)
-}
 
-func TestEnsureAuthConfigured_failure(t *testing.T) {
-	testFs := afero.MemMapFs{}
+	// filter out dynamic & sensitive data/headers.
+	// NOTE: your test code will continue to see (and use) the real access token and
+	// it is redacted before the recorded interactions are saved.
+	rec.AddSaveFilter(func(i *cassette.Interaction) error {
+		delete(i.Request.Headers, "Authorization")
+		// i.Request.Headers["Authorization"] = []string{"Basic REDACTED"}
 
-	tokenLocation, err := github.TokenLocation()
-	require.NoError(t, err, "cannot get token location")
+		return nil
+	})
 
-	tk := github.NewAuthToken(&testFs, tokenLocation)
+	hc = &http.Client{
+		Transport: rec,
+		Timeout:   2 * time.Second,
+	}
 
-	ok, err := github.EnsureAuthConfigured(tk)
-	require.Error(t, err)
-	require.False(t, ok)
-}
-
-func TestEnsureAuthConfigured_empty(t *testing.T) {
-	expectedToken := ""
-	testFs := afero.MemMapFs{}
-
-	tokenLocation, err := github.TokenLocation()
-	require.NoError(t, err, "cannot get token location")
-	afero.WriteFile(&testFs, tokenLocation, []byte(expectedToken), fs.ModeAppend)
-
-	tk := github.NewAuthToken(&testFs, tokenLocation)
-
-	ok, err := github.EnsureAuthConfigured(tk)
-	require.Error(t, err)
-	require.False(t, ok)
+	return rec, hc
 }
