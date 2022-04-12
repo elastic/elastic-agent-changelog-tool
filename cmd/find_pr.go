@@ -49,10 +49,15 @@ func FindPRCommand() *cobra.Command {
 				return fmt.Errorf("repo flag malformed: %w", err)
 			}
 
+			owner, err := cmd.Flags().GetString("owner")
+			if err != nil {
+				return fmt.Errorf("owner flag malformed: %w", err)
+			}
+
 			commit := args[0]
 			ctx := context.Background()
 
-			res, err := github.FindPR(ctx, c, defaultOwner, repo, commit)
+			res, err := github.FindPR(ctx, c, owner, repo, commit)
 			if err != nil {
 				return fmt.Errorf("failed listing prs with commit: %w", err)
 			}
@@ -69,6 +74,7 @@ func FindPRCommand() *cobra.Command {
 	}
 
 	findPRCommand.Flags().String("repo", defaultRepo, "target repository")
+	findPRCommand.Flags().String("owner", defaultOwner, "target repository owner")
 
 	return findPRCommand
 }
