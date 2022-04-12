@@ -10,7 +10,7 @@ import (
 
 func TestFindPR(t *testing.T) {
 	r, hc := getHttpClient(t)
-	defer r.Stop()
+	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
 	ctx := context.Background()
@@ -24,7 +24,7 @@ func TestFindPR(t *testing.T) {
 
 func TestFindPR_missingCommit(t *testing.T) {
 	r, hc := getHttpClient(t)
-	defer r.Stop()
+	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
 	ctx := context.Background()
@@ -36,7 +36,7 @@ func TestFindPR_missingCommit(t *testing.T) {
 
 func TestFindPR_missingRepo(t *testing.T) {
 	r, hc := getHttpClient(t)
-	defer r.Stop()
+	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
 	ctx := context.Background()
