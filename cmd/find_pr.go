@@ -25,7 +25,7 @@ const findPRLongDescription = `Use this command to find the original PR that inc
 argument with commit hash is required
 --repo flag is optional and will default to elastic/beats if left unspecified.`
 
-func FindPRCommand() *cobra.Command {
+func FindPRCommand(appFs afero.Fs) *cobra.Command {
 	findPRCommand := &cobra.Command{
 		Use:  "find-pr",
 		Long: findPRLongDescription,
@@ -37,7 +37,7 @@ func FindPRCommand() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			hc, err := github.GetHTTPClient(afero.NewOsFs())
+			hc, err := github.GetHTTPClient(appFs)
 			if err != nil {
 				return fmt.Errorf("cannot initialize http client: %w", err)
 			}

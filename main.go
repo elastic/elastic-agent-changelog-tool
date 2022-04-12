@@ -9,14 +9,17 @@ import (
 
 	"github.com/elastic/elastic-agent-changelog-tool/cmd"
 	"github.com/elastic/elastic-agent-changelog-tool/internal/settings"
+	"github.com/spf13/afero"
 )
 
 func main() {
 	settings.Init()
 
+	appFs := afero.NewOsFs()
+
 	rootCmd := cmd.RootCmd()
 	rootCmd.AddCommand(cmd.NewCmd())
-	rootCmd.AddCommand(cmd.FindPRCommand())
+	rootCmd.AddCommand(cmd.FindPRCommand(appFs))
 	rootCmd.AddCommand(cmd.VersionCmd())
 
 	err := rootCmd.Execute()
