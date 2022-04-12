@@ -6,59 +6,51 @@ package github
 
 import (
 	"fmt"
+	"log"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/spf13/afero"
 )
 
 const (
-	envAuth       = "GITHUB_TOKEN"
-	authTokenFile = ".elastic/github.token"
+	envAuth = "GITHUB_TOKEN"
 )
 
-// EnsureAuthConfigured method ensures that GitHub auth token is available.
-func (f *AuthToken) EnsureAuthConfigured() error {
-	if _, err := f.AuthToken(); err != nil {
-		return fmt.Errorf("GitHub authorization token is missing. Please use either environment variable %s or ~/%s: %w",
-			envAuth, authTokenFile, err)
-	}
-
-	return nil
-}
+type envProvider func(env string) string
 
 type AuthToken struct {
-	fs *afero.Afero
+	fs       afero.Fs
+	location string
+
+	envProvider envProvider
 }
 
-func NewAuthToken(fs afero.Fs) *AuthToken {
-	return &AuthToken{
-		fs: &afero.Afero{
-			Fs: fs,
-		},
+func NewAuthToken(fs afero.Fs, tkLoc string) AuthToken {
+	return AuthToken{
+		fs:          fs,
+		location:    tkLoc,
+		envProvider: os.Getenv,
 	}
+}
+
+func NewTestAuthToken(fs afero.Fs, tkLoc string, ep envProvider) AuthToken {
+	at := NewAuthToken(fs, tkLoc)
+	at.envProvider = ep
+
+	return at
 }
 
 // AuthToken method finds and returns the GitHub authorization token.
-func (f *AuthToken) AuthToken() (string, error) {
-	githubTokenVar := os.Getenv(envAuth)
-
-	if githubTokenVar != "" {
-		fmt.Println("Using GitHub token from environment variable.")
+func (f AuthToken) AuthToken() (string, error) {
+	if githubTokenVar := f.envProvider(envAuth); githubTokenVar != "" {
+		log.Println("Using GitHub token from environment variable")
 		return githubTokenVar, nil
 	}
 
-	homeDir, err := os.UserHomeDir()
+	token, err := afero.ReadFile(f.fs, f.location)
 	if err != nil {
-		return "", fmt.Errorf("reading user home directory failed: %w", err)
-	}
-
-	githubTokenPath := filepath.Join(homeDir, authTokenFile)
-
-	token, err := f.fs.ReadFile(githubTokenPath)
-	if err != nil {
-		return "", fmt.Errorf("reading Github token file failed (path: %s): %w", githubTokenPath, err)
+		return "", fmt.Errorf("cannot read Github token file failed (path: %s): %w", f.location, err)
 	}
 
 	return strings.TrimSpace(string(token)), nil

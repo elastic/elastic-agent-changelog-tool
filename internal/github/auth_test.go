@@ -2,50 +2,54 @@
 // or more contributor license agreements. Licensed under the Elastic License 2.0;
 // you may not use this file except in compliance with the Elastic License 2.0.
 
-package github
+package github_test
 
 import (
 	"io/fs"
-	"os"
-	"path/filepath"
 	"testing"
 
+	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/require"
 )
 
 func TestAuthToken(t *testing.T) {
 	expectedToken := "ghp_tuQprmeVXWdaMhatQiw8pJdEXPxHWm9tkTJb"
+	testFs := afero.MemMapFs{}
 
-	AuthToken := NewAuthToken(&afero.MemMapFs{})
-
-	homeDir, err := os.UserHomeDir()
+	tokenLocation, err := github.TokenLocation()
+	require.NoError(t, err, "cannot get token location")
+	err = afero.WriteFile(&testFs, tokenLocation, []byte(expectedToken), fs.ModeAppend)
 	require.NoError(t, err)
 
-	githubTokenPath := filepath.Join(homeDir, authTokenFile)
+	tk := github.NewAuthToken(&testFs, tokenLocation)
 
-	err = AuthToken.fs.WriteFile(githubTokenPath, []byte(expectedToken), fs.ModeAppend)
-	require.NoError(t, err)
-
-	token, err := AuthToken.AuthToken()
+	token, err := tk.AuthToken()
 	require.NoError(t, err)
 	require.NotEmpty(t, token)
 	require.Equal(t, expectedToken, token)
 }
 
-func TestEnsureAuthConfigured(t *testing.T) {
+func TestAuthToken_fromEnv(t *testing.T) {
 	expectedToken := "ghp_tuQprmeVXWdaMhatQiw8pJdEXPxHWm9tkTJb"
+	testFs := afero.MemMapFs{}
 
-	homeDir, err := os.UserHomeDir()
+	tk := github.NewTestAuthToken(&testFs, "using env", func(key string) string {
+		return expectedToken
+	})
+
+	token, err := tk.AuthToken()
 	require.NoError(t, err)
+	require.NotEmpty(t, token)
+	require.Equal(t, expectedToken, token)
+}
 
-	githubTokenPath := filepath.Join(homeDir, authTokenFile)
+func TestAuthToken_readFailure(t *testing.T) {
+	testFs := afero.MemMapFs{}
 
-	AuthToken := NewAuthToken(&afero.MemMapFs{})
+	tk := github.NewAuthToken(&testFs, "foobar")
 
-	err = AuthToken.fs.WriteFile(githubTokenPath, []byte(expectedToken), fs.ModeAppend)
-	require.NoError(t, err)
-
-	err = AuthToken.EnsureAuthConfigured()
-	require.NoError(t, err)
+	token, err := tk.AuthToken()
+	require.Error(t, err)
+	require.Empty(t, token)
 }
