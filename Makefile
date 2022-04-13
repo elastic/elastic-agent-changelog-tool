@@ -11,7 +11,7 @@ build:
 	go build -ldflags "$(VERSION_LDFLAGS)" -o elastic-agent-changelog-tool
 
 licenser:
-	go run github.com/elastic/go-licenser -license Elasticv2
+	go-licenser -license Elasticv2
 
 test:
 	go test -v ./...
