@@ -1,0 +1,2 @@
+kind: foobar # this is a wrong kind
+summary: a fragment with unknown kind

@@ -9,12 +9,16 @@ import (
 
 	"github.com/elastic/elastic-agent-changelog-tool/cmd"
 	"github.com/elastic/elastic-agent-changelog-tool/internal/settings"
+	"github.com/spf13/afero"
 )
 
 func main() {
 	settings.Init()
 
+	appFs := afero.NewOsFs()
+
 	rootCmd := cmd.RootCmd()
+	rootCmd.AddCommand(cmd.BuildCmd(appFs))
 	rootCmd.AddCommand(cmd.NewCmd())
 	rootCmd.AddCommand(cmd.FindPRCommand())
 	rootCmd.AddCommand(cmd.VersionCmd())
