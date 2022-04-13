@@ -86,8 +86,14 @@ jobs:
           go-version: "${{steps.version.outputs.go}}"
 
       - name: install go-licenser
-        run: "go install github.com/elastic/go-licenser@latest"
+        run: |
+          ls
+          printenv GOPATH
+          printenv GOBIN
+          go install github.com/elastic/go-licenser@latest
 
       - name: check license
         # -d returns files without proper header
-        run: "go-licenser -license Elasticv2 -d"
+        run: |
+          GOBIN=$PWD/bin go install github.com/elastic/go-licenser@latest
+          ./bin/go-licenser -license Elasticv2 -d
