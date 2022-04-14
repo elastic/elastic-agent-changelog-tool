@@ -77,5 +77,7 @@ func (b Builder) Build() error {
 		return fmt.Errorf("cannot marshall changelog: %w", err)
 	}
 
-	return afero.WriteFile(b.fs, path.Join(b.dest, b.filename), data, changelogFilePerm)
+	outFile := path.Join(b.dest, b.filename)
+	log.Printf("saving changelog in %s\n", outFile)
+	return afero.WriteFile(b.fs, outFile, data, changelogFilePerm)
 }

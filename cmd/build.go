@@ -6,6 +6,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog"
 	"github.com/spf13/afero"
@@ -26,7 +27,12 @@ func BuildCmd(fs afero.Fs) *cobra.Command {
 			src := viper.GetString("fragment_location")
 			dest := viper.GetString("changelog_destination")
 
-			b := changelog.NewBuilder(fs, filename, "8.2.1", src, dest)
+			version, err := cmd.Flags().GetString("version")
+			if err != nil {
+				return fmt.Errorf("error parsing flag 'version': %w", err)
+			}
+
+			b := changelog.NewBuilder(fs, filename, version, src, dest)
 
 			if err := b.Build(); err != nil {
 				return fmt.Errorf("cannot build changelog: %w", err)
@@ -34,6 +40,13 @@ func BuildCmd(fs afero.Fs) *cobra.Command {
 
 			return nil
 		},
+	}
+
+	buildCmd.Flags().String("version", "", "The version of the consolidated changelog being created")
+	err := buildCmd.MarkFlagRequired("version")
+	if err != nil {
+		// NOTE: the only case this error appear is when the flag is not defined
+		log.Fatal(err)
 	}
 
 	return buildCmd
