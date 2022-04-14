@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"path"
 	"testing"
 	"time"
 
@@ -47,7 +48,8 @@ func TestBuildCmd(t *testing.T) {
 	err = cmd.Execute()
 	require.Nil(t, err)
 
-	content, err := afero.ReadFile(testFs, viper.GetString("changelog_destination"))
+	changelogFile := path.Join(viper.GetString("changelog_destination"), viper.GetString("changelog_filename"))
+	content, err := afero.ReadFile(testFs, changelogFile)
 	require.Nil(t, err)
 
 	ch := changelog.Changelog{}
