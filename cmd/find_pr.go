@@ -9,14 +9,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
-	"os"
 
-	gb "github.com/elastic/elastic-agent-changelog-tool/internal/github"
-	"github.com/google/go-github/v32/github"
+	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"golang.org/x/oauth2"
 )
 
 var errListPRCmdMissingCommitHash = errors.New("find-pr requires commit hash argument")
@@ -24,26 +20,12 @@ var errListPRCmdMissingCommitHash = errors.New("find-pr requires commit hash arg
 const defaultOwner = "elastic"
 const defaultRepo = "beats"
 
-const repoFlagName = "repo"
-const repoFlagDescription = "target repository"
 const findPRLongDescription = `Use this command to find the original PR that included the commit in the repository.
 
 argument with commit hash is required
 --repo flag is optional and will default to elastic/beats if left unspecified.`
 
-type PRInfo struct {
-	CommitHash    string `json:"commit"`
-	PullRequestID string `json:"pull-request"`
-}
-
-func prToDomain(commitHash string, pr *github.PullRequest) PRInfo {
-	return PRInfo{
-		CommitHash:    commitHash,
-		PullRequestID: fmt.Sprintf("%d", *pr.Number),
-	}
-}
-
-func FindPRCommand() *cobra.Command {
+func FindPRCommand(appFs afero.Fs) *cobra.Command {
 	findPRCommand := &cobra.Command{
 		Use:  "find-pr",
 		Long: findPRLongDescription,
@@ -55,66 +37,34 @@ func FindPRCommand() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			authToken := gb.NewAuthToken(&afero.OsFs{})
-
-			var GithubClient *gb.GithubClient
-
-			githubAccessToken, err := authToken.AuthToken()
-			switch {
-			case errors.Is(err, os.ErrNotExist):
-				// Github authorization token is not found
-				// we continue using an unauthorized github client
-				GithubClient = gb.NewUnauthorizedClient()
-
-			case err != nil:
-				// If github token is found but couldn't read it's content
-				log.Fatal(err)
-
-			default:
-				// Github token is found and read successfully
-				GithubClient, err = gb.NewClient(gb.NewWrapper(github.NewClient(oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(
-					&oauth2.Token{
-						AccessToken: githubAccessToken,
-					}),
-				))))
-				if err != nil {
-					log.Fatal(err)
-				}
+			hc, err := github.GetHTTPClient(appFs)
+			if err != nil {
+				return fmt.Errorf("cannot initialize http client: %w", err)
 			}
 
-			var commit string
+			c := github.NewClient(hc)
 
-			repo, err := cmd.Flags().GetString(repoFlagName)
+			repo, err := cmd.Flags().GetString("repo")
 			if err != nil {
 				return fmt.Errorf("repo flag malformed: %w", err)
 			}
 
-			commit = args[0]
-
-			if repo == "" {
-				repo = defaultRepo
+			owner, err := cmd.Flags().GetString("owner")
+			if err != nil {
+				return fmt.Errorf("owner flag malformed: %w", err)
 			}
 
-			prs, _, err := GithubClient.ListPullRequestsWithCommit(context.Background(), defaultOwner, repo, commit, nil)
+			commit := args[0]
+			ctx := context.Background()
+
+			res, err := github.FindPR(ctx, c, owner, repo, commit)
 			if err != nil {
 				return fmt.Errorf("failed listing prs with commit: %w", err)
 			}
 
-			type resp struct {
-				Items []PRInfo `json:"items"`
-			}
-
-			respData := resp{
-				Items: make([]PRInfo, len(prs)),
-			}
-
-			for i, pr := range prs {
-				respData.Items[i] = prToDomain(commit, pr)
-			}
-
-			respJSON, err := json.Marshal(respData)
+			respJSON, err := json.Marshal(res)
 			if err != nil {
-				return fmt.Errorf("failed listing prs with commit: %w", err)
+				return fmt.Errorf("failed marshalling JSON output: %w", err)
 			}
 
 			cmd.Println(string(respJSON))
@@ -123,7 +73,8 @@ func FindPRCommand() *cobra.Command {
 		},
 	}
 
-	findPRCommand.Flags().String(repoFlagName, "", repoFlagDescription)
+	findPRCommand.Flags().String("repo", defaultRepo, "target repository")
+	findPRCommand.Flags().String("owner", defaultOwner, "target repository owner")
 
 	return findPRCommand
 }

@@ -20,7 +20,7 @@ func main() {
 	rootCmd := cmd.RootCmd()
 	rootCmd.AddCommand(cmd.BuildCmd(appFs))
 	rootCmd.AddCommand(cmd.NewCmd())
-	rootCmd.AddCommand(cmd.FindPRCommand())
+	rootCmd.AddCommand(cmd.FindPRCommand(appFs))
 	rootCmd.AddCommand(cmd.VersionCmd())
 
 	err := rootCmd.Execute()

@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestAuthToken(t *testing.T) {
+func TestEnsureAuthConfigured(t *testing.T) {
 	expectedToken := "ghp_tuQprmeVXWdaMhatQiw8pJdEXPxHWm9tkTJb"
 	testFs := afero.MemMapFs{}
 
@@ -24,32 +24,36 @@ func TestAuthToken(t *testing.T) {
 
 	tk := github.NewAuthToken(&testFs, tokenLocation)
 
-	token, err := tk.AuthToken()
+	ok, err := github.EnsureAuthConfigured(tk)
 	require.NoError(t, err)
-	require.NotEmpty(t, token)
-	require.Equal(t, expectedToken, token)
+	require.True(t, ok)
 }
 
-func TestAuthToken_fromEnv(t *testing.T) {
-	expectedToken := "ghp_tuQprmeVXWdaMhatQiw8pJdEXPxHWm9tkTJb"
+func TestEnsureAuthConfigured_failure(t *testing.T) {
 	testFs := afero.MemMapFs{}
 
-	tk := github.NewTestAuthToken(&testFs, "using env", func(key string) string {
-		return expectedToken
-	})
+	tokenLocation, err := github.TokenLocation()
+	require.NoError(t, err, "cannot get token location")
 
-	token, err := tk.AuthToken()
-	require.NoError(t, err)
-	require.NotEmpty(t, token)
-	require.Equal(t, expectedToken, token)
-}
+	tk := github.NewAuthToken(&testFs, tokenLocation)
 
-func TestAuthToken_readFailure(t *testing.T) {
-	testFs := afero.MemMapFs{}
-
-	tk := github.NewAuthToken(&testFs, "foobar")
-
-	token, err := tk.AuthToken()
+	ok, err := github.EnsureAuthConfigured(tk)
 	require.Error(t, err)
-	require.Empty(t, token)
+	require.False(t, ok)
+}
+
+func TestEnsureAuthConfigured_empty(t *testing.T) {
+	expectedToken := ""
+	testFs := afero.MemMapFs{}
+
+	tokenLocation, err := github.TokenLocation()
+	require.NoError(t, err, "cannot get token location")
+	err = afero.WriteFile(&testFs, tokenLocation, []byte(expectedToken), fs.ModeAppend)
+	require.NoError(t, err)
+
+	tk := github.NewAuthToken(&testFs, tokenLocation)
+
+	ok, err := github.EnsureAuthConfigured(tk)
+	require.Error(t, err)
+	require.False(t, ok)
 }
