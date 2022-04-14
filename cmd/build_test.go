@@ -15,6 +15,7 @@ import (
 	"github.com/elastic/elastic-agent-changelog-tool/cmd"
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog"
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog/fragment"
+	"github.com/elastic/elastic-agent-changelog-tool/internal/settings"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
@@ -22,6 +23,8 @@ import (
 )
 
 func TestBuildCmd(t *testing.T) {
+	settings.Init()
+
 	testFs := afero.NewMemMapFs()
 	c := fragment.NewCreator(testFs, viper.GetString("fragment_location"))
 	err := c.Create("foo")
