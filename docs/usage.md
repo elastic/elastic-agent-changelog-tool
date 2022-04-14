@@ -6,6 +6,8 @@ This tool provides functionalities for different personas:
 - the maintainer needs to verify the proper changelog fragment is provided in PRs and may want to review the unreleased changelog
 - the release manager needs to build public release notes from the unreleased changelog.
 
+This repository uses the tool to keep the changelog, so you can seeing it in action (look at `changelog` folder).
+
 ## I'm a customer/user
 
 To be done.
@@ -23,13 +25,23 @@ To create a new fragment:
 $ elastic-agent-changelog-tool new a-changeset-filename
 ```
 
-A new file will be created in the changelog fragments folder (default to `changelog/fragmennts`).
+A new file will be created in the changelog fragments folder (default to `changelog/fragments`).
 
 You must edit the created file compiling all uncommented fields and optionally uncomment and compile commented fields. Guidance is provided through comments in the file.
 
+The fragment is created from the template available in [`../internal/changelog/fragment/template.yaml`](../internal/changelog/fragment/template.yaml).
+
 ### Viewing the changelog
 
-There is no way to view the changelog at the moment. You can view the **consolidated changelog** by running `elastic-agent-changelog-tool build` from the repository root folder.
+There is no way to view the changelog at the moment. You can view the **consolidated changelog** by running:
+
+```
+$ elastic-agent-changelog-tool build
+```
+
+from the repository root folder.
+
+An example is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).
 
 ## I'm a maintainer
 
