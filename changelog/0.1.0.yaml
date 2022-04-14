@@ -1,0 +1,47 @@
+version: 0.1.0
+entries:
+    - summary: Add Changelog Fragment creation
+      description: ""
+      kind: feature
+      pr: 13
+      issue: 21
+      timestamp: 1649924282
+      file:
+        name: 1649924282-changelog-fragment-creation.yaml
+        checksum: 10bf1bf67509a524e48f0795be75c278e29c0b47
+    - summary: Add version command
+      description: ""
+      kind: feature
+      pr: 23
+      issue: 19
+      timestamp: 1649924372
+      file:
+        name: 1649924372-version-command.yaml
+        checksum: fc5421947f717377f82f539ba3eabbdcd375e67e
+    - summary: Update Changelog Fragment structure
+      description: Previous fragment structure was temporary and we agreed on a new flattened structure.
+      kind: bug-fix
+      pr: 17
+      issue: 13
+      timestamp: 1649924436
+      file:
+        name: 1649924436-update-changelog-fragment-structure.yaml
+        checksum: f711f4ffe46eb5967d77d4e56912a7029bc4ce16
+    - summary: Add find-pr command
+      description: find-pr command returns all PRs a commit was found in through GitHub APIs.
+      kind: feature
+      pr: 16
+      issue: 5
+      timestamp: 1649924529
+      file:
+        name: 1649924529-add-find-pr-command.yaml
+        checksum: b94cc8d3133df0db263c18d0879a70a34f744373
+    - summary: Implement consolidated changelog builder
+      description: ""
+      kind: feature
+      pr: 15
+      issue: 20
+      timestamp: 1649924600
+      file:
+        name: 1649924600-implement-consolidated-changelog-builder.yaml
+        checksum: 3c45730cac255e4300b4f877d73b2d50af70c717
