@@ -6,7 +6,9 @@ package cmd_test
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"testing"
 	"time"
 
@@ -19,7 +21,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-func TestBuildCmd_default(t *testing.T) {
+func TestBuildCmd(t *testing.T) {
 	testFs := afero.NewMemMapFs()
 	c := fragment.NewCreator(testFs, viper.GetString("fragment_location"))
 	err := c.Create("foo")
@@ -30,6 +32,11 @@ func TestBuildCmd_default(t *testing.T) {
 	require.Nil(t, err)
 
 	cmd := cmd.BuildCmd(testFs)
+
+	expectedVersion := "0.0.0"
+	cmd.SetArgs([]string{
+		fmt.Sprintf("--version=%s", expectedVersion),
+	})
 
 	b := new(bytes.Buffer)
 	cmd.SetOut(b)
@@ -44,8 +51,18 @@ func TestBuildCmd_default(t *testing.T) {
 	err = yaml.Unmarshal(content, &ch)
 	require.Nil(t, err)
 
-	fmt.Println(ch)
-
-	require.Equal(t, "8.2.1", ch.Version)
+	require.Equal(t, expectedVersion, ch.Version)
 	require.Len(t, ch.Entries, 2)
+}
+
+func TestBuildCmd_missingFlag(t *testing.T) {
+	testFs := afero.NewMemMapFs()
+	cmd := cmd.BuildCmd(testFs)
+
+	cmd.SetOut(ioutil.Discard)
+	cmd.SetErr(ioutil.Discard)
+
+	err := cmd.Execute()
+	expectedErr := errors.New("required flag(s) \"version\" not set")
+	require.Error(t, expectedErr, err)
 }
