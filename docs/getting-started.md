@@ -60,10 +60,10 @@ Save and close the file.
 From the root folder of the repository run:
 
 ```
-$ elastic-agent-changelog-tool build
+$ elastic-agent-changelog-tool build --version 0.1.0
 ```
 
-This will create `./changelog/0.1.0.yaml` with content similar to this:
+This will create `./changelog.yaml` with content similar to this:
 
 ```yaml
 version: 0.1.0

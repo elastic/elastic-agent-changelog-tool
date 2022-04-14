@@ -36,7 +36,7 @@ The fragment is created from the template available in [`../internal/changelog/f
 There is no way to view the changelog at the moment. You can view the **consolidated changelog** by running:
 
 ```
-$ elastic-agent-changelog-tool build
+$ elastic-agent-changelog-tool build --version=8.2.1
 ```
 
 from the repository root folder.
