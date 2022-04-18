@@ -6,6 +6,7 @@ package github
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -14,6 +15,66 @@ import (
 	"github.com/google/go-github/v32/github"
 )
 
+type Strategy interface {
+	FindPullRequestID(pr *github.PullRequest) (int, error)
+}
+
+var ErrStrategyFailed = errors.New("strategy failed")
+
+type BackportPRNumber struct {
+	Strategy
+}
+
+func (s *BackportPRNumber) FindPullRequestID(pr *github.PullRequest) (int, error) {
+	patterns := []string{`backport #(\d+)`, `cherry-pick of #(\d+)`, `cherry-pick of PR #(\d+)`}
+	rDigit, _ := regexp.Compile(`(\d+)`)
+
+	for _, label := range pr.Labels {
+		if strings.Contains(label.GetName(), "backport") {
+			for _, p := range patterns {
+				regexPattern, _ := regexp.Compile(p)
+				backport := regexPattern.FindString(pr.GetTitle())
+				if backport == "" {
+					backport = regexPattern.FindString(*pr.Body)
+				}
+
+				PRNumber, err := strconv.Atoi(rDigit.FindString(backport))
+				if err == nil {
+					return PRNumber, err
+				}
+			}
+		}
+	}
+	return -1, ErrStrategyFailed
+}
+
+type PRNumber struct {
+	Strategy
+}
+
+func (s *PRNumber) FindPullRequestID(pr *github.PullRequest) (int, error) {
+	if pr.Number != nil {
+		return pr.GetNumber(), nil
+	}
+	return -1, ErrStrategyFailed
+}
+
+func TestStrategies(pr *github.PullRequest, strategies ...Strategy) (int, error) {
+	var (
+		prID int
+		err  error
+	)
+
+	for _, s := range strategies {
+		prID, err = s.FindPullRequestID(pr)
+		if err == nil {
+			break
+		}
+	}
+
+	return prID, err
+}
+
 type PRForCommit struct {
 	CommitHash    string `json:"commit"`
 	PullRequestID int    `json:"pull-request"`
@@ -21,23 +82,6 @@ type PRForCommit struct {
 
 type FoundPRs struct {
 	Items []PRForCommit `json:"items"`
-}
-
-func findPRID(pr *github.PullRequest) int {
-	rBackportTitle, _ := regexp.Compile(`backport #(\d+)`)
-	rDigit, _ := regexp.Compile(`(\d+)`)
-
-	for _, label := range pr.Labels {
-		if strings.Contains(label.GetName(), "backport") {
-			backport := rBackportTitle.FindString(pr.GetTitle())
-			PRNumber, err := strconv.Atoi(rDigit.FindString(backport))
-
-			if err == nil {
-				return PRNumber
-			}
-		}
-	}
-	return pr.GetNumber()
 }
 
 func FindPR(ctx context.Context, c *Client, owner, repo, commit string) (FoundPRs, error) {
@@ -51,10 +95,18 @@ func FindPR(ctx context.Context, c *Client, owner, repo, commit string) (FoundPR
 		Items: make([]PRForCommit, len(prs)),
 	}
 
+	backportStrategy := &BackportPRNumber{}
+	prNumberStrategy := &PRNumber{}
+
 	for i, pr := range prs {
+		prID, err := TestStrategies(pr, backportStrategy, prNumberStrategy)
+		if err != nil {
+			return FoundPRs{}, fmt.Errorf("failed testing strategies: %w", err)
+		}
+
 		respData.Items[i] = PRForCommit{
 			CommitHash:    commit,
-			PullRequestID: findPRID(pr),
+			PullRequestID: prID,
 		}
 	}
 
