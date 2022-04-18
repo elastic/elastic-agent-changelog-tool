@@ -7,6 +7,11 @@ package github
 import (
 	"context"
 	"fmt"
+	"regexp"
+	"strconv"
+	"strings"
+
+	"github.com/google/go-github/v32/github"
 )
 
 type PRForCommit struct {
@@ -16,6 +21,23 @@ type PRForCommit struct {
 
 type FoundPRs struct {
 	Items []PRForCommit `json:"items"`
+}
+
+func findPRID(pr *github.PullRequest) int {
+	rBackportTitle, _ := regexp.Compile(`backport #(\d+)`)
+	rDigit, _ := regexp.Compile(`(\d+)`)
+
+	for _, label := range pr.Labels {
+		if strings.Contains(label.GetName(), "backport") {
+			backport := rBackportTitle.FindString(pr.GetTitle())
+			PRNumber, err := strconv.Atoi(rDigit.FindString(backport))
+
+			if err == nil {
+				return PRNumber
+			}
+		}
+	}
+	return pr.GetNumber()
 }
 
 func FindPR(ctx context.Context, c *Client, owner, repo, commit string) (FoundPRs, error) {
@@ -32,7 +54,7 @@ func FindPR(ctx context.Context, c *Client, owner, repo, commit string) (FoundPR
 	for i, pr := range prs {
 		respData.Items[i] = PRForCommit{
 			CommitHash:    commit,
-			PullRequestID: pr.GetNumber(),
+			PullRequestID: findPRID(pr),
 		}
 	}
 
