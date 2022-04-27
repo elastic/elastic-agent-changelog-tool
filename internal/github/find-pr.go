@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/google/go-github/v32/github"
 )
@@ -30,7 +29,7 @@ func (s *BackportPRNumber) FindPullRequestID(pr *github.PullRequest) (int, error
 	rDigit, _ := regexp.Compile(`(\d+)`)
 
 	for _, label := range pr.Labels {
-		if strings.Contains(label.GetName(), "backport") {
+		if label.GetName() == "backport" {
 			for _, p := range patterns {
 				regexPattern, _ := regexp.Compile(p)
 				backport := regexPattern.FindString(pr.GetTitle())

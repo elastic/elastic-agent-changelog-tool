@@ -41,14 +41,17 @@ func TestFindPR_backport(t *testing.T) {
 	res, err := github.FindPR(ctx, c, "elastic", "beats", "fe25c73907336fc462d5e6e059d3cd86512484fe")
 	require.NoError(t, err)
 	require.Len(t, res.Items, 4)
+	// not a backport: https://github.com/elastic/beats/pull/31396
 	require.Equal(t, 31396, res.Items[0].PullRequestID)
-	require.Equal(t, 31417, res.Items[1].PullRequestID)
-	require.Equal(t, 31382, res.Items[2].PullRequestID)
-	require.Equal(t, 31343, res.Items[3].PullRequestID)
+	// backport: https://github.com/elastic/beats/pull/31417 => source: https://github.com/elastic/beats/issues/31013
+	require.Equal(t, 31013, res.Items[1].PullRequestID)
+	// backport: https://github.com/elastic/beats/pull/31396 => source: https://github.com/elastic/beats/issues/31369
+	require.Equal(t, 31369, res.Items[2].PullRequestID)
+	// backport: https://github.com/elastic/beats/pull/31343 => source: https://github.com/elastic/beats/pull/31279
+	require.Equal(t, 31279, res.Items[3].PullRequestID)
 }
 
 func TestFindPR_forwardport(t *testing.T) {
-	t.Skip("this behaviour is not yet implemented")
 	r, hc := getHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
