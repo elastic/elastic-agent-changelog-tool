@@ -5,6 +5,7 @@
 package changelog
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"path"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog/fragment"
+	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 )
@@ -70,6 +72,27 @@ func (b Builder) Build() error {
 		}
 
 		b.changelog.Entries = append(b.changelog.Entries, EntryFromFragment(f))
+
+		hc, err := github.GetHTTPClient(b.fs)
+		if err != nil {
+			return fmt.Errorf("cannot initialize http client: %w", err)
+		}
+
+		c := github.NewClient(hc)
+
+		for i, entry := range b.changelog.Entries {
+			pr, _, err := c.PullRequests.Get(context.Background(), "elastic", "beats", entry.LinkedPR)
+			if err != nil {
+				continue
+			}
+
+			prID, err := github.TestStrategies(pr, &github.BackportPRNumber{}, &github.PRNumber{})
+			if err != nil {
+				continue
+			}
+
+			b.changelog.Entries[i].LinkedPR = prID
+		}
 	}
 
 	data, err := yaml.Marshal(&b.changelog)
