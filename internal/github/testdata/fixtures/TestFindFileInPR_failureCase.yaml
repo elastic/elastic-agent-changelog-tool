@@ -1,0 +1,80 @@
+---
+version: 1
+interactions:
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/vnd.github.v3+json
+      User-Agent:
+      - go-github
+    url: https://api.github.com/repos/elastic/elastic-agent-changelog-tool/pulls/33/files
+    method: GET
+  response:
+    body: '[{"sha":"56589b5ad4361dcb7e076f56dd11bab5b7003b48","filename":".github/workflows/pull-request.yaml","status":"modified","additions":3,"deletions":4,"changes":7,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/8f260191f005a2622b33d4c671b6cbf3b719965e/.github%2Fworkflows%2Fpull-request.yaml","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/8f260191f005a2622b33d4c671b6cbf3b719965e/.github%2Fworkflows%2Fpull-request.yaml","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/.github%2Fworkflows%2Fpull-request.yaml?ref=8f260191f005a2622b33d4c671b6cbf3b719965e","patch":"@@
+      -85,9 +85,8 @@ jobs:\n         with:\n           go-version: \"${{steps.version.outputs.go}}\"\n
+      \n-      - name: install go-licenser\n-        run: \"go get github.com/elastic/go-licenser\"\n-\n       -
+      name: check license\n         # -d returns files without proper header\n-        run:
+      \"go run github.com/elastic/go-licenser -license Elasticv2 -d\"\n+        run:
+      |\n+          GOBIN=$PWD/bin go install github.com/elastic/go-licenser@latest\n+          ./bin/go-licenser
+      -license Elasticv2 -d"},{"sha":"1a534b92b08673b775f9207e86e20709a16f5208","filename":"Makefile","status":"modified","additions":1,"deletions":1,"changes":2,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/8f260191f005a2622b33d4c671b6cbf3b719965e/Makefile","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/8f260191f005a2622b33d4c671b6cbf3b719965e/Makefile","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/Makefile?ref=8f260191f005a2622b33d4c671b6cbf3b719965e","patch":"@@
+      -11,7 +11,7 @@ build:\n \tgo build -ldflags \"$(VERSION_LDFLAGS)\" -o elastic-agent-changelog-tool\n
+      \n licenser:\n-\tgo run github.com/elastic/go-licenser -license Elasticv2\n+\tgo-licenser
+      -license Elasticv2\n \n test:\n \tgo test -v ./..."},{"sha":"c7c7113d7b6e53d3e61aafc4fc7530c711c3d5f2","filename":"README.md","status":"modified","additions":1,"deletions":0,"changes":1,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/8f260191f005a2622b33d4c671b6cbf3b719965e/README.md","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/8f260191f005a2622b33d4c671b6cbf3b719965e/README.md","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/README.md?ref=8f260191f005a2622b33d4c671b6cbf3b719965e","patch":"@@
+      -4,3 +4,4 @@ Tooling to manage the changelog for beats, Elastic Agent and Fleet
+      Server\n ## Requirements\n \n `git` CLI should be installed and available.\n+[`go-licenser`](https://github.com/elastic/go-licenser)
+      CLI should be installed and available."}]'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - public, max-age=60, s-maxage=60
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 16 May 2022 14:39:35 GMT
+      Etag:
+      - W/"33137441b92ecc1529cf541df1516b62cc301531cc8ed57b1bba6107f61b87be"
+      Last-Modified:
+      - Mon, 09 May 2022 09:37:35 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Vary:
+      - Accept, Accept-Encoding, Accept, X-Requested-With
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Github-Media-Type:
+      - github.v3; format=json
+      X-Github-Request-Id:
+      - 8EFE:12BEB:E2C994:E7785A:62826227
+      X-Ratelimit-Limit:
+      - "60"
+      X-Ratelimit-Remaining:
+      - "52"
+      X-Ratelimit-Reset:
+      - "1652712072"
+      X-Ratelimit-Resource:
+      - core
+      X-Ratelimit-Used:
+      - "8"
+      X-Xss-Protection:
+      - "0"
+    status: 200 OK
+    code: 200
+    duration: ""

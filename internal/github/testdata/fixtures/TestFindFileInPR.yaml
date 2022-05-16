@@ -1,0 +1,330 @@
+---
+version: 1
+interactions:
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/vnd.github.v3+json
+      User-Agent:
+      - go-github
+    url: https://api.github.com/repos/elastic/elastic-agent-changelog-tool/pulls/29/files
+    method: GET
+  response:
+    body: '[{"sha":"7cdeb2a18aca8dd5e7d6215558aafe594165c442","filename":"README.md","status":"modified","additions":16,"deletions":0,"changes":16,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/0b0321d62950fea6230515d29846f942f27a5005/README.md","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/0b0321d62950fea6230515d29846f942f27a5005/README.md","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/README.md?ref=0b0321d62950fea6230515d29846f942f27a5005","patch":"@@
+      -6,6 +6,22 @@ Tooling to manage the changelog for beats, Elastic Agent and Fleet
+      Server\n `git` CLI should be installed and available.\n [`go-licenser`](https://github.com/elastic/go-licenser)
+      CLI should be installed and available.\n \n+## Usage\n+\n+Install following
+      one of the methods provided in [docs/install.md].\n+\n+To get started look into
+      [docs/getting-started.md]\n+\n+Look at [docs/usage.md] for detailed usage guidelines.
+      \n+\n+Look into [docs/concepts.md] for overall concepts behind how it works
+      and [docs/glossary.md] for details about terms used in this project.\n+\n+[docs/install.md]:
+      ./docs/usage.md\n+[docs/getting-started.md]: ./docs/getting-started.md\n+[docs/usage.md]:
+      ./docs/usage.md\n+[docs/concepts.md]: ./docs/concepts.md\n+[docs/glossary.md]:
+      ./docs/glossary.md\n+\n ## Contributing\n \n Thinking of contributing? Thank
+      you! Look at [`./CONTRIBUTING.md`](./CONTRIBUTING.md) for guidelines."},{"sha":"1895705b4885ea778224d567acd8f4728572ae99","filename":"changelog/0.1.0.yaml","status":"added","additions":47,"deletions":0,"changes":47,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/0b0321d62950fea6230515d29846f942f27a5005/changelog%2F0.1.0.yaml","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/0b0321d62950fea6230515d29846f942f27a5005/changelog%2F0.1.0.yaml","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/changelog%2F0.1.0.yaml?ref=0b0321d62950fea6230515d29846f942f27a5005","patch":"@@
+      -0,0 +1,47 @@\n+version: 0.1.0\n+entries:\n+    - summary: Add Changelog Fragment
+      creation\n+      description: \"\"\n+      kind: feature\n+      pr: 13\n+      issue:
+      21\n+      timestamp: 1649924282\n+      file:\n+        name: 1649924282-changelog-fragment-creation.yaml\n+        checksum:
+      10bf1bf67509a524e48f0795be75c278e29c0b47\n+    - summary: Add version command\n+      description:
+      \"\"\n+      kind: feature\n+      pr: 23\n+      issue: 19\n+      timestamp:
+      1649924372\n+      file:\n+        name: 1649924372-version-command.yaml\n+        checksum:
+      fc5421947f717377f82f539ba3eabbdcd375e67e\n+    - summary: Update Changelog Fragment
+      structure\n+      description: Previous fragment structure was temporary and
+      we agreed on a new flattened structure.\n+      kind: bug-fix\n+      pr: 17\n+      issue:
+      13\n+      timestamp: 1649924436\n+      file:\n+        name: 1649924436-update-changelog-fragment-structure.yaml\n+        checksum:
+      f711f4ffe46eb5967d77d4e56912a7029bc4ce16\n+    - summary: Add find-pr command\n+      description:
+      find-pr command returns all PRs a commit was found in through GitHub APIs.\n+      kind:
+      feature\n+      pr: 16\n+      issue: 5\n+      timestamp: 1649924529\n+      file:\n+        name:
+      1649924529-add-find-pr-command.yaml\n+        checksum: b94cc8d3133df0db263c18d0879a70a34f744373\n+    -
+      summary: Implement consolidated changelog builder\n+      description: \"\"\n+      kind:
+      feature\n+      pr: 15\n+      issue: 20\n+      timestamp: 1649924600\n+      file:\n+        name:
+      1649924600-implement-consolidated-changelog-builder.yaml\n+        checksum:
+      3c45730cac255e4300b4f877d73b2d50af70c717"},{"sha":"2ce61c1a12f1cdbcf8cb7df09c6918ed5eac04bc","filename":"changelog/fragments/1649924282-changelog-fragment-creation.yaml","status":"added","additions":28,"deletions":0,"changes":28,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/0b0321d62950fea6230515d29846f942f27a5005/changelog%2Ffragments%2F1649924282-changelog-fragment-creation.yaml","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/0b0321d62950fea6230515d29846f942f27a5005/changelog%2Ffragments%2F1649924282-changelog-fragment-creation.yaml","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/changelog%2Ffragments%2F1649924282-changelog-fragment-creation.yaml?ref=0b0321d62950fea6230515d29846f942f27a5005","patch":"@@
+      -0,0 +1,28 @@\n+# one of:\n+# - breaking-change: a change to previously-documented
+      behavior\n+# - deprecation: functionality that is being removed in a later release\n+#
+      - bug-fix: fixes a problem in a previous version\n+# - enhancement: extends
+      functionality but does not break or fix existing behavior\n+# - feature: new
+      functionality\n+# - known-issue: problems that we are aware of in a given version\n+#
+      - security: impacts on the security of a product or a user’s deployment.\n+#
+      - upgrade: important information for someone upgrading from a prior version\n+#
+      - other: does not fit into any of the other categories\n+kind: feature\n+# Change
+      summary; a 80ish characters long description of the change.\n+summary: Add Changelog
+      Fragment creation\n+# Long description; in case the summary is not enough to
+      describe the change this field accomodate a description without length limits.\n+#
+      description: \n+# Affected component; a word indicating the component this changeset
+      affects.\n+# component:\n+# PR number; optional; the PR number that added the
+      changeset.\n+# If not present is automatically filled by the tooling finding
+      the PR where this changelog fragment has been added.\n+# NOTE: the tooling supports
+      backports, so it''s able to fill the original PR number instead of the backport
+      PR number.\n+# Please provide it if you are adding a fragment for a different
+      PR.\n+pr: 13\n+# Issue number; optional; the GitHub issue related to this changeset
+      (either closes or is part of).\n+# If not present is automatically filled by
+      the tooling with the issue linked to the PR number.\n+issue: 21\n+# Repository
+      URL; optional; the repository URL related to this changeset and pr and issue
+      numbers.\n+# If not present is automatically filled by the tooling based on
+      the repository this file has been committed in.\n+# repository: https://github.com/elastic/elastic-agent-changelog-tool"},{"sha":"6d983d9cbc7c681915d1ab4de7b1259be4f4608e","filename":"changelog/fragments/1649924372-version-command.yaml","status":"added","additions":28,"deletions":0,"changes":28,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/0b0321d62950fea6230515d29846f942f27a5005/changelog%2Ffragments%2F1649924372-version-command.yaml","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/0b0321d62950fea6230515d29846f942f27a5005/changelog%2Ffragments%2F1649924372-version-command.yaml","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/changelog%2Ffragments%2F1649924372-version-command.yaml?ref=0b0321d62950fea6230515d29846f942f27a5005","patch":"@@
+      -0,0 +1,28 @@\n+# one of:\n+# - breaking-change: a change to previously-documented
+      behavior\n+# - deprecation: functionality that is being removed in a later release\n+#
+      - bug-fix: fixes a problem in a previous version\n+# - enhancement: extends
+      functionality but does not break or fix existing behavior\n+# - feature: new
+      functionality\n+# - known-issue: problems that we are aware of in a given version\n+#
+      - security: impacts on the security of a product or a user’s deployment.\n+#
+      - upgrade: important information for someone upgrading from a prior version\n+#
+      - other: does not fit into any of the other categories\n+kind: feature\n+# Change
+      summary; a 80ish characters long description of the change.\n+summary: Add version
+      command\n+# Long description; in case the summary is not enough to describe
+      the change this field accomodate a description without length limits.\n+# description:
+      \n+# Affected component; a word indicating the component this changeset affects.\n+#
+      component:\n+# PR number; optional; the PR number that added the changeset.\n+#
+      If not present is automatically filled by the tooling finding the PR where this
+      changelog fragment has been added.\n+# NOTE: the tooling supports backports,
+      so it''s able to fill the original PR number instead of the backport PR number.\n+#
+      Please provide it if you are adding a fragment for a different PR.\n+pr: 23\n+#
+      Issue number; optional; the GitHub issue related to this changeset (either closes
+      or is part of).\n+# If not present is automatically filled by the tooling with
+      the issue linked to the PR number.\n+issue: 19\n+# Repository URL; optional;
+      the repository URL related to this changeset and pr and issue numbers.\n+# If
+      not present is automatically filled by the tooling based on the repository this
+      file has been committed in.\n+# repository: https://github.com/elastic/elastic-agent-changelog-tool"},{"sha":"a09b421520f3f9e15f67f3bd897e1ab5eb01f2ab","filename":"changelog/fragments/1649924436-update-changelog-fragment-structure.yaml","status":"added","additions":28,"deletions":0,"changes":28,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/0b0321d62950fea6230515d29846f942f27a5005/changelog%2Ffragments%2F1649924436-update-changelog-fragment-structure.yaml","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/0b0321d62950fea6230515d29846f942f27a5005/changelog%2Ffragments%2F1649924436-update-changelog-fragment-structure.yaml","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/changelog%2Ffragments%2F1649924436-update-changelog-fragment-structure.yaml?ref=0b0321d62950fea6230515d29846f942f27a5005","patch":"@@
+      -0,0 +1,28 @@\n+# one of:\n+# - breaking-change: a change to previously-documented
+      behavior\n+# - deprecation: functionality that is being removed in a later release\n+#
+      - bug-fix: fixes a problem in a previous version\n+# - enhancement: extends
+      functionality but does not break or fix existing behavior\n+# - feature: new
+      functionality\n+# - known-issue: problems that we are aware of in a given version\n+#
+      - security: impacts on the security of a product or a user’s deployment.\n+#
+      - upgrade: important information for someone upgrading from a prior version\n+#
+      - other: does not fit into any of the other categories\n+kind: bug-fix\n+# Change
+      summary; a 80ish characters long description of the change.\n+summary: Update
+      Changelog Fragment structure\n+# Long description; in case the summary is not
+      enough to describe the change this field accomodate a description without length
+      limits.\n+description: Previous fragment structure was temporary and we agreed
+      on a new flattened structure.\n+# Affected component; a word indicating the
+      component this changeset affects.\n+# component:\n+# PR number; optional; the
+      PR number that added the changeset.\n+# If not present is automatically filled
+      by the tooling finding the PR where this changelog fragment has been added.\n+#
+      NOTE: the tooling supports backports, so it''s able to fill the original PR
+      number instead of the backport PR number.\n+# Please provide it if you are adding
+      a fragment for a different PR.\n+pr: 17\n+# Issue number; optional; the GitHub
+      issue related to this changeset (either closes or is part of).\n+# If not present
+      is automatically filled by the tooling with the issue linked to the PR number.\n+issue:
+      13\n+# Repository URL; optional; the repository URL related to this changeset
+      and pr and issue numbers.\n+# If not present is automatically filled by the
+      tooling based on the repository this file has been committed in.\n+# repository:
+      https://github.com/elastic/elastic-agent-changelog-tool"},{"sha":"d6fae913d8828dc7c102361773dd29d8dd9e27b0","filename":"changelog/fragments/1649924529-add-find-pr-command.yaml","status":"added","additions":28,"deletions":0,"changes":28,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/0b0321d62950fea6230515d29846f942f27a5005/changelog%2Ffragments%2F1649924529-add-find-pr-command.yaml","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/0b0321d62950fea6230515d29846f942f27a5005/changelog%2Ffragments%2F1649924529-add-find-pr-command.yaml","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/changelog%2Ffragments%2F1649924529-add-find-pr-command.yaml?ref=0b0321d62950fea6230515d29846f942f27a5005","patch":"@@
+      -0,0 +1,28 @@\n+# one of:\n+# - breaking-change: a change to previously-documented
+      behavior\n+# - deprecation: functionality that is being removed in a later release\n+#
+      - bug-fix: fixes a problem in a previous version\n+# - enhancement: extends
+      functionality but does not break or fix existing behavior\n+# - feature: new
+      functionality\n+# - known-issue: problems that we are aware of in a given version\n+#
+      - security: impacts on the security of a product or a user’s deployment.\n+#
+      - upgrade: important information for someone upgrading from a prior version\n+#
+      - other: does not fit into any of the other categories\n+kind: feature\n+# Change
+      summary; a 80ish characters long description of the change.\n+summary: Add find-pr
+      command\n+# Long description; in case the summary is not enough to describe
+      the change this field accomodate a description without length limits.\n+description:
+      find-pr command returns all PRs a commit was found in through GitHub APIs.\n+#
+      Affected component; a word indicating the component this changeset affects.\n+#
+      component:\n+# PR number; optional; the PR number that added the changeset.
+      find-pr command returns all PRs a commit was found in through GitHub APIs.\n+#
+      If not present is automatically filled by the tooling finding the PR where this
+      changelog fragment has been added.\n+# NOTE: the tooling supports backports,
+      so it''s able to fill the original PR number instead of the backport PR number.\n+#
+      Please provide it if you are adding a fragment for a different PR.\n+pr: 16\n+#
+      Issue number; optional; the GitHub issue related to this changeset (either closes
+      or is part of).\n+# If not present is automatically filled by the tooling with
+      the issue linked to the PR number.\n+issue: 5\n+# Repository URL; optional;
+      the repository URL related to this changeset and pr and issue numbers.\n+# If
+      not present is automatically filled by the tooling based on the repository this
+      file has been committed in.\n+# repository: https://github.com/elastic/elastic-agent-changelog-tool"},{"sha":"1528b2ae5157b916b28ec1bc407009384b18c014","filename":"changelog/fragments/1649924600-implement-consolidated-changelog-builder.yaml","status":"added","additions":28,"deletions":0,"changes":28,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/0b0321d62950fea6230515d29846f942f27a5005/changelog%2Ffragments%2F1649924600-implement-consolidated-changelog-builder.yaml","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/0b0321d62950fea6230515d29846f942f27a5005/changelog%2Ffragments%2F1649924600-implement-consolidated-changelog-builder.yaml","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/changelog%2Ffragments%2F1649924600-implement-consolidated-changelog-builder.yaml?ref=0b0321d62950fea6230515d29846f942f27a5005","patch":"@@
+      -0,0 +1,28 @@\n+# one of:\n+# - breaking-change: a change to previously-documented
+      behavior\n+# - deprecation: functionality that is being removed in a later release\n+#
+      - bug-fix: fixes a problem in a previous version\n+# - enhancement: extends
+      functionality but does not break or fix existing behavior\n+# - feature: new
+      functionality\n+# - known-issue: problems that we are aware of in a given version\n+#
+      - security: impacts on the security of a product or a user’s deployment.\n+#
+      - upgrade: important information for someone upgrading from a prior version\n+#
+      - other: does not fit into any of the other categories\n+kind: feature\n+# Change
+      summary; a 80ish characters long description of the change.\n+summary: Implement
+      consolidated changelog builder\n+# Long description; in case the summary is
+      not enough to describe the change this field accomodate a description without
+      length limits.\n+# description: \n+# Affected component; a word indicating the
+      component this changeset affects.\n+# component:\n+# PR number; optional; the
+      PR number that added the changeset.\n+# If not present is automatically filled
+      by the tooling finding the PR where this changelog fragment has been added.\n+#
+      NOTE: the tooling supports backports, so it''s able to fill the original PR
+      number instead of the backport PR number.\n+# Please provide it if you are adding
+      a fragment for a different PR.\n+pr: 15\n+# Issue number; optional; the GitHub
+      issue related to this changeset (either closes or is part of).\n+# If not present
+      is automatically filled by the tooling with the issue linked to the PR number.\n+issue:
+      20\n+# Repository URL; optional; the repository URL related to this changeset
+      and pr and issue numbers.\n+# If not present is automatically filled by the
+      tooling based on the repository this file has been committed in.\n+# repository:
+      https://github.com/elastic/elastic-agent-changelog-tool"},{"sha":"29d7bc2a349f7df923d955e0c25d9007358a8909","filename":"docs/concepts.md","status":"added","additions":39,"deletions":0,"changes":39,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/0b0321d62950fea6230515d29846f942f27a5005/docs%2Fconcepts.md","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/0b0321d62950fea6230515d29846f942f27a5005/docs%2Fconcepts.md","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/docs%2Fconcepts.md?ref=0b0321d62950fea6230515d29846f942f27a5005","patch":"@@
+      -0,0 +1,39 @@\n+# File based approach\n+\n+This CLI tool is file based. This
+      means files are it''s primary source and primary output, and all steps in the
+      process produce files that can be archived or versioned (through `git` for example).\n+\n+Adopting
+      a file based approach has this advantages:\n+- Editing files is widely supported
+      \n+- Validation files is easy\n+- Structured content is easy\n+- Is possible
+      to correlate a file with a commit (i.e. through `git blame`)\n+- Works with
+      any code versioning tools (but we focus on `git`)\n+- Bulk editing relies on
+      bulk file editing support\n+- Trunk-based development is supported out of the
+      box\n+\n+# Git focused\n+\n+We rely on `git` and `GitHub`, the tool is not expected
+      to allow choosing a different VCS or code hosting platform.\n+\n+# Files\n+##
+      Changelog fragment\n+\n+A **changelog fragment** is a file representing a **changelog
+      entry**. \n+\n+Changelog fragments are uniquely named and contain all information
+      needed to create changelog entries. They are easy to write and must be part
+      of the git history.\n+\n+## Changelog entry\n+\n+A **changelog entry** is an
+      entry in the changelog, representing a documented changeset.\n+\n+Changelog
+      entries are structured and enriched to provide all information needed to build
+      the consolidated changelog.\n+\n+## Consolidated changelog\n+\n+The **consolidated
+      changelog** is a list of changelog entries.\n+\n+Is created from a list of changelog
+      fragments, enriched and structured. It can be manually edited where needed.\n+\n+##
+      Release notes\n+\n+Release notes are the human or machine readable output created
+      from a consolidated changelog."},{"sha":"5e99638281149301ca60cc59d235d289c27323a3","filename":"docs/configuration.md","status":"added","additions":31,"deletions":0,"changes":31,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/0b0321d62950fea6230515d29846f942f27a5005/docs%2Fconfiguration.md","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/0b0321d62950fea6230515d29846f942f27a5005/docs%2Fconfiguration.md","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/docs%2Fconfiguration.md?ref=0b0321d62950fea6230515d29846f942f27a5005","patch":"@@
+      -0,0 +1,31 @@\n+# Configuration options\n+\n+`elastic-agent-changelog-tool`
+      has configuration options available to change it''s behaviour.\n+\n+All settings
+      are managed via the [`settings`][settings] package, using [`spf13/viper`][viper].  \n+Configurations
+      are bound to environment variables with same name and `ELASTIC_AGENT_CHANGELOG`
+      prefix using [`viper.BindEnv`][bindenv].\n+\n+This CLI supports and adhere to
+      cross platform XDG Standard provided by [`OpenPeeDeeP/xdg`][xdg].\n+\n+|Settings
+      key|Default value|Note|\n+|---|---|---|---|\n+|`fragment_location`|`$GIT_REPO_ROOT/changelog/fragments`|The
+      location of changelog fragments used by the CLI. By default `fragment_root`
+      + `fragment_path`.| \n+|`fragment_path`|`changelog/fragments`|The path in `fragment_root`
+      where to locate changelog fragments.|\n+|`fragment_root`|`$GIT_REPO_ROOT`|The
+      root folder for `fragment_location`.|\n+\n+## Configuration file\n+\n+Not supported
+      yet.\n+\n+## Supported Environment Variables\n+\n+`elastic-agent-changelog-tool`
+      uses some environment variables that can be set.\n+\n+|Name|Default|Note|\n+|---|---|---|\n+|`GIT_REPO_ROOT`|Git
+      repository root folder|This value is computed at each execution to retrieve
+      the repository root folder.|\n+\n+[bindenv]: https://pkg.go.dev/github.com/spf13/viper#BindEnv\n+[settings]:
+      ../internal/settings/settings.go\n+[xdg]: https://pkg.go.dev/github.com/OpenPeeDeeP/xdg\n+[viper]:
+      https://pkg.go.dev/github.com/spf13/viper"},{"sha":"8fc7ed7b4513c04b484ae162e908c8b52cb69972","filename":"docs/getting-started.md","status":"added","additions":85,"deletions":0,"changes":85,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/0b0321d62950fea6230515d29846f942f27a5005/docs%2Fgetting-started.md","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/0b0321d62950fea6230515d29846f942f27a5005/docs%2Fgetting-started.md","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/docs%2Fgetting-started.md?ref=0b0321d62950fea6230515d29846f942f27a5005","patch":"@@
+      -0,0 +1,85 @@\n+# Getting started\n+\n+This page describes all steps required
+      for going from zero to viewing a consolidated changelog.\n+\n+## 1. Prerequisites\n+\n+Ensure
+      you have `git` installed and available.\n+\n+## 2. Install\n+\n+Follow one of
+      the installation ways described in [`./install.md`](./install.md).\n+\n+## 3.
+      Create a changelog fragment\n+\n+From the root folder of the repository run:\n+\n+```\n+$
+      elastic-agent-changelog-tool new \"my test fragment\"\n+```\n+\n+This will create
+      `./changelog/fragments/<timestamp>-my-test-fragment.yaml` with this content:\n+\n+```yaml\n+#
+      one of:\n+# - breaking-change: a change to previously-documented behavior\n+#
+      - deprecation: functionality that is being removed in a later release\n+# -
+      bug-fix: fixes a problem in a previous version\n+# - enhancement: extends functionality
+      but does not break or fix existing behavior\n+# - feature: new functionality\n+#
+      - known-issue: problems that we are aware of in a given version\n+# - security:
+      impacts on the security of a product or a user’s deployment.\n+# - upgrade:
+      important information for someone upgrading from a prior version\n+# - other:
+      does not fit into any of the other categories\n+kind: feature\n+# Change summary;
+      a 80ish characters long description of the change.\n+summary: \n+# Long description;
+      in case the summary is not enough to describe the change this field accomodate
+      a description without length limits.\n+# description: \n+# Affected component;
+      a word indicating the component this changeset affects.\n+component:\n+# PR
+      number; optional; the PR number that added the changeset.\n+# If not present
+      is automatically filled by the tooling finding the PR where this changelog fragment
+      has been added.\n+# NOTE: the tooling supports backports, so it''s able to fill
+      the original PR number instead of the backport PR number.\n+# Please provide
+      it if you are adding a fragment for a different PR.\n+# pr: 1234\n+# Issue number;
+      optional; the GitHub issue related to this changeset (either closes or is part
+      of).\n+# If not present is automatically filled by the tooling with the issue
+      linked to the PR number.\n+# issue: 1234\n+# Repository URL; optional; the repository
+      URL related to this changeset and pr and issue numbers.\n+# If not present is
+      automatically filled by the tooling based on the repository this file has been
+      committed in.\n+# repository: https://github.com/elastic/elastic-agent-changelog-tool\n+```\n+\n+Ensure
+      `kind` is correct and fill the `summary` field with a brief description. You
+      can ignore `component`, but you must set `pr`, `issue` and `repository` manually,
+      the logic to fill them automatically is still work in progress.\n+\n+Save and
+      close the file.\n+\n+## 4. Create the consolidated changelog\n+\n+From the root
+      folder of the repository run:\n+\n+```\n+$ elastic-agent-changelog-tool build
+      --version 0.1.0\n+```\n+\n+This will create `./changelog.yaml` with content
+      similar to this:\n+\n+```yaml\n+version: 0.1.0\n+entries:\n+    - summary: Add
+      Changelog Fragment creation\n+      description: \"\"\n+      kind: feature\n+      pr:
+      13\n+      issue: 21\n+      timestamp: 1649924282\n+      file:\n+        name:
+      1649924282-changelog-fragment-creation.yaml\n+        checksum: 10bf1bf67509a524e48f0795be75c278e29c0b47\n+\n+```\n+\n+There
+      will be multiple entries, one for each files in `changelog/fragments`.\n+\n+**NOTE:**
+      the version is currently hard coded to `0.1.0` (the first version for `elastic-agent-changelog-tool`)."},{"sha":"92d1582207ee41e0dc94da17cbe0892ee5a4caaf","filename":"docs/glossary.md","status":"added","additions":20,"deletions":0,"changes":20,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/0b0321d62950fea6230515d29846f942f27a5005/docs%2Fglossary.md","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/0b0321d62950fea6230515d29846f942f27a5005/docs%2Fglossary.md","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/docs%2Fglossary.md?ref=0b0321d62950fea6230515d29846f942f27a5005","patch":"@@
+      -0,0 +1,20 @@\n+A collection of 1 line explanation for key terms used in this
+      tool. Alphabetically sorted.\n+\n+**Changelog**\n+A log or record of all notable
+      changes made to a project. Is composed of a list of strings grouped in sections.\n+\n+**Changelog
+      Entry**  \n+A single item in a section of a changelog.\n+\n+**Changelog Fragment**  \n+A
+      structured file that will produce one or more entries in the Changelog.\n+\n+**Changelog
+      Repository**  \n+The repository where changelog consolidation happens\n+\n+**Changeset**  \n+A
+      set of changes made to a project. In the context of git VCS represent one or
+      more commits. \n+A changeset requires a changelog entry through a changelog
+      fragment.\n+\n+**Release file**  \n+To be done"},{"sha":"a5cb412bfbcba509ebdfb0b3e4b3f2d208eb0cb6","filename":"docs/usage.md","status":"added","additions":52,"deletions":0,"changes":52,"blob_url":"https://github.com/elastic/elastic-agent-changelog-tool/blob/0b0321d62950fea6230515d29846f942f27a5005/docs%2Fusage.md","raw_url":"https://github.com/elastic/elastic-agent-changelog-tool/raw/0b0321d62950fea6230515d29846f942f27a5005/docs%2Fusage.md","contents_url":"https://api.github.com/repos/elastic/elastic-agent-changelog-tool/contents/docs%2Fusage.md?ref=0b0321d62950fea6230515d29846f942f27a5005","patch":"@@
+      -0,0 +1,52 @@\n+# How to use this tool\n+\n+This tool provides functionalities
+      for different personas:\n+- the customer or user needs to view the changelog
+      for unreleased development (if they are interested in released changes they
+      must refer to the public release notes)\n+- the developer needs to provide changelog
+      fragments for changeset and may want to review the unreleased changelog\n+-
+      the maintainer needs to verify the proper changelog fragment is provided in
+      PRs and may want to review the unreleased changelog\n+- the release manager
+      needs to build public release notes from the unreleased changelog.\n+\n+This
+      repository uses the tool to keep the changelog, so you can seeing it in action
+      (look at `changelog` folder).\n+\n+## I''m a customer/user\n+\n+To be done.\n+\n+##
+      I''m a developer\n+\n+As a developer you are responsible for adding one or multiple
+      **changelog fragments** in your Pull Requests.\n+You may also be interested
+      in  viewing the changelog for unreleased changes.\n+\n+### Adding a changelog
+      fragment\n+\n+To create a new fragment:\n+\n+```\n+$ elastic-agent-changelog-tool
+      new a-changeset-filename\n+```\n+\n+A new file will be created in the changelog
+      fragments folder (default to `changelog/fragments`).\n+\n+You must edit the
+      created file compiling all uncommented fields and optionally uncomment and compile
+      commented fields. Guidance is provided through comments in the file.\n+\n+The
+      fragment is created from the template available in [`../internal/changelog/fragment/template.yaml`](../internal/changelog/fragment/template.yaml).\n+\n+###
+      Viewing the changelog\n+\n+There is no way to view the changelog at the moment.
+      You can view the **consolidated changelog** by running:\n+\n+```\n+$ elastic-agent-changelog-tool
+      build --version=8.2.1\n+```\n+\n+from the repository root folder.\n+\n+An example
+      is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).\n+\n+## I''m a maintainer\n+\n+To
+      be done.\n+\n+## I''m the release manager\n+\n+To be done."}]'
+    headers:
+      Accept-Ranges:
+      - bytes
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Cache-Control:
+      - public, max-age=60, s-maxage=60
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Mon, 16 May 2022 13:46:18 GMT
+      Etag:
+      - W/"767ae1de6cf2be1aad81eea66bfc090cd76195a0810247be20f53be53742c83e"
+      Last-Modified:
+      - Mon, 09 May 2022 09:37:35 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Vary:
+      - Accept, Accept-Encoding, Accept, X-Requested-With
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Github-Media-Type:
+      - github.v3; format=json
+      X-Github-Request-Id:
+      - 8FD1:12BE8:152BE9:184991:628255AA
+      X-Ratelimit-Limit:
+      - "60"
+      X-Ratelimit-Remaining:
+      - "56"
+      X-Ratelimit-Reset:
+      - "1652712073"
+      X-Ratelimit-Resource:
+      - core
+      X-Ratelimit-Used:
+      - "4"
+      X-Xss-Protection:
+      - "0"
+    status: 200 OK
+    code: 200
+    duration: ""
