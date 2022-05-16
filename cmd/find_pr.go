@@ -17,9 +17,6 @@ import (
 
 var errListPRCmdMissingCommitHash = errors.New("find-pr requires commit hash argument")
 
-const defaultOwner = "elastic"
-const defaultRepo = "beats"
-
 const findPRLongDescription = `Use this command to find the original PR that included the commit in the repository.
 
 argument with commit hash is required
