@@ -72,27 +72,27 @@ func (b Builder) Build() error {
 		}
 
 		b.changelog.Entries = append(b.changelog.Entries, EntryFromFragment(f))
+	}
 
-		hc, err := github.GetHTTPClient(b.fs)
+	hc, err := github.GetHTTPClient(b.fs)
+	if err != nil {
+		return fmt.Errorf("cannot initialize http client: %w", err)
+	}
+
+	c := github.NewClient(hc)
+
+	for i, entry := range b.changelog.Entries {
+		pr, _, err := c.PullRequests.Get(context.Background(), "elastic", "beats", entry.LinkedPR)
 		if err != nil {
-			return fmt.Errorf("cannot initialize http client: %w", err)
+			continue
 		}
 
-		c := github.NewClient(hc)
-
-		for i, entry := range b.changelog.Entries {
-			pr, _, err := c.PullRequests.Get(context.Background(), "elastic", "beats", entry.LinkedPR)
-			if err != nil {
-				continue
-			}
-
-			prID, err := github.TestStrategies(pr, &github.BackportPRNumber{}, &github.PRNumber{})
-			if err != nil {
-				continue
-			}
-
-			b.changelog.Entries[i].LinkedPR = prID
+		prID, err := github.TestStrategies(pr, &github.BackportPRNumber{}, &github.PRNumber{})
+		if err != nil {
+			continue
 		}
+
+		b.changelog.Entries[i].LinkedPR = prID
 	}
 
 	data, err := yaml.Marshal(&b.changelog)
