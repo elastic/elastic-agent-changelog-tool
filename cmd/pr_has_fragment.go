@@ -6,31 +6,26 @@ package cmd
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-var errListPRCmdMissingCommitHash = errors.New("find-pr requires commit hash argument")
+var errPrCheckCmdMissingArg = errors.New("pr-has-fragment command requires pr number argument")
 
-const findPRLongDescription = `Use this command to find the original PR that included the commit in the repository.
-
-argument with commit hash is required
---repo flag is optional and will default to elastic/beats if left unspecified.`
-
-func FindPRCommand(appFs afero.Fs) *cobra.Command {
-	findPRCommand := &cobra.Command{
-		Use:  "find-pr",
-		Long: findPRLongDescription,
+func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
+	prCheckCmd := &cobra.Command{
+		Use:  "pr-has-fragment <pr-number>",
+		Long: "Check changelog fragment presence in the given PR.",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
-				return errListPRCmdMissingCommitHash
+				return errPrCheckCmdMissingArg
 			}
-
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -51,27 +46,28 @@ func FindPRCommand(appFs afero.Fs) *cobra.Command {
 				return fmt.Errorf("owner flag malformed: %w", err)
 			}
 
-			commit := args[0]
+			pr, err := strconv.Atoi(args[0])
+			if err != nil {
+				return err
+			}
+
 			ctx := context.Background()
+			pattern := fmt.Sprintf("%s/*", viper.GetString("fragment_path"))
 
-			res, err := github.FindPR(ctx, c, owner, repo, commit)
+			found, err := github.FindFileInPR(ctx, c, owner, repo, pr, pattern)
 			if err != nil {
-				return fmt.Errorf("failed listing prs with commit: %w", err)
+				return err
 			}
-
-			respJSON, err := json.Marshal(res)
-			if err != nil {
-				return fmt.Errorf("failed marshalling JSON output: %w", err)
+			if !found {
+				return fmt.Errorf("fragment not present in PR %d", pr)
 			}
-
-			cmd.Println(string(respJSON))
 
 			return nil
 		},
 	}
 
-	findPRCommand.Flags().String("repo", defaultRepo, "target repository")
-	findPRCommand.Flags().String("owner", defaultOwner, "target repository owner")
+	prCheckCmd.Flags().String("repo", defaultRepo, "target repository")
+	prCheckCmd.Flags().String("owner", defaultOwner, "target repository owner")
 
-	return findPRCommand
+	return prCheckCmd
 }
