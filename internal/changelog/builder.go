@@ -82,17 +82,12 @@ func (b Builder) Build() error {
 	c := github.NewClient(hc)
 
 	for i, entry := range b.changelog.Entries {
-		pr, _, err := c.PullRequests.Get(context.Background(), "elastic", "beats", entry.LinkedPR)
-		if err != nil {
-			continue
+		// Applying heuristics
+		originalPR, err := FindOriginalPR(entry, c)
+		if err == nil {
+			b.changelog.Entries[i].LinkedPR = originalPR
 		}
 
-		prID, err := github.TestStrategies(pr, &github.BackportPRNumber{}, &github.PRNumber{})
-		if err != nil {
-			continue
-		}
-
-		b.changelog.Entries[i].LinkedPR = prID
 	}
 
 	data, err := yaml.Marshal(&b.changelog)
@@ -103,4 +98,18 @@ func (b Builder) Build() error {
 	outFile := path.Join(b.dest, b.filename)
 	log.Printf("saving changelog in %s\n", outFile)
 	return afero.WriteFile(b.fs, outFile, data, changelogFilePerm)
+}
+
+func FindOriginalPR(entry Entry, c *github.Client) (int, error) {
+	pr, _, err := c.PullRequests.Get(context.Background(), "elastic", "beats", entry.LinkedPR)
+	if err != nil {
+		return 0, err
+	}
+
+	prID, err := github.TestStrategies(pr, &github.BackportPRNumber{}, &github.PRNumber{})
+	if err != nil {
+		return 0, err
+	}
+
+	return prID, nil
 }
