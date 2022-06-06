@@ -10,7 +10,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"path"
+	"strings"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog/fragment"
 	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
@@ -82,7 +84,15 @@ func (b Builder) Build() error {
 	c := github.NewClient(hc)
 
 	for i, entry := range b.changelog.Entries {
-		// Applying heuristics
+		// Filling empty PR fields
+		if entry.LinkedPR == 0 {
+			prID, err := FillEmptyPRField(entry, c)
+			if err == nil {
+				b.changelog.Entries[i].LinkedPR = prID
+			}
+		}
+
+		// Applying heuristics to PR fields
 		originalPR, err := FindOriginalPR(entry, c)
 		if err == nil {
 			b.changelog.Entries[i].LinkedPR = originalPR
@@ -98,6 +108,54 @@ func (b Builder) Build() error {
 	outFile := path.Join(b.dest, b.filename)
 	log.Printf("saving changelog in %s\n", outFile)
 	return afero.WriteFile(b.fs, outFile, data, changelogFilePerm)
+}
+
+func FillEmptyPRField(entry Entry, c *github.Client) (int, error) {
+	response, err := exec.Command("git", "log", "--diff-filter=A", "--format=%H",
+		"changelog/fragments/"+entry.File.Name).Output()
+	if err != nil {
+		return 0, err
+	}
+
+	responseStr := strings.ReplaceAll(string(response), "\n", "")
+
+	// To be moved to testing
+	responseStr = "fe25c73907336fc462d5e6e059d3cd86512484fe"
+
+	pr, err := github.FindPR(context.Background(), c, "elastic", "beats", responseStr)
+	if err != nil {
+		return 0, err
+	}
+
+	if len(pr.Items) == 1 {
+		return pr.Items[0].PullRequestID, nil
+	}
+
+	if len(pr.Items) > 1 {
+		var prIDs []int
+		var choice int
+
+		for _, item := range pr.Items {
+			prIDs = append(prIDs, item.PullRequestID)
+		}
+
+		for {
+			log.Print("choose the correct PR from the list: ", strings.Trim(fmt.Sprint(prIDs), "[]"))
+
+			_, err := fmt.Scan(&choice)
+			if err != nil {
+				continue
+			}
+
+			for _, prID := range prIDs {
+				if choice == prID {
+					return choice, nil
+				}
+			}
+		}
+	}
+
+	return 0, err
 }
 
 func FindOriginalPR(entry Entry, c *github.Client) (int, error) {
