@@ -7,6 +7,7 @@ package cmd_test
 import (
 	"bytes"
 	"io/ioutil"
+	"log"
 	"testing"
 
 	"github.com/elastic/elastic-agent-changelog-tool/cmd"
@@ -16,6 +17,8 @@ import (
 )
 
 func TestPrHasFragmentCmd_noArgs(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
+
 	fs := afero.NewMemMapFs()
 	cmd := cmd.PrHasFragmentCommand(fs)
 
@@ -27,6 +30,8 @@ func TestPrHasFragmentCmd_noArgs(t *testing.T) {
 }
 
 func TestPrHasFragmentCmd_oneArg(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
+
 	settings.Init()
 
 	fs := afero.NewMemMapFs()
@@ -43,6 +48,8 @@ func TestPrHasFragmentCmd_oneArg(t *testing.T) {
 }
 
 func TestPrHasFragmentCmd_oneArgFailCase(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
+
 	settings.Init()
 
 	fs := afero.NewMemMapFs()
