@@ -52,6 +52,18 @@ func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
 			}
 
 			ctx := context.Background()
+			// TODO: move this to configuration or flag
+			labels := []string{"skip-changelog", "backport"}
+
+			shouldSkip, err := github.PRHasLabels(ctx, c, owner, repo, pr, labels)
+			if err != nil {
+				return err
+			}
+			if shouldSkip {
+				fmt.Fprintln(cmd.OutOrStdout(), "PR requires no changelog")
+				return nil
+			}
+
 			pattern := fmt.Sprintf("%s/*", viper.GetString("fragment_path"))
 
 			found, err := github.FindFileInPR(ctx, c, owner, repo, pr, pattern)
