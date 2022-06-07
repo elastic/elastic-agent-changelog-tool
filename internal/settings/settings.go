@@ -32,7 +32,9 @@ func Init() {
 	if err := viper.ReadInConfig(); err == nil {
 		log.Println("Using config file:", viper.ConfigFileUsed())
 	} else {
-		log.Fatalln(err)
+		// NOTE: we do not fail in this case as it's ok not to have the config file
+		// but we want to alert the user that the file has not been found
+		log.Println(err)
 	}
 }
 
