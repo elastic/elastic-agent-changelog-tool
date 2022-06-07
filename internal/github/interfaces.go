@@ -11,6 +11,9 @@ import (
 )
 
 type githubPullRequestsService interface {
+	// https://pkg.go.dev/github.com/google/go-github/v32/github#PullRequestsService.Get
+	Get(ctx context.Context, owner string, repo string, number int) (*gh.PullRequest, *gh.Response, error)
+	// https://pkg.go.dev/github.com/google/go-github/v32/github#PullRequestsService.ListPullRequestsWithCommit
 	ListPullRequestsWithCommit(
 		ctx context.Context,
 		owner string,
