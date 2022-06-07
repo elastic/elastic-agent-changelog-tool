@@ -5,7 +5,6 @@
 package settings
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -31,9 +30,9 @@ func Init() {
 
 	// TODO: better error handling (skip missing file error)
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		log.Println("Using config file:", viper.ConfigFileUsed())
 	} else {
-		fmt.Println(err)
+		log.Fatalln(err)
 	}
 }
 
