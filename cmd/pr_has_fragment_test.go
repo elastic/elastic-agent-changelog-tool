@@ -7,6 +7,7 @@ package cmd_test
 import (
 	"bytes"
 	"io/ioutil"
+	"log"
 	"testing"
 
 	"github.com/elastic/elastic-agent-changelog-tool/cmd"
@@ -16,44 +17,50 @@ import (
 )
 
 func TestPrHasFragmentCmd_noArgs(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
+
 	fs := afero.NewMemMapFs()
-	cmd := cmd.PrHasFragmentCommand(fs)
+	c := cmd.PrHasFragmentCommand(fs)
 
-	cmd.SetOut(ioutil.Discard)
-	cmd.SetErr(ioutil.Discard)
+	c.SetOut(ioutil.Discard)
+	c.SetErr(ioutil.Discard)
 
-	err := cmd.Execute()
+	err := c.Execute()
 	require.Error(t, err)
 }
 
 func TestPrHasFragmentCmd_oneArg(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
+
 	settings.Init()
 
 	fs := afero.NewMemMapFs()
-	cmd := cmd.PrHasFragmentCommand(fs)
+	c := cmd.PrHasFragmentCommand(fs)
 
 	b := new(bytes.Buffer)
-	cmd.SetOut(b)
-	cmd.SetErr(ioutil.Discard)
+	c.SetOut(b)
+	c.SetErr(ioutil.Discard)
 
-	cmd.SetArgs([]string{"--repo", "elastic-agent-changelog-tool", "29"})
+	c.SetArgs([]string{"--repo", "elastic-agent-changelog-tool", "29"})
 
-	err := cmd.Execute()
+	err := c.Execute()
 	require.Nil(t, err)
 }
 
 func TestPrHasFragmentCmd_oneArgFailCase(t *testing.T) {
+	log.SetOutput(ioutil.Discard)
+
 	settings.Init()
 
 	fs := afero.NewMemMapFs()
-	cmd := cmd.PrHasFragmentCommand(fs)
+	c := cmd.PrHasFragmentCommand(fs)
 
 	b := new(bytes.Buffer)
-	cmd.SetOut(b)
-	cmd.SetErr(ioutil.Discard)
+	c.SetOut(b)
+	c.SetErr(ioutil.Discard)
 
-	cmd.SetArgs([]string{"--repo", "elastic-agent-changelog-tool", "33"})
+	c.SetArgs([]string{"--repo", "elastic-agent-changelog-tool", "33"})
 
-	err := cmd.Execute()
+	err := c.Execute()
 	require.Error(t, err)
 }

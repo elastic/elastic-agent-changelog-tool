@@ -5,7 +5,6 @@
 package settings
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -31,9 +30,11 @@ func Init() {
 
 	// TODO: better error handling (skip missing file error)
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		log.Println("Using config file:", viper.ConfigFileUsed())
 	} else {
-		fmt.Println(err)
+		// NOTE: we do not fail in this case as it's ok not to have the config file
+		// but we want to alert the user that the file has not been found
+		log.Println(err)
 	}
 }
 
