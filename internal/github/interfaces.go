@@ -20,6 +20,12 @@ type githubPullRequestsService interface {
 	) ([]*gh.PullRequest, *gh.Response, error)
 	// https://pkg.go.dev/github.com/google/go-github/v32/github#PullRequestsService.ListFiles
 	ListFiles(ctx context.Context, owner string, repo string, number int, opts *gh.ListOptions) ([]*gh.CommitFile, *gh.Response, error)
+	Get(
+		ctx context.Context,
+		owner string,
+		repo string,
+		number int,
+	) (*gh.PullRequest, *gh.Response, error)
 }
 
 type githubUsersService interface {

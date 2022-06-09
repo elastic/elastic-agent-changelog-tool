@@ -5,6 +5,7 @@
 package changelog
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -12,6 +13,7 @@ import (
 	"path"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog/fragment"
+	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
 	"github.com/spf13/afero"
 	"gopkg.in/yaml.v3"
 )
@@ -72,6 +74,21 @@ func (b Builder) Build() error {
 		b.changelog.Entries = append(b.changelog.Entries, EntryFromFragment(f))
 	}
 
+	hc, err := github.GetHTTPClient(b.fs)
+	if err != nil {
+		return fmt.Errorf("cannot initialize http client: %w", err)
+	}
+
+	c := github.NewClient(hc)
+
+	for i, entry := range b.changelog.Entries {
+		// Applying heuristics to PR fields
+		originalPR, err := findOriginalPR(entry.LinkedPR[0], c)
+		if err == nil {
+			b.changelog.Entries[i].LinkedPR = []int{originalPR}
+		}
+	}
+
 	data, err := yaml.Marshal(&b.changelog)
 	if err != nil {
 		return fmt.Errorf("cannot marshall changelog: %w", err)
@@ -80,4 +97,18 @@ func (b Builder) Build() error {
 	outFile := path.Join(b.dest, b.filename)
 	log.Printf("saving changelog in %s\n", outFile)
 	return afero.WriteFile(b.fs, outFile, data, changelogFilePerm)
+}
+
+func findOriginalPR(linkedPR int, c *github.Client) (int, error) {
+	pr, _, err := c.PullRequests.Get(context.Background(), "elastic", "beats", linkedPR)
+	if err != nil {
+		return 0, err
+	}
+
+	prID, err := github.TestStrategies(pr, &github.BackportPRNumber{}, &github.PRNumber{})
+	if err != nil {
+		return 0, err
+	}
+
+	return prID, nil
 }
