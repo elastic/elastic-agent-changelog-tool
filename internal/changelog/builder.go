@@ -86,15 +86,23 @@ func (b Builder) Build() error {
 	for i, entry := range b.changelog.Entries {
 		// Filling empty PR fields
 		if entry.LinkedPR[0] == 0 {
-			prID, err := fillEmptyPRField(entry.File.Name, c)
+			prIDs, err := fillEmptyPRField(entry.File.Name, c)
 			if err == nil {
-				b.changelog.Entries[i].LinkedPR = prID
+				b.changelog.Entries[i].LinkedPR = prIDs
+				if len(prIDs) > 1 {
+					log.Printf("delete de additional PRs in the changelog for %s", entry.File.Name)
+				}
+			} else {
+				log.Printf("fill the PR field in the changelog for %s", entry.File.Name)
 			}
 		} else {
 			// Applying heuristics to PR fields
 			originalPR, err := findOriginalPR(entry.LinkedPR[0], c)
 			if err == nil {
 				b.changelog.Entries[i].LinkedPR = []int{originalPR}
+			} else {
+				// This should only fail if the PR is mistyped in the fragment
+				log.Printf("check that the PR field is correct in the changelog for %s", entry.File.Name)
 			}
 		}
 	}
