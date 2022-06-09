@@ -15,7 +15,7 @@ type Entry struct {
 	Summary     string           `yaml:"summary"`
 	Description string           `yaml:"description"`
 	Kind        Kind             `yaml:"kind"`
-	LinkedPR    int              `yaml:"pr"`
+	LinkedPR    []int            `yaml:"pr"`
 	LinkedIssue int              `yaml:"issue"`
 	Timestamp   int64            `yaml:"timestamp"`
 	File        FragmentFileInfo `yaml:"file"`
@@ -28,7 +28,7 @@ func EntryFromFragment(f fragment.File) Entry {
 		Summary:     f.Fragment.Summary,
 		Description: f.Fragment.Description,
 		Kind:        kind2kind(f),
-		LinkedPR:    f.Fragment.Pr,
+		LinkedPR:    []int{f.Fragment.Pr},
 		LinkedIssue: f.Fragment.Issue,
 		Timestamp:   f.Timestamp,
 		File: FragmentFileInfo{
