@@ -10,7 +10,9 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"path"
+	"strings"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog/fragment"
 	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
@@ -82,10 +84,18 @@ func (b Builder) Build() error {
 	c := github.NewClient(hc)
 
 	for i, entry := range b.changelog.Entries {
-		// Applying heuristics to PR fields
-		originalPR, err := findOriginalPR(entry.LinkedPR[0], c)
-		if err == nil {
-			b.changelog.Entries[i].LinkedPR = []int{originalPR}
+		// Filling empty PR fields
+		if entry.LinkedPR[0] == 0 {
+			prID, err := fillEmptyPRField(entry.File.Name, c)
+			if err == nil {
+				b.changelog.Entries[i].LinkedPR = prID
+			}
+		} else {
+			// Applying heuristics to PR fields
+			originalPR, err := findOriginalPR(entry.LinkedPR[0], c)
+			if err == nil {
+				b.changelog.Entries[i].LinkedPR = []int{originalPR}
+			}
 		}
 	}
 
@@ -97,6 +107,28 @@ func (b Builder) Build() error {
 	outFile := path.Join(b.dest, b.filename)
 	log.Printf("saving changelog in %s\n", outFile)
 	return afero.WriteFile(b.fs, outFile, data, changelogFilePerm)
+}
+
+func fillEmptyPRField(fileName string, c *github.Client) ([]int, error) {
+	response, err := exec.Command("git", "log", "--diff-filter=A", "--format=%H", "changelog/fragments/"+fileName).Output()
+	if err != nil {
+		return []int{}, err
+	}
+
+	responseStr := strings.ReplaceAll(string(response), "\n", "")
+
+	pr, err := github.FindPR(context.Background(), c, "elastic", "beats", responseStr)
+	if err != nil {
+		return []int{}, err
+	}
+
+	var prIDs []int
+
+	for _, item := range pr.Items {
+		prIDs = append(prIDs, item.PullRequestID)
+	}
+
+	return prIDs, nil
 }
 
 func findOriginalPR(linkedPR int, c *github.Client) (int, error) {
