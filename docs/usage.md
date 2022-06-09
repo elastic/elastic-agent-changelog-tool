@@ -49,4 +49,29 @@ To be done.
 
 ## I'm the release manager
 
-To be done.
+> NOTE: This instructions are for the 0.2.0 milestone (when ready). As more features and automation is added the process will become simpler.
+
+### Preparing the changelog
+
+* Wait for the last BC of the release. If another BC is generated after that or a patch version for a previous minor is released, you might need to restart the process.
+* Checkout the commit of the BC
+* From the root folder of the repository run:
+
+```
+$ elastic-agent-changelog-tool build --version x.y.z
+```
+* This will create `./changelog.yaml`. Store for future use outside of the repository.
+* TODO Add render command
+* Integrate the generated asciidoc fragment into your changelog, creating the needed PR.
+
+### On Release Day
+
+Once the release is given the final go on release day:
+* Create a branch from the commit of the released BC.
+* Copy the generated `changelog.yaml` to `changelog/x.y.x`.
+* From the root of the repository run:
+```
+$ elastic-agent-changelog-tool cleanup
+```
+* Create a PR with the added consolidated changelog and the removed files against the `x.y` branch.
+* Once merged, forward-port it to the other active branches, up to `main`.
