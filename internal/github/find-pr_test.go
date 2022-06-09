@@ -40,13 +40,16 @@ func TestFindPR_backport(t *testing.T) {
 	// https://github.com/elastic/beats/commit/fe25c73907336fc462d5e6e059d3cd86512484fe
 	res, err := github.FindPR(ctx, c, "elastic", "beats", "fe25c73907336fc462d5e6e059d3cd86512484fe")
 	require.NoError(t, err)
-	require.Len(t, res.Items, 3)
+
+	prIDs := []int{}
+	for _, p := range res.Items {
+		prIDs = append(prIDs, p.PullRequestID)
+	}
+
 	// backport: https://github.com/elastic/beats/pull/31482 => source: https://github.com/elastic/beats/pull/30979
-	require.Equal(t, 30979, res.Items[0].PullRequestID)
 	// backport: https://github.com/elastic/beats/pull/31572 => source: https://github.com/elastic/beats/pull/31531
-	require.Equal(t, 31531, res.Items[1].PullRequestID)
 	// backport: https://github.com/elastic/beats/pull/31343 => source: https://github.com/elastic/beats/pull/31279
-	require.Equal(t, 31279, res.Items[2].PullRequestID)
+	require.ElementsMatch(t, []int{30979, 31531, 31279}, prIDs)
 }
 
 func TestFindPR_forwardport(t *testing.T) {
