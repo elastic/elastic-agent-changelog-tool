@@ -5,14 +5,11 @@
 package changelog
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"path"
-	"strings"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog/fragment"
 	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
@@ -86,24 +83,32 @@ func (b Builder) Build() error {
 	for i, entry := range b.changelog.Entries {
 		// Filling empty PR fields
 		if entry.LinkedPR[0] == 0 {
-			prIDs, err := fillEmptyPRField(entry.File.Name, c)
-			if err == nil {
-				b.changelog.Entries[i].LinkedPR = prIDs
-				if len(prIDs) > 1 {
-					log.Printf("delete de additional PRs in the changelog for %s", entry.File.Name)
-				}
-			} else {
-				log.Printf("fill the PR field in the changelog for %s", entry.File.Name)
+			commitHash, err := github.GetLatestCommitHash(entry.File.Name)
+			if err != nil {
+				log.Printf("cannot find commit hash, fill the PR field in changelog: %s", entry.File.Name)
+				continue
 			}
+
+			prIDs, err := github.FillEmptyPRField(commitHash, c)
+			if err != nil {
+				log.Printf("fill the PR field in changelog: %s", entry.File.Name)
+				continue
+			}
+
+			if len(prIDs) > 1 {
+				log.Printf("delete the additional PRs in changelog: %s", entry.File.Name)
+			}
+
+			b.changelog.Entries[i].LinkedPR = prIDs
 		} else {
 			// Applying heuristics to PR fields
-			originalPR, err := findOriginalPR(entry.LinkedPR[0], c)
-			if err == nil {
-				b.changelog.Entries[i].LinkedPR = []int{originalPR}
-			} else {
-				// This should only fail if the PR is mistyped in the fragment
-				log.Printf("check that the PR field is correct in the changelog for %s", entry.File.Name)
+			originalPR, err := github.FindOriginalPR(entry.LinkedPR[0], c)
+			if err != nil {
+				log.Printf("check if the PR field is correct in changelog: %s", entry.File.Name)
+				continue
 			}
+
+			b.changelog.Entries[i].LinkedPR = []int{originalPR}
 		}
 	}
 
@@ -115,40 +120,4 @@ func (b Builder) Build() error {
 	outFile := path.Join(b.dest, b.filename)
 	log.Printf("saving changelog in %s\n", outFile)
 	return afero.WriteFile(b.fs, outFile, data, changelogFilePerm)
-}
-
-func fillEmptyPRField(fileName string, c *github.Client) ([]int, error) {
-	response, err := exec.Command("git", "log", "--diff-filter=A", "--format=%H", "changelog/fragments/"+fileName).Output()
-	if err != nil {
-		return []int{}, err
-	}
-
-	responseStr := strings.ReplaceAll(string(response), "\n", "")
-
-	pr, err := github.FindPR(context.Background(), c, "elastic", "beats", responseStr)
-	if err != nil {
-		return []int{}, err
-	}
-
-	var prIDs []int
-
-	for _, item := range pr.Items {
-		prIDs = append(prIDs, item.PullRequestID)
-	}
-
-	return prIDs, nil
-}
-
-func findOriginalPR(linkedPR int, c *github.Client) (int, error) {
-	pr, _, err := c.PullRequests.Get(context.Background(), "elastic", "beats", linkedPR)
-	if err != nil {
-		return 0, err
-	}
-
-	prID, err := github.TestStrategies(pr, &github.BackportPRNumber{}, &github.PRNumber{})
-	if err != nil {
-		return 0, err
-	}
-
-	return prID, nil
 }
