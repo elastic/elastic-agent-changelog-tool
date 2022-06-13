@@ -9,6 +9,7 @@ pipeline {
     BASE_DIR = "src/github.com/elastic/${env.REPO}"
     JOB_GIT_CREDENTIALS = "f6c7695a-671e-4f4f-a331-acdce44ff9ba"
     PIPELINE_LOG_LEVEL = 'INFO'
+    GITHUB_TOKEN_CREDENTIALS = "2a9602aa-ab9f-4e52-baf3-b71ca88469c7"
   }
   options {
     timeout(time: 1, unit: 'HOURS')
@@ -63,6 +64,20 @@ pipeline {
       post {
         always {
           junit(allowEmptyResults: true, keepLongStdio: true, testResults: '**/junit-report.xml')
+        }
+      }
+    }
+    stage('Release') {
+      when {
+        tag pattern: '\\d+\\.\\d+\\.\\d+', comparator: 'REGEXP'
+      }
+      steps {
+        dir("${BASE_DIR}"){
+          withCredentials([string(credentialsId: "${env.GITHUB_TOKEN_CREDENTIALS}", variable: 'GITHUB_TOKEN')]) {
+            // Ensure that tags are present so goreleaser can build the changelog from the last release.
+            gitCmd(cmd: 'fetch', args: '--unshallow --tags')
+            sh(label: 'goreleaser', script: 'curl -sL https://git.io/goreleaser | bash')
+          }
         }
       }
     }
