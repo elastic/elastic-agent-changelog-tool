@@ -2,7 +2,7 @@
 
 ## Install from release binary
 
-Download latest release from the [Releases](https://github.com/elastic/elastic-agent-changelog-tool/releases/latest) page.
+Download the latest release from the [Releases](https://github.com/elastic/elastic-agent-changelog-tool/releases/latest) page.
 
 On macOS, use `xattr -r -d com.apple.quarantine elastic-agent-changelog-tool` after downloading to allow the binary to run.
 
@@ -28,3 +28,4 @@ $ make build
 ```
 
 `elastic-agent-changelog-tool` binary will be created in the root folder.
+Add it to your path.
