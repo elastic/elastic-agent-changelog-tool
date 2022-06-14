@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog/fragment"
 	"github.com/spf13/afero"
@@ -78,7 +79,11 @@ func (b Builder) Build() error {
 
 func collectFragment(fs afero.Fs, path string, info os.FileInfo, err error, files *[]string) error {
 	if info, err := fs.Stat(path); err == nil && !info.IsDir() {
-		*files = append(*files, path)
+		if filepath.Ext(path) == ".yaml" {
+			*files = append(*files, path)
+		} else {
+			log.Printf("skipping %s (not a YAML file)", path)
+		}
 	} else {
 		return err
 	}

@@ -20,7 +20,7 @@ func Test_collectFragment(t *testing.T) {
 	require.NoError(t, err)
 
 	log.Println(files)
-	require.Contains(t, files, "testdata/.gitkeep")
+	require.NotContains(t, files, "testdata/.gitkeep")
 	require.Contains(t, files, "testdata/1648040928-breaking-change.yaml")
 	require.Contains(t, files, "testdata/1648040928-bug-fix.yaml")
 	require.Contains(t, files, "testdata/1648040928-deprecation.yaml")
