@@ -45,13 +45,7 @@ func (b Builder) Build() error {
 
 	var files []string
 	err := afero.Walk(b.fs, b.src, func(path string, info os.FileInfo, err error) error {
-		if info, err := b.fs.Stat(path); err == nil && !info.IsDir() {
-			files = append(files, path)
-		} else {
-			return err
-		}
-
-		return nil
+		return collectFragment(b.fs, path, info, err, &files)
 	})
 	if err != nil {
 		return fmt.Errorf("cannot walk path %s: %w", b.src, err)
@@ -80,4 +74,14 @@ func (b Builder) Build() error {
 	outFile := path.Join(b.dest, b.filename)
 	log.Printf("saving changelog in %s\n", outFile)
 	return afero.WriteFile(b.fs, outFile, data, changelogFilePerm)
+}
+
+func collectFragment(fs afero.Fs, path string, info os.FileInfo, err error, files *[]string) error {
+	if info, err := fs.Stat(path); err == nil && !info.IsDir() {
+		*files = append(*files, path)
+	} else {
+		return err
+	}
+
+	return nil
 }
