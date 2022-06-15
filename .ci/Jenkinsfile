@@ -74,7 +74,7 @@ pipeline {
       steps {
         dir("${BASE_DIR}"){
           deleteDir()
-          unstash 'source'
+          gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: false)
           withGoEnv() {
             sh 'go install github.com/goreleaser/goreleaser@v1.6.3'
             withCredentials([string(credentialsId: "${env.GITHUB_TOKEN_CREDENTIALS}", variable: 'GITHUB_TOKEN')]) {
