@@ -1,0 +1,8 @@
+builds:
+  # this build supports reproducible builds (see docs)
+  - flags: [-trimpath]
+    mod_timestamp: '{{ .CommitTimestamp }}'
+    ldflags:
+      - -X github.com/elastic/elastic-agent-changelog-tool/internal/version.CommitHash={{.ShortCommit}}
+      - -X github.com/elastic/elastic-agent-changelog-tool/internal/version.SourceDateEpoch={{.CommitDate}}
+      - -X github.com/elastic/elastic-agent-changelog-tool/internal/version.Tag={{.Tag}}
