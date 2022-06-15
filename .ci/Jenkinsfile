@@ -70,7 +70,7 @@ pipeline {
     }
     stage('Release') {
       options { skipDefaultCheckout() }
-      when { tag pattern: '\\d+\\.\\d+\\.\\d+', comparator: 'REGEXP' }
+      when { tag pattern: 'v\\d+\\.\\d+\\.\\d+.*', comparator: 'REGEXP' }
       steps {
         dir("${BASE_DIR}"){
           withGoEnv(pkgs: ['github.com/goreleaser/goreleaser']){
