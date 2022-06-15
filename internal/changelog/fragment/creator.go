@@ -6,6 +6,7 @@ package fragment
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"path"
 	"strings"
@@ -66,7 +67,13 @@ func (c FragmentCreator) Create(slug string) error {
 		return fmt.Errorf("cannot create fragment location folder: %v", err)
 	}
 
-	return afero.WriteFile(c.fs, path.Join(c.location, c.filename(slug)), data, fragmentPerm)
+	filePath := path.Join(c.location, c.filename(slug))
+	if err := afero.WriteFile(c.fs, filePath, data, fragmentPerm); err != nil {
+		return err
+	}
+
+	log.Print("created fragment ", filePath)
+	return nil
 }
 
 // sanitizeFilename takes care of removing dangerous elements from a string so it can be safely

@@ -8,7 +8,7 @@ Configurations are bound to environment variables with same name and `ELASTIC_AG
 This CLI supports and adhere to cross platform XDG Standard provided by [`OpenPeeDeeP/xdg`][xdg].
 
 |Settings key|Default value|Note|
-|---|---|---|---|
+|---|---|---|
 |`fragment_location`|`$GIT_REPO_ROOT/changelog/fragments`|The location of changelog fragments used by the CLI. By default `fragment_root` + `fragment_path`.| 
 |`fragment_path`|`changelog/fragments`|The path in `fragment_root` where to locate changelog fragments.|
 |`fragment_root`|`$GIT_REPO_ROOT`|The root folder for `fragment_location`.|

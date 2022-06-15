@@ -7,6 +7,7 @@ VERSION_LDFLAGS = -X $(VERSION_IMPORT_PATH).CommitHash=$(VERSION_COMMIT_HASH) -X
 
 .PHONY: build
 
+# NOTE: this command is only for dev builds, releases are build using goreleaser
 build:
 	go build -ldflags "$(VERSION_LDFLAGS)" -o elastic-agent-changelog-tool
 
