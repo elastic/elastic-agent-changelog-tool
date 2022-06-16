@@ -72,10 +72,10 @@ pipeline {
       options { skipDefaultCheckout() }
       when { tag pattern: 'v\\d+\\.\\d+\\.\\d+.*', comparator: 'REGEXP' }
       steps {
+        sh 'ls -alh'
+        deleteDir()
+        unstash 'source'
         dir("${BASE_DIR}"){
-          sh 'ls -alh'
-          deleteDir()
-          unstash 'source'
           sh 'ls -alh'
           withGoEnv() {
             sh 'go install github.com/goreleaser/goreleaser@v1.6.3'
