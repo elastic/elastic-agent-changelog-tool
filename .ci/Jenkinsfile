@@ -73,11 +73,14 @@ pipeline {
       when { tag pattern: 'v\\d+\\.\\d+\\.\\d+.*', comparator: 'REGEXP' }
       steps {
         dir("${BASE_DIR}"){
+          sh 'ls -alh'
           deleteDir()
-          gitCheckout(basedir: "${BASE_DIR}", githubNotifyFirstTimeContributor: false)
+          unstash 'source'
+          sh 'ls -alh'
           withGoEnv() {
             sh 'go install github.com/goreleaser/goreleaser@v1.6.3'
             withCredentials([string(credentialsId: "${env.GITHUB_TOKEN_CREDENTIALS}", variable: 'GITHUB_TOKEN')]) {
+              sh 'ls -alh'
               // Ensure that tags are present so goreleaser can build the changelog from the last release.
               gitCmd(cmd: 'fetch', args: '--unshallow --tags')
               sh(label: 'goreleaser', script: 'goreleaser release')
