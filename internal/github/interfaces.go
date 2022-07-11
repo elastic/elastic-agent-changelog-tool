@@ -26,5 +26,6 @@ type githubPullRequestsService interface {
 }
 
 type githubUsersService interface {
+	// https://pkg.go.dev/github.com/google/go-github/v32/github#UsersService.Get
 	Get(ctx context.Context, user string) (*gh.User, *gh.Response, error)
 }
