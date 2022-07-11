@@ -9,10 +9,11 @@ import (
 	"testing"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
+	"github.com/elastic/elastic-agent-changelog-tool/internal/githubtest"
 )
 
 func TestPRHasLabels(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
