@@ -1,0 +1,86 @@
+// begin {{.Version}} relnotes
+
+[[release-notes-{{.Version}}]]
+== {{.Component}} {{.Version}}
+
+// TODO: support multiple components
+Review important information about the {{.Component}} {{.Version}} release.
+
+{{ if .Security -}}
+[discrete]
+[[security-updates-{{.Version}}]]
+=== Security updates
+
+{{.Component}}::{{ range $item := .Security }}
+* {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
+{{- end }}
+{{ if .BreakingChange -}}
+[discrete]
+[[breaking-changes-{{.Version}}]]
+=== Breaking changes
+
+Breaking changes can prevent your application from optimal operation and
+performance. Before you upgrade, review the breaking changes, then mitigate the
+impact to your application.
+
+// TODO: add details and impact
+{{.Component}}::{{ range $item := .BreakingChange }}
+* {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
+{{- end }}
+{{ if .KnownIssue -}}
+[discrete]
+[[known-issues-{{.Version}}]]
+=== Known issues
+
+// TODO: add details and impact
+{{.Component}}::{{ range $item := .KnownIssue }}
+* {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
+{{- end }}
+{{ if .Deprecation -}}
+[discrete]
+[[deprecations-{{.Version}}]]
+=== Deprecations
+
+The following functionality is deprecated in {{.Version}}, and will be removed in
+{{.Version}}. Deprecated functionality does not have an immediate impact on your
+application, but we strongly recommend you make the necessary updates after you
+upgrade to {{.Version}}.
+
+{{.Component}}::{{ range $item := .Deprecation }}
+* {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
+{{- end }}
+{{ if .Feature -}}
+[discrete]
+[[new-features-{{.Version}}]]
+=== New features
+
+The {{.Version}} release adds the following new and notable features.
+
+{{.Component}}::{{ range $item := .Feature }}
+* {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
+{{- end }}
+{{ if .Enhancement }}
+[discrete]
+[[enhancements-{{.Version}}]]
+=== Enhancements
+
+{{.Component}}::{{ range $item := .Enhancement }}
+* {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
+{{- end }}
+{{ if .BugFix }}
+[discrete]
+[[bug-fixes-{{.Version}}]]
+=== Bug fixes
+
+{{.Component}}::{{ range $item := .BugFix }}
+* {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
+{{- end }}
+
+// end {{.Version}} relnotes

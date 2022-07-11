@@ -14,6 +14,7 @@ type FragmentFileInfo struct {
 type Entry struct {
 	Summary     string           `yaml:"summary"`
 	Description string           `yaml:"description"`
+	Component   string           `yaml:"component" `
 	Kind        Kind             `yaml:"kind"`
 	LinkedPR    []int            `yaml:"pr"`
 	LinkedIssue int              `yaml:"issue"`
@@ -25,9 +26,10 @@ type Entry struct {
 // A single Fragment can contain multiple Changelog entries.
 func EntryFromFragment(f fragment.File) Entry {
 	e := Entry{
+		Kind:        kind2kind(f),
 		Summary:     f.Fragment.Summary,
 		Description: f.Fragment.Description,
-		Kind:        kind2kind(f),
+		Component:   f.Fragment.Component,
 		LinkedPR:    []int{f.Fragment.Pr},
 		LinkedIssue: f.Fragment.Issue,
 		Timestamp:   f.Timestamp,
