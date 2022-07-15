@@ -84,7 +84,7 @@ func (b Builder) Build(owner, repo string) error {
 
 	for i, entry := range b.changelog.Entries {
 		// Filling empty PR fields
-		if entry.LinkedPR[0] == 0 {
+		if len(entry.LinkedPR) == 0 {
 			commitHash, err := GetLatestCommitHash(entry.File.Name)
 			if err != nil {
 				log.Printf("cannot find commit hash, fill the PR field in changelog: %s", entry.File.Name)
