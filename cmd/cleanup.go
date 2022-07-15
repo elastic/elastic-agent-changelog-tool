@@ -6,10 +6,12 @@ package cmd
 
 import (
 	"fmt"
-	"os"
+	"io/ioutil"
+	"path/filepath"
 
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func CleanupCmd(fs afero.Fs) *cobra.Command {
@@ -20,26 +22,27 @@ func CleanupCmd(fs afero.Fs) *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			path, err := cmd.Flags().GetString("path")
+			fragmentLocation := viper.GetString("fragment_location")
+
+			fragments, err := ioutil.ReadDir(fragmentLocation)
 			if err != nil {
-				return fmt.Errorf("error parsing flag 'path': %w", err)
+				return fmt.Errorf("could not get fragments folder: %w", err)
 			}
 
-			err = fs.RemoveAll(path)
-			if err != nil {
-				return fmt.Errorf("error deleting fragments: %w", err)
-			}
+			for _, f := range fragments {
+				ext := filepath.Ext(f.Name())
 
-			err = fs.Mkdir(path, os.ModePerm)
-			if err != nil {
-				return fmt.Errorf("error creating fragments folder: %w", err)
+				if ext == ".yaml" || ext == ".yml" {
+					err = fs.Remove(filepath.Join(fragmentLocation, f.Name()))
+					if err != nil {
+						return fmt.Errorf("could not remove fragment: %w", err)
+					}
+				}
 			}
 
 			return nil
 		},
 	}
-
-	cleanupCmd.Flags().String("path", "changelog/fragments", "The folder where fragments are stored.")
 
 	return cleanupCmd
 }
