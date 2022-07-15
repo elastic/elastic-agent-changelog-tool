@@ -74,9 +74,16 @@ func (r Renderer) Render() error {
 	tmpl, err := template.New("asciidoc-release-notes").
 		Funcs(template.FuncMap{
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
-			"linkPRSource": func(component string, id []int) string {
+			"linkPRSource": func(component string, ids []int) []string {
 				component = "agent" // TODO: remove this when implementing support for multiple components
-				return fmt.Sprintf("{%s-pull}%v[#%v]", component, id, id)
+
+				res := make([]string, len(ids))
+
+				for i, id := range ids {
+					res[i] = fmt.Sprintf("{%s-pull}%v[#%v]", component, id, id)
+				}
+
+				return res
 			},
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
 			"linkIssueSource": func(component string, id int) string {
