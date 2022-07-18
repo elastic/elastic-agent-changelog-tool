@@ -23,6 +23,7 @@ func main() {
 	rootCmd.AddCommand(cmd.NewCmd())
 	rootCmd.AddCommand(cmd.PrHasFragmentCommand(appFs))
 	rootCmd.AddCommand(cmd.VersionCmd())
+	rootCmd.AddCommand(cmd.RenderCmd(appFs))
 
 	err := rootCmd.Execute()
 	if err != nil {

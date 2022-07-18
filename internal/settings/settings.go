@@ -60,6 +60,7 @@ func setDefaults() {
 
 	viper.SetDefault("changelog_destination", ".")
 	viper.SetDefault("changelog_filename", "changelog.yaml")
+	viper.SetDefault("rendered_changelog_destination", ".")
 }
 
 func setConstants() {
