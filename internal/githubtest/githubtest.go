@@ -2,7 +2,7 @@
 // or more contributor license agreements. Licensed under the Elastic License 2.0;
 // you may not use this file except in compliance with the Elastic License 2.0.
 
-package github_test
+package githubtest
 
 import (
 	"errors"
@@ -26,7 +26,7 @@ import (
 // As GitHub may require authentication, this function leverages AuthToken functionality to load
 // GitHub token from env or file; when missing instantiate an unauthenticated client.
 // NOTE: always remember to call (recorder.Recorder).Stop() in your test case.
-func getHttpClient(t *testing.T) (*recorder.Recorder, *http.Client) {
+func GetHttpClient(t *testing.T) (*recorder.Recorder, *http.Client) {
 	t.Helper()
 	var err error
 

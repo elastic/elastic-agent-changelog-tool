@@ -9,11 +9,12 @@ import (
 	"testing"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
+	"github.com/elastic/elastic-agent-changelog-tool/internal/githubtest"
 	"github.com/stretchr/testify/require"
 )
 
 func TestFindPR(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
@@ -29,7 +30,7 @@ func TestFindPR(t *testing.T) {
 }
 
 func TestFindPR_backport(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
@@ -53,7 +54,7 @@ func TestFindPR_backport(t *testing.T) {
 }
 
 func TestFindPR_forwardport(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
@@ -69,7 +70,7 @@ func TestFindPR_forwardport(t *testing.T) {
 }
 
 func TestFindPR_missingCommit(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
@@ -81,7 +82,7 @@ func TestFindPR_missingCommit(t *testing.T) {
 }
 
 func TestFindPR_missingRepo(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)

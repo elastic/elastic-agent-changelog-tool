@@ -12,12 +12,11 @@ type FragmentFileInfo struct {
 }
 
 type Entry struct {
-	// fields from template
 	Kind        Kind   `yaml:"kind"`
 	Summary     string `yaml:"summary"`
 	Description string `yaml:"description"`
 	Component   string `yaml:"component" `
-	LinkedPR    int    `yaml:"pr"`
+	LinkedPR    []int  `yaml:"pr"`
 	LinkedIssue int    `yaml:"issue"`
 
 	Timestamp int64            `yaml:"timestamp"`
@@ -32,13 +31,17 @@ func EntryFromFragment(f fragment.File) Entry {
 		Summary:     f.Fragment.Summary,
 		Description: f.Fragment.Description,
 		Component:   f.Fragment.Component,
-		LinkedPR:    f.Fragment.Pr,
+		LinkedPR:    []int{},
 		LinkedIssue: f.Fragment.Issue,
 		Timestamp:   f.Timestamp,
 		File: FragmentFileInfo{
 			Name:     f.Name,
 			Checksum: f.Checksum(),
 		},
+	}
+
+	if f.Fragment.Pr > 0 {
+		e.LinkedPR = []int{f.Fragment.Pr}
 	}
 
 	return e

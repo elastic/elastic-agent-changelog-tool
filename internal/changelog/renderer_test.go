@@ -26,7 +26,7 @@ func TestRenderer(t *testing.T) {
 
 	t.Log("building changelog from test fragments")
 	builder := changelog.NewBuilder(fs, filename, "0.0.0", src, dest)
-	err := builder.Build()
+	err := builder.Build("elastic", "elastic-agent-changelog-tool")
 	require.NoError(t, err)
 
 	t.Log("loading generated changelog")

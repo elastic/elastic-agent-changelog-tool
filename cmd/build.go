@@ -23,6 +23,16 @@ func BuildCmd(fs afero.Fs) *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
+			repo, err := cmd.Flags().GetString("repo")
+			if err != nil {
+				return fmt.Errorf("repo flag malformed: %w", err)
+			}
+
+			owner, err := cmd.Flags().GetString("owner")
+			if err != nil {
+				return fmt.Errorf("owner flag malformed: %w", err)
+			}
+
 			filename := viper.GetString("changelog_filename")
 			src := viper.GetString("fragment_location")
 			dest := viper.GetString("changelog_destination")
@@ -34,13 +44,16 @@ func BuildCmd(fs afero.Fs) *cobra.Command {
 
 			b := changelog.NewBuilder(fs, filename, version, src, dest)
 
-			if err := b.Build(); err != nil {
+			if err := b.Build(owner, repo); err != nil {
 				return fmt.Errorf("cannot build changelog: %w", err)
 			}
 
 			return nil
 		},
 	}
+
+	buildCmd.Flags().String("repo", defaultRepo, "target repository")
+	buildCmd.Flags().String("owner", defaultOwner, "target repository owner")
 
 	buildCmd.Flags().String("version", "", "The version of the consolidated changelog being created")
 	err := buildCmd.MarkFlagRequired("version")

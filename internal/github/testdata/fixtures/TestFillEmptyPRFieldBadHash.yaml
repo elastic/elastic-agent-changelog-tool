@@ -1,0 +1,70 @@
+---
+version: 1
+interactions:
+- request:
+    body: ""
+    form: {}
+    headers:
+      Accept:
+      - application/vnd.github.groot-preview+json, application/vnd.github.sailor-v-preview+json
+      User-Agent:
+      - go-github
+    url: https://api.github.com/repos/elastic/beats/commits/123/pulls
+    method: GET
+  response:
+    body: '{"message":"No commit found for SHA: 123","documentation_url":"https://docs.github.com/rest/reference/repos#list-pull-requests-associated-with-a-commit"}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Content-Length:
+      - "153"
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 10 Jun 2022 12:10:25 GMT
+      Github-Authentication-Token-Expiration:
+      - 2022-07-03 07:58:09 UTC
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Vary:
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-Oauth-Scopes:
+      - ""
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Github-Media-Type:
+      - github.v3; param=groot-preview.sailor-v-preview; format=json
+      X-Github-Request-Id:
+      - DBB0:60FD:7426DD:FE6980:62A334B0
+      X-Oauth-Scopes:
+      - admin:enterprise, admin:gpg_key, admin:org, admin:org_hook, admin:public_key,
+        admin:repo_hook, delete:packages, delete_repo, gist, notifications, repo,
+        user, workflow, write:discussion, write:packages
+      X-Ratelimit-Limit:
+      - "5000"
+      X-Ratelimit-Remaining:
+      - "4990"
+      X-Ratelimit-Reset:
+      - "1654864256"
+      X-Ratelimit-Resource:
+      - core
+      X-Ratelimit-Used:
+      - "10"
+      X-Xss-Protection:
+      - "0"
+    status: 422 Unprocessable Entity
+    code: 422
+    duration: ""
