@@ -58,16 +58,24 @@ To be done.
 * From the root folder of the repository run:
 
 ```
-$ elastic-agent-changelog-tool build --version x.y.z
+$ elastic-agent-changelog-tool build --version x.y.z --owner <owner> --repo <repo>
 ```
+* Where:
+  * `x.y.z` is the version to release.
+  * `owner` is the user / organization the repository to use belongs to.
+  * `repo` is the name of the repository containing the issues / PRs, etc.
 * This will create `./changelog.yaml`. Store it in the repository as `changelog/x.y.x.yaml`.
 * From the root of the repository run:
 ```
 $ elastic-agent-changelog-tool cleanup
 ```
 * Commit the previous changes (consolidated changelod and removed files)
-* **TODO: ** Add `render` command when available.
-* Integrate the generated asciidoc fragment into your changelog. If the changelog is stored in the same repository, commit the changes in this same branch.
+* From the root folder of the repository run:
+```
+$ elastic-agent-changelog-tool render --version x.y.z
+```
+* This will generate an asciidoc fragment in __TODO__.
+* Integrate the generated fragment into the changelog. If the changelog is stored in the same repository, commit the changes in this same branch.
 * Create a PR with the changes above the `x.y` branch.
 
 
