@@ -1,0 +1,65 @@
+---
+version: 1
+interactions:
+- request:
+    body: |
+      {"query":"query($issuesLen:Int!$owner:String!$prID:Int!$repo:String!){repository(owner: $owner, name: $repo){pullRequest(number: $prID){closingIssuesReferences (first: $issuesLen){edges{node{number}}}}}}","variables":{"issuesLen":50,"owner":"elastic","prID":32501,"repo":"beats"}}
+    form: {}
+    headers:
+      Content-Type:
+      - application/json
+    url: https://api.github.com/graphql
+    method: POST
+  response:
+    body: '{"data":{"repository":{"pullRequest":{"closingIssuesReferences":{"edges":[{"node":{"number":32483}}]}}}}}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Access-Control-Expose-Headers:
+      - ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining,
+        X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes,
+        X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO,
+        X-GitHub-Request-Id, Deprecation, Sunset
+      Content-Security-Policy:
+      - default-src 'none'
+      Content-Type:
+      - application/json; charset=utf-8
+      Date:
+      - Fri, 29 Jul 2022 14:32:44 GMT
+      Referrer-Policy:
+      - origin-when-cross-origin, strict-origin-when-cross-origin
+      Server:
+      - GitHub.com
+      Strict-Transport-Security:
+      - max-age=31536000; includeSubdomains; preload
+      Vary:
+      - Accept-Encoding, Accept, X-Requested-With
+      X-Accepted-Oauth-Scopes:
+      - repo
+      X-Content-Type-Options:
+      - nosniff
+      X-Frame-Options:
+      - deny
+      X-Github-Media-Type:
+      - github.v4; format=json
+      X-Github-Request-Id:
+      - B671:9BC3:921A81:96B8D2:62E3EF8B
+      X-Oauth-Scopes:
+      - admin:enterprise, admin:gpg_key, admin:org, admin:org_hook, admin:public_key,
+        admin:repo_hook, delete:packages, delete_repo, gist, notifications, project,
+        repo, user, workflow, write:discussion, write:packages
+      X-Ratelimit-Limit:
+      - "5000"
+      X-Ratelimit-Remaining:
+      - "4998"
+      X-Ratelimit-Reset:
+      - "1659108224"
+      X-Ratelimit-Resource:
+      - graphql
+      X-Ratelimit-Used:
+      - "2"
+      X-Xss-Protection:
+      - "0"
+    status: 200 OK
+    code: 200
+    duration: ""

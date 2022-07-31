@@ -29,3 +29,7 @@ type githubUsersService interface {
 	// https://pkg.go.dev/github.com/google/go-github/v32/github#UsersService.Get
 	Get(ctx context.Context, user string) (*gh.User, *gh.Response, error)
 }
+
+type githubGraphQLPRService interface {
+	FindIssues(ctx context.Context, owner, repo string, prID, issuesLen int) ([]int, error)
+}

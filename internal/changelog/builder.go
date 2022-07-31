@@ -81,10 +81,12 @@ func (b Builder) Build(owner, repo string) error {
 	}
 
 	c := github.NewClient(hc)
+	graphqlClient := github.NewGraphQLClient(hc)
 
 	for i, entry := range b.changelog.Entries {
 		// Filling empty PR fields
 		if len(entry.LinkedPR) == 0 {
+
 			commitHash, err := GetLatestCommitHash(entry.File.Name)
 			if err != nil {
 				log.Printf("cannot find commit hash, fill the PR field in changelog: %s", entry.File.Name)
@@ -111,6 +113,22 @@ func (b Builder) Build(owner, repo string) error {
 			}
 
 			b.changelog.Entries[i].LinkedPR = []int{originalPR}
+		}
+
+		if len(entry.LinkedIssue) == 0 && len(entry.LinkedPR) > 0 {
+			linkedIssues := []int{}
+
+			for _, pr := range entry.LinkedPR {
+				tempIssues, err := FindIssues(graphqlClient, context.Background(), owner, repo, pr, 50)
+				if err != nil {
+					log.Printf("could not find linked issues for pr id: %d", entry.LinkedPR)
+					continue
+				}
+
+				linkedIssues = append(linkedIssues, tempIssues...)
+			}
+
+			b.changelog.Entries[i].LinkedIssue = linkedIssues
 		}
 	}
 
@@ -145,6 +163,15 @@ func GetLatestCommitHash(fileName string) (string, error) {
 	}
 
 	return strings.ReplaceAll(string(response), "\n", ""), nil
+}
+
+func FindIssues(graphqlClient *github.ClientGraphQL, ctx context.Context, owner, name string, prID, issuesLen int) ([]int, error) {
+	issues, err := graphqlClient.PR.FindIssues(ctx, owner, name, prID, issuesLen)
+	if err != nil {
+		return nil, err
+	}
+
+	return issues, nil
 }
 
 func FillEmptyPRField(commitHash, owner, repo string, c *github.Client) ([]int, error) {

@@ -86,9 +86,15 @@ func (r Renderer) Render() error {
 				return strings.Join(res, " ")
 			},
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
-			"linkIssueSource": func(component string, id int) string {
+			"linkIssueSource": func(component string, ids []int) string {
 				component = "agent" // TODO: remove this when implementing support for multiple components
-				return fmt.Sprintf("{%s-issue}%d[#%d]", component, id, id)
+				res := make([]string, len(ids))
+
+				for i, id := range ids {
+					res[i] = fmt.Sprintf("{%s-issue}%v[#%v]", component, id, id)
+				}
+
+				return strings.Join(res, " ")
 			},
 			// Capitalize sentence and ensure ends with .
 			"beautify": func(s1 string) string {
