@@ -126,6 +126,9 @@ func (b Builder) Build(owner, repo string) error {
 				}
 
 				linkedIssues = append(linkedIssues, tempIssues...)
+				if len(linkedIssues) > 1 {
+					log.Printf("multiple issues found for %s, please remove all but one of them", entry.File.Name)
+				}
 			}
 
 			b.changelog.Entries[i].LinkedIssue = linkedIssues
