@@ -5,6 +5,7 @@
 package changelog_test
 
 import (
+	"context"
 	"testing"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog"
@@ -52,4 +53,17 @@ func TestFillEmptyPRFieldBadHash(t *testing.T) {
 	prIDs, err := changelog.FillEmptyPRField("123", "elastic", "beats", c)
 	require.Error(t, err)
 	require.Empty(t, prIDs)
+}
+
+func TestFindIssues(t *testing.T) {
+	r, hc := githubtest.GetHttpClient(t)
+	defer r.Stop() //nolint:errcheck
+
+	graphqlClient := github.NewGraphQLClient(hc)
+
+	issues, err := changelog.FindIssues(graphqlClient, context.Background(), "elastic", "beats", 32501, 50)
+	require.NoError(t, err)
+	require.NotEmpty(t, issues)
+	require.Len(t, issues, 1)
+	require.ElementsMatch(t, issues, []int{32483})
 }
