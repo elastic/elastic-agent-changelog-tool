@@ -17,8 +17,8 @@ import (
 func BuildCmd(fs afero.Fs) *cobra.Command {
 
 	buildCmd := &cobra.Command{
-		Use:  "build",
-		Long: "Create changelog from fragments",
+		Use:   "build",
+		Short: "Create changelog from fragments",
 		Args: func(cmd *cobra.Command, args []string) error {
 			return nil
 		},
