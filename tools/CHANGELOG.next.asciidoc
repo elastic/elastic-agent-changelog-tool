@@ -1,0 +1,32 @@
+// Use these for links to issue and pulls. Note issues and pulls redirect one to
+// each other on Github, so don't worry too much on using the right prefix.
+:issue-beats: https://github.com/elastic/beats/issues/
+:pull-beats: https://github.com/elastic/beats/pull/
+
+:issue: https://github.com/elastic/elastic-agent/issues/
+:pull: https://github.com/elastic/elastic-agent/pull/
+
+=== Elastic Agent version HEAD
+
+==== Breaking changes
+
+- Docker container is not run as root by default. {pull-beats}[21213]
+- Read Fleet connection information from `fleet.*` instead of `fleet.kibana.*`. {pull-beats}[24713]
+
+==== Bugfixes
+
+- diagnostics collect log names are fixed on Windows machines, command will ignore failures. AgentID is included in diagnostics(and diagnostics collect) output. {issue}81[81] {issue}92[92] {issue}190[190] {pull}262[262]
+- Allow the / char in variable names in eql and transpiler. {issue}715[715] {pull}718[718]
+- Fix data duplication for standalone agent on Kubernetes using the default manifest {issue-beats}31512[31512] {pull}742[742]
+- Agent updates will clean up unneeded artifacts. {issue}693[693] {issue}694[694] {pull}752[752]
+
+==== New features
+
+- Allow pprof endpoints for elastic-agent or beats if enabled. {pull-beats}[28983] {pull-beats}[29155]
+- Set `agent.id` to the Fleet Agent ID in events published from inputs backed by Beats. {issue-beats}[21121] {pull-beats}[26394] {pull-beats}[26548]
+- Agent now adapts the beats queue size based on output settings. {issue-beats}[26638] {pull-beats}[27429]
+- Support ephemeral containers in Kubernetes dynamic provider. {issue-beats}[#27020] {pull-beats}[27707]
+- Add support for enabling the metrics buffer endpoint in the elastic-agent and beats it runs. diagnostics collect command will gather metrics-buffer data if enabled. {pull-beats}[30471]
+- Changed the default policy selection logic. When the agent has no policy id or name defined, it will fall back to defaults (defined by $FLEET_SERVER_POLICY_ID and $FLEET_DEFAULT_TOKEN_POLICY_NAME environment variables respectively). {issue-beats}[29774] {pull}226[226]
+- Support scheduled actions and cancellation of pending actions. {issue}393[393] {pull}419[419]
+- Bump node.js version for heartbeat/synthetics to 16.15.0
