@@ -130,5 +130,6 @@ if __name__ == "__main__":
     except FileExistsError as e:
         pass
 
+    print("Skipped entries should be manually created")
     with open(args.path, 'r') as f:
         iterate_lines(f)
