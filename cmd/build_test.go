@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"path"
 	"testing"
 	"time"
@@ -64,8 +64,8 @@ func TestBuildCmd_missingFlag(t *testing.T) {
 	testFs := afero.NewMemMapFs()
 	cmd := cmd.BuildCmd(testFs)
 
-	cmd.SetOut(ioutil.Discard)
-	cmd.SetErr(ioutil.Discard)
+	cmd.SetOut(io.Discard)
+	cmd.SetErr(io.Discard)
 
 	err := cmd.Execute()
 	expectedErr := errors.New("required flag(s) \"version\" not set")

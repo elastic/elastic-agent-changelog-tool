@@ -6,7 +6,7 @@ package cmd
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/spf13/afero"
@@ -24,7 +24,7 @@ func CleanupCmd(fs afero.Fs) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fragmentLocation := viper.GetString("fragment_location")
 
-			fragments, err := ioutil.ReadDir(fragmentLocation)
+			fragments, err := os.ReadDir(fragmentLocation)
 			if err != nil {
 				return fmt.Errorf("could not get fragments folder: %w", err)
 			}
