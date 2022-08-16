@@ -4,6 +4,7 @@
 
 import time
 import argparse
+from os import makedirs
 
 
 timestamp = round(time.time())
@@ -123,6 +124,11 @@ if __name__ == "__main__":
 
     if args.repo:
         default_repolink = repo_dict[args.repo]
+
+    try:
+        makedirs(fragments_path)
+    except FileExistsError as e:
+        pass
 
     with open(args.path, 'r') as f:
         iterate_lines(f)
