@@ -58,9 +58,8 @@ func setDefaults() {
 		os.ExpandEnv(viper.GetString("fragment_root")),
 		viper.GetString("fragment_path")))
 
-	viper.SetDefault("changelog_destination", ".")
-	viper.SetDefault("changelog_filename", "changelog.yaml")
-	viper.SetDefault("rendered_changelog_destination", ".")
+	viper.SetDefault("changelog_destination", "changelog")
+	viper.SetDefault("rendered_changelog_destination", "changelog")
 }
 
 func setConstants() {

@@ -33,7 +33,6 @@ func BuildCmd(fs afero.Fs) *cobra.Command {
 				return fmt.Errorf("owner flag malformed: %w", err)
 			}
 
-			filename := viper.GetString("changelog_filename")
 			src := viper.GetString("fragment_location")
 			dest := viper.GetString("changelog_destination")
 
@@ -42,6 +41,7 @@ func BuildCmd(fs afero.Fs) *cobra.Command {
 				return fmt.Errorf("error parsing flag 'version': %w", err)
 			}
 
+			filename := fmt.Sprintf("%s.yaml", version)
 			b := changelog.NewBuilder(fs, filename, version, src, dest)
 
 			if err := b.Build(owner, repo); err != nil {

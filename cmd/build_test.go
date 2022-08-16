@@ -48,7 +48,7 @@ func TestBuildCmd(t *testing.T) {
 	err = cmd.Execute()
 	require.Nil(t, err)
 
-	changelogFile := path.Join(viper.GetString("changelog_destination"), viper.GetString("changelog_filename"))
+	changelogFile := path.Join(viper.GetString("changelog_destination"), fmt.Sprintf("%s.yaml", expectedVersion))
 	content, err := afero.ReadFile(testFs, changelogFile)
 	require.Nil(t, err)
 
