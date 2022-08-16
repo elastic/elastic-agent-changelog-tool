@@ -16,7 +16,7 @@ func RootCmd() *cobra.Command {
 
 	rootCmd := &cobra.Command{
 		Use:          "elastic-agent-changelog-tool",
-		Long:         "elastic-agent-changelog-tool - Command line tool used for managing the change log for Elastic Agent and related components, including Beats.",
+		Short:        "elastic-agent-changelog-tool - Command line tool used for managing the change log for Elastic Agent and related components, including Beats.",
 		SilenceUsage: true,
 	}
 

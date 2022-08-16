@@ -16,8 +16,9 @@ import (
 
 func RenderCmd(fs afero.Fs) *cobra.Command {
 	renderCmd := &cobra.Command{
-		Use:  "render",
-		Long: "Render a changelog in an asciidoc file",
+		Use:   "render",
+		Short: "Render a changelog in an asciidoc file",
+		Long:  "Render a changelog in an asciidoc file",
 		Args: func(cmd *cobra.Command, args []string) error {
 			return nil
 		},

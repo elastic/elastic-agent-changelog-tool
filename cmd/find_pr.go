@@ -24,8 +24,9 @@ argument with commit hash is required
 
 func FindPRCommand(appFs afero.Fs) *cobra.Command {
 	findPRCommand := &cobra.Command{
-		Use:  "find-pr",
-		Long: findPRLongDescription,
+		Use:   "find-pr",
+		Short: "Find the original PR that included a commit",
+		Long:  findPRLongDescription,
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
 				return errListPRCmdMissingCommitHash
