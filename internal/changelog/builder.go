@@ -83,24 +83,26 @@ func (b Builder) Build(owner, repo string) error {
 	c := github.NewClient(hc)
 	graphqlClient := github.NewGraphQLClient(hc)
 
+	log.Println("Verifying entries:")
+
 	for i, entry := range b.changelog.Entries {
 		// Filling empty PR fields
 		if len(entry.LinkedPR) == 0 {
 
 			commitHash, err := GetLatestCommitHash(entry.File.Name)
 			if err != nil {
-				log.Printf("cannot find commit hash, fill the PR field in changelog: %s", entry.File.Name)
+				log.Printf("%s: cannot find commit hash, fill the PR field in changelog", entry.File.Name)
 				continue
 			}
 
 			prIDs, err := FillEmptyPRField(commitHash, owner, repo, c)
 			if err != nil {
-				log.Printf("fill the PR field in changelog: %s", entry.File.Name)
+				log.Printf("%s: fill the PR field in changelog", entry.File.Name)
 				continue
 			}
 
 			if len(prIDs) > 1 {
-				log.Printf("multiple PRs found for %s, please remove all but one of them", entry.File.Name)
+				log.Printf("%s: multiple PRs found, please remove all but one of them", entry.File.Name)
 			}
 
 			b.changelog.Entries[i].LinkedPR = prIDs
@@ -108,7 +110,7 @@ func (b Builder) Build(owner, repo string) error {
 			// Applying heuristics to PR fields
 			originalPR, err := FindOriginalPR(entry.LinkedPR[0], owner, repo, c)
 			if err != nil {
-				log.Printf("check if the PR field is correct in changelog: %s", entry.File.Name)
+				log.Printf("%s: check if the PR field is correct in changelog", entry.File.Name)
 				continue
 			}
 
@@ -121,13 +123,13 @@ func (b Builder) Build(owner, repo string) error {
 			for _, pr := range entry.LinkedPR {
 				tempIssues, err := FindIssues(graphqlClient, context.Background(), owner, repo, pr, 50)
 				if err != nil {
-					log.Printf("could not find linked issues for pr id: %d", entry.LinkedPR)
+					log.Printf("%s: could not find linked issues for pr: %s/pull/%d", entry.File.Name, entry.Repository, entry.LinkedPR)
 					continue
 				}
 
 				linkedIssues = append(linkedIssues, tempIssues...)
 				if len(linkedIssues) > 1 {
-					log.Printf("multiple issues found for %s, please remove all but one of them", entry.File.Name)
+					log.Printf("%s: multiple issues found, please remove all but one of them", entry.File.Name)
 				}
 			}
 
@@ -141,7 +143,7 @@ func (b Builder) Build(owner, repo string) error {
 	}
 
 	outFile := path.Join(b.dest, b.filename)
-	log.Printf("saving changelog in %s\n", outFile)
+	log.Printf("saving changelog in: %s\n", outFile)
 	return afero.WriteFile(b.fs, outFile, data, changelogFilePerm)
 }
 
