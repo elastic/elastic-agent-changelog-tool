@@ -54,7 +54,7 @@ To be done.
 ### Preparing the changelog
 
 * Wait for the last BC of the release. If another BC is generated after that or a patch version for a previous minor is released, you might need to restart the process.
-* Create a branch from the commit of the BC.
+* Create a branch **from the commit of the BC**.
 * From the root folder of the repository run:
 
 ```
@@ -62,8 +62,8 @@ $ elastic-agent-changelog-tool build --version x.y.z --owner <owner> --repo <rep
 ```
 * Where:
   * `x.y.z` is the version to release.
-  * `owner` is the user / organization the repository to use belongs to.
-  * `repo` is the name of the repository containing the issues / PRs, etc.
+  * `owner` is the user / organization the repository to use belongs to. The default value is `elastic`.
+  * `repo` is the name of the repository containing the issues / PRs, etc. The default value is `elastic-agent`.
 * This will create `./changelog.yaml`. Store it in the repository as `changelog/x.y.x.yaml`.
 * From the root of the repository run:
 ```
@@ -74,9 +74,9 @@ $ elastic-agent-changelog-tool cleanup
 ```
 $ elastic-agent-changelog-tool render --version x.y.z
 ```
-* This will generate an asciidoc fragment in __TODO__.
+* This will generate an asciidoc fragment in the current directory.
 * Integrate the generated fragment into the changelog. If the changelog is stored in the same repository, commit the changes in this same branch.
-* Create a PR with the changes above the `x.y` branch.
+* Create a PR with the changes to the `x.y` branch.
 
 
 ### On Release Day
