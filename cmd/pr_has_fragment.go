@@ -20,8 +20,8 @@ var errPrCheckCmdMissingArg = errors.New("pr-has-fragment command requires pr nu
 
 func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
 	prCheckCmd := &cobra.Command{
-		Use:  "pr-has-fragment <pr-number>",
-		Long: "Check changelog fragment presence in the given PR.",
+		Use:   "pr-has-fragment <pr-number>",
+		Short: "Check changelog fragment presence in the given PR.",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
 				return errPrCheckCmdMissingArg
@@ -52,6 +52,18 @@ func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
 			}
 
 			ctx := context.Background()
+			// TODO: move this to configuration or flag
+			labels := []string{"skip-changelog", "backport"}
+
+			shouldSkip, err := github.PRHasLabels(ctx, c, owner, repo, pr, labels)
+			if err != nil {
+				return err
+			}
+			if shouldSkip {
+				fmt.Fprintln(cmd.OutOrStdout(), "PR requires no changelog")
+				return nil
+			}
+
 			pattern := fmt.Sprintf("%s/*", viper.GetString("fragment_path"))
 
 			found, err := github.FindFileInPR(ctx, c, owner, repo, pr, pattern)

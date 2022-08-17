@@ -12,29 +12,42 @@ type FragmentFileInfo struct {
 }
 
 type Entry struct {
-	Summary     string           `yaml:"summary"`
-	Description string           `yaml:"description"`
-	Kind        Kind             `yaml:"kind"`
-	LinkedPR    int              `yaml:"pr"`
-	LinkedIssue int              `yaml:"issue"`
-	Timestamp   int64            `yaml:"timestamp"`
-	File        FragmentFileInfo `yaml:"file"`
+	Kind        Kind   `yaml:"kind"`
+	Summary     string `yaml:"summary"`
+	Description string `yaml:"description"`
+	Component   string `yaml:"component" `
+	LinkedPR    []int  `yaml:"pr"`
+	LinkedIssue []int  `yaml:"issue"`
+	Repository  string `yaml:"repository"`
+
+	Timestamp int64            `yaml:"timestamp"`
+	File      FragmentFileInfo `yaml:"file"`
 }
 
 // EntriesFromFragment returns one or more entries based on the fragment File.
 // A single Fragment can contain multiple Changelog entries.
 func EntryFromFragment(f fragment.File) Entry {
 	e := Entry{
+		Kind:        kind2kind(f),
 		Summary:     f.Fragment.Summary,
 		Description: f.Fragment.Description,
-		Kind:        kind2kind(f),
-		LinkedPR:    f.Fragment.Pr,
-		LinkedIssue: f.Fragment.Issue,
+		Component:   f.Fragment.Component,
+		LinkedPR:    []int{},
+		LinkedIssue: []int{},
+		Repository:  f.Fragment.Repository,
 		Timestamp:   f.Timestamp,
 		File: FragmentFileInfo{
 			Name:     f.Name,
 			Checksum: f.Checksum(),
 		},
+	}
+
+	if f.Fragment.Pr > 0 {
+		e.LinkedPR = []int{f.Fragment.Pr}
+	}
+
+	if f.Fragment.Issue > 0 {
+		e.LinkedIssue = []int{f.Fragment.Issue}
 	}
 
 	return e

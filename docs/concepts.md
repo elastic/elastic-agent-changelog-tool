@@ -1,6 +1,6 @@
 # File based approach
 
-This CLI tool is file based. This means files are it's primary source and primary output, and all steps in the process produce files that can be archived or versioned (through `git` for example).
+This CLI tool is file based. This means files are its primary source and primary output, and all steps in the process produce files that can be archived or versioned (through `git` for example).
 
 Adopting a file based approach has this advantages:
 - Editing files is widely supported 

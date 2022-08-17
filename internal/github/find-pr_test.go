@@ -9,11 +9,12 @@ import (
 	"testing"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
+	"github.com/elastic/elastic-agent-changelog-tool/internal/githubtest"
 	"github.com/stretchr/testify/require"
 )
 
 func TestFindPR(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
@@ -29,7 +30,7 @@ func TestFindPR(t *testing.T) {
 }
 
 func TestFindPR_backport(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
@@ -40,19 +41,20 @@ func TestFindPR_backport(t *testing.T) {
 	// https://github.com/elastic/beats/commit/fe25c73907336fc462d5e6e059d3cd86512484fe
 	res, err := github.FindPR(ctx, c, "elastic", "beats", "fe25c73907336fc462d5e6e059d3cd86512484fe")
 	require.NoError(t, err)
-	require.Len(t, res.Items, 4)
-	// not a backport: https://github.com/elastic/beats/pull/31396
-	require.Equal(t, 31396, res.Items[0].PullRequestID)
-	// backport: https://github.com/elastic/beats/pull/31417 => source: https://github.com/elastic/beats/issues/31013
-	require.Equal(t, 31013, res.Items[1].PullRequestID)
-	// backport: https://github.com/elastic/beats/pull/31396 => source: https://github.com/elastic/beats/issues/31369
-	require.Equal(t, 31369, res.Items[2].PullRequestID)
+
+	prIDs := []int{}
+	for _, p := range res.Items {
+		prIDs = append(prIDs, p.PullRequestID)
+	}
+
+	// backport: https://github.com/elastic/beats/pull/31482 => source: https://github.com/elastic/beats/pull/30979
+	// backport: https://github.com/elastic/beats/pull/31572 => source: https://github.com/elastic/beats/pull/31531
 	// backport: https://github.com/elastic/beats/pull/31343 => source: https://github.com/elastic/beats/pull/31279
-	require.Equal(t, 31279, res.Items[3].PullRequestID)
+	require.ElementsMatch(t, []int{30979, 31531, 31279}, prIDs)
 }
 
 func TestFindPR_forwardport(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
@@ -68,7 +70,7 @@ func TestFindPR_forwardport(t *testing.T) {
 }
 
 func TestFindPR_missingCommit(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
@@ -80,7 +82,7 @@ func TestFindPR_missingCommit(t *testing.T) {
 }
 
 func TestFindPR_missingRepo(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)

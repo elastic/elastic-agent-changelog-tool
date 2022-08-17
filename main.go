@@ -19,9 +19,11 @@ func main() {
 
 	rootCmd := cmd.RootCmd()
 	rootCmd.AddCommand(cmd.BuildCmd(appFs))
+	rootCmd.AddCommand(cmd.CleanupCmd(appFs))
 	rootCmd.AddCommand(cmd.FindPRCommand(appFs))
 	rootCmd.AddCommand(cmd.NewCmd())
 	rootCmd.AddCommand(cmd.PrHasFragmentCommand(appFs))
+	rootCmd.AddCommand(cmd.RenderCmd(appFs))
 	rootCmd.AddCommand(cmd.VersionCmd())
 
 	err := rootCmd.Execute()

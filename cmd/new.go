@@ -18,8 +18,8 @@ var errNewCmdMissingArg = errors.New("new requires title argument")
 func NewCmd() *cobra.Command {
 
 	newCmd := &cobra.Command{
-		Use:  "new title",
-		Long: "Create a new changelog fragment",
+		Use:   "new title",
+		Short: "Create a new changelog fragment",
 		Args: func(cmd *cobra.Command, args []string) error {
 			if len(args) < 1 {
 				return errNewCmdMissingArg

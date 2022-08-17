@@ -1,6 +1,8 @@
 # elastic-agent-changelog-tool
 Tooling to manage the changelog for beats, Elastic Agent and Fleet Server
 
+[CI activity](https://beats-ci.elastic.co/blue/organizations/jenkins/elastic-agent-changelog-tool-mbp/activity)
+
 ## Requirements
 
 `git` CLI should be installed and available.

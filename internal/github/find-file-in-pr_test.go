@@ -9,11 +9,12 @@ import (
 	"testing"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
+	"github.com/elastic/elastic-agent-changelog-tool/internal/githubtest"
 	"github.com/stretchr/testify/require"
 )
 
 func TestFindFileInPR(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
@@ -27,7 +28,7 @@ func TestFindFileInPR(t *testing.T) {
 }
 
 func TestFindFileInPR_failureCase(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)
@@ -41,7 +42,7 @@ func TestFindFileInPR_failureCase(t *testing.T) {
 }
 
 func TestFindFileInPR_PrIsNotFound(t *testing.T) {
-	r, hc := getHttpClient(t)
+	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
 
 	c := github.NewClient(hc)

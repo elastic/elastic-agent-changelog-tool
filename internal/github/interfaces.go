@@ -11,6 +11,9 @@ import (
 )
 
 type githubPullRequestsService interface {
+	// https://pkg.go.dev/github.com/google/go-github/v32/github#PullRequestsService.Get
+	Get(ctx context.Context, owner string, repo string, number int) (*gh.PullRequest, *gh.Response, error)
+	// https://pkg.go.dev/github.com/google/go-github/v32/github#PullRequestsService.ListPullRequestsWithCommit
 	ListPullRequestsWithCommit(
 		ctx context.Context,
 		owner string,
@@ -23,5 +26,10 @@ type githubPullRequestsService interface {
 }
 
 type githubUsersService interface {
+	// https://pkg.go.dev/github.com/google/go-github/v32/github#UsersService.Get
 	Get(ctx context.Context, user string) (*gh.User, *gh.Response, error)
+}
+
+type githubGraphQLPRService interface {
+	FindIssues(ctx context.Context, owner, repo string, prID, issuesLen int) ([]int, error)
 }

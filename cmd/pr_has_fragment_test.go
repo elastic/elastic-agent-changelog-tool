@@ -6,7 +6,7 @@ package cmd_test
 
 import (
 	"bytes"
-	"io/ioutil"
+	"io"
 	"log"
 	"testing"
 
@@ -17,20 +17,20 @@ import (
 )
 
 func TestPrHasFragmentCmd_noArgs(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 
 	fs := afero.NewMemMapFs()
 	c := cmd.PrHasFragmentCommand(fs)
 
-	c.SetOut(ioutil.Discard)
-	c.SetErr(ioutil.Discard)
+	c.SetOut(io.Discard)
+	c.SetErr(io.Discard)
 
 	err := c.Execute()
 	require.Error(t, err)
 }
 
 func TestPrHasFragmentCmd_oneArg(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 
 	settings.Init()
 
@@ -39,7 +39,7 @@ func TestPrHasFragmentCmd_oneArg(t *testing.T) {
 
 	b := new(bytes.Buffer)
 	c.SetOut(b)
-	c.SetErr(ioutil.Discard)
+	c.SetErr(io.Discard)
 
 	c.SetArgs([]string{"--repo", "elastic-agent-changelog-tool", "29"})
 
@@ -48,7 +48,7 @@ func TestPrHasFragmentCmd_oneArg(t *testing.T) {
 }
 
 func TestPrHasFragmentCmd_oneArgFailCase(t *testing.T) {
-	log.SetOutput(ioutil.Discard)
+	log.SetOutput(io.Discard)
 
 	settings.Init()
 
@@ -57,10 +57,27 @@ func TestPrHasFragmentCmd_oneArgFailCase(t *testing.T) {
 
 	b := new(bytes.Buffer)
 	c.SetOut(b)
-	c.SetErr(ioutil.Discard)
+	c.SetErr(io.Discard)
 
 	c.SetArgs([]string{"--repo", "elastic-agent-changelog-tool", "33"})
 
 	err := c.Execute()
 	require.Error(t, err)
+}
+
+func TestPrHasFragmentCmd_hasSkipChangelogLabel(t *testing.T) {
+	settings.Init()
+
+	fs := afero.NewMemMapFs()
+	c := cmd.PrHasFragmentCommand(fs)
+
+	b := new(bytes.Buffer)
+	c.SetOut(b)
+	c.SetErr(io.Discard)
+
+	c.SetArgs([]string{"--repo", "elastic-agent-changelog-tool", "47"})
+
+	err := c.Execute()
+	require.Nil(t, err)
+	require.Contains(t, b.String(), "PR requires no changelog")
 }

@@ -17,13 +17,22 @@ import (
 func BuildCmd(fs afero.Fs) *cobra.Command {
 
 	buildCmd := &cobra.Command{
-		Use:  "build",
-		Long: "Create changelog from fragments",
+		Use:   "build",
+		Short: "Create changelog from fragments",
 		Args: func(cmd *cobra.Command, args []string) error {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			filename := viper.GetString("changelog_filename")
+			repo, err := cmd.Flags().GetString("repo")
+			if err != nil {
+				return fmt.Errorf("repo flag malformed: %w", err)
+			}
+
+			owner, err := cmd.Flags().GetString("owner")
+			if err != nil {
+				return fmt.Errorf("owner flag malformed: %w", err)
+			}
+
 			src := viper.GetString("fragment_location")
 			dest := viper.GetString("changelog_destination")
 
@@ -32,15 +41,19 @@ func BuildCmd(fs afero.Fs) *cobra.Command {
 				return fmt.Errorf("error parsing flag 'version': %w", err)
 			}
 
+			filename := fmt.Sprintf("%s.yaml", version)
 			b := changelog.NewBuilder(fs, filename, version, src, dest)
 
-			if err := b.Build(); err != nil {
+			if err := b.Build(owner, repo); err != nil {
 				return fmt.Errorf("cannot build changelog: %w", err)
 			}
 
 			return nil
 		},
 	}
+
+	buildCmd.Flags().String("repo", defaultRepo, "target repository")
+	buildCmd.Flags().String("owner", defaultOwner, "target repository owner")
 
 	buildCmd.Flags().String("version", "", "The version of the consolidated changelog being created")
 	err := buildCmd.MarkFlagRequired("version")
