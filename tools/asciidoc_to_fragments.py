@@ -55,42 +55,44 @@ def parse_line(line, kind):
     title = title.replace("/", "|")
     title = title.rstrip(".")
 
-    repo_link = ""
+    pr_repo, issue_repo = "", ""
 
     for entry in entries:
         number = entry[entry.find("[")+1:entry.find("]")]
         number = ''.join(filter(lambda n: n.isdigit(), number))
+        entry_data = entry.split("}")[0]
 
-        if "pull" in entry:
-            fragment_field, default_repo_token = ["pr", "pull}"]
-        if "issue" in entry:
-            fragment_field, default_repo_token = ["issue", "issue}"]
+        try:
+            fragment_field, repo = entry_data.split("-")
+            repo_link = repo_dict[repo]
+        except ValueError:
+            fragment_field, repo_link = entry_data, default_repolink
+
+        fragment_field = fragment_field.replace("pull", "pr")
 
         if fragment_field in fragment_dict.keys():
             print(f"Skipping {line} -> multiple PRs/issues found!\n")
             return
 
-        fragment_dict[fragment_field] = number
+        if fragment_field == "pr":
+            fragment_dict[fragment_field] = number
+            pr_repo = repo_link
+        elif fragment_field == "issue":
+            fragment_dict[fragment_field] = number
+            issue_repo = repo_link
 
-        if entry.startswith(default_repo_token):
-            if repo_link:
-                if repo_link != default_repolink:
-                    print(f"Skipping {line} -> multiple repositories found!\n")
-                    return
-            repo_link = default_repolink
-        else:
-            for repo in repo_dict.keys():
-                if repo in entry:
-                    if repo_link and repo_link != repo_dict[repo]:
-                        print(f"Skipping {line} -> multiple repositories found!\n")
-                        return
-                    repo_link = repo_dict[repo]
+    if pr_repo:
+        fragment_dict["repository"] = pr_repo
+    elif issue_repo:
+        fragment_dict["repository"] = issue_repo
 
-    if repo_link:
-        fragment_dict["repository"] = repo_link
-
+    if issue_repo != pr_repo and pr_repo:
+        try:
+            del fragment_dict["issue"]
+        except KeyError:
+            pass
+   
     write_fragment(title, fragment_dict)
-
 
 def iterate_lines(f, kind='', skip=True):
     line = next(f, None)
