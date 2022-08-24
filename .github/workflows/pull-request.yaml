@@ -90,3 +90,25 @@ jobs:
         run: |
           GOBIN=$PWD/bin go install github.com/elastic/go-licenser@latest
           ./bin/go-licenser -license Elasticv2 -d
+
+  fragments:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: get go version
+        run: |
+          gv=$(cat .go-version)
+          echo "::set-output name=go::$gv"
+        id: version
+
+      - name: install Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: "${{steps.version.outputs.go}}"
+
+      - name: check fragments
+        run: |
+          make build
+          ./elastic-agent-changelog-tool pr-has-fragment --repo elastic-agent-changelog-tool ${{github.event.number}}
