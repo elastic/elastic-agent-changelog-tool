@@ -64,7 +64,7 @@ $ elastic-agent-changelog-tool build --version x.y.z --owner <owner> --repo <rep
   * `x.y.z` is the version to release.
   * `owner` is the user / organization the repository to use belongs to. The default value is `elastic`.
   * `repo` is the name of the repository containing the issues / PRs, etc. The default value is `elastic-agent`.
-* This will create `./changelog.yaml`. Store it in the repository as `changelog/x.y.x.yaml`.
+* This will create `./changelog/x.y.z.yaml`.
 * From the root of the repository run:
 ```
 $ elastic-agent-changelog-tool cleanup
