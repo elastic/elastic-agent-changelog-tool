@@ -9,7 +9,7 @@ import (
 )
 
 const defaultOwner = "elastic"
-const defaultRepo = "beats"
+const defaultRepo = "elastic-agent"
 
 // RootCmd creates and returns root cmd for elastic-agent-changelog-tool.
 func RootCmd() *cobra.Command {
