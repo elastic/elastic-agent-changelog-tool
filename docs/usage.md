@@ -74,7 +74,7 @@ $ elastic-agent-changelog-tool cleanup
 ```
 $ elastic-agent-changelog-tool render --version x.y.z
 ```
-* This will generate an asciidoc fragment in the current directory.
+* This will generate an asciidoc fragment in the `changelog/` directory.
 * Integrate the generated fragment into the changelog. If the changelog is stored in the same repository, commit the changes in this same branch.
 * Create a PR with the changes to the `x.y` branch.
 
