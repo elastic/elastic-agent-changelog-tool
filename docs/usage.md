@@ -33,19 +33,47 @@ The fragment is created from the template available in [`../internal/changelog/f
 
 ### Viewing the changelog
 
-There is no way to view the changelog at the moment. You can view the **consolidated changelog** by running:
+From the repository root folder build the consolidated changelog with:
 
 ```
-$ elastic-agent-changelog-tool build --version=8.2.1
+$ elastic-agent-changelog-tool build --version=next --owner <owner> --repo <repo>
 ```
 
-from the repository root folder.
+the render the consolidated changelog with:
+
+```
+$ $ elastic-agent-changelog-tool render --version=next --owner <owner> --repo <repo>
+```
 
 An example is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).
 
 ## I'm a maintainer
 
-To be done.
+As a maintainer you are responsible for ensureing **changelog fragments** are present in Pull Requests.
+You may also be interested in  viewing the changelog for unreleased changes.
+
+### Ensuring Changelog Fragment presence in PRs
+
+`elastic-agent-chagelog-tool` has a dedicated command for this: `pr-has-fragment`.
+Given a PR number this command checks for presence of an added Changelog Fragment.
+
+For futrher details look at command usage: `elastic-agent-changelog-tool pr-has-fragment --help`
+
+### Viewing the changelog
+
+From the repository root folder build the consolidated changelog with:
+
+```
+$ elastic-agent-changelog-tool build --version=next --owner <owner> --repo <repo>
+```
+
+the render the consolidated changelog with:
+
+```
+$ $ elastic-agent-changelog-tool render --version=next --owner <owner> --repo <repo>
+```
+
+An example is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).
 
 ## I'm the release manager
 
