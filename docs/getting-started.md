@@ -10,6 +10,10 @@ Ensure you have `git` installed and available.
 
 Follow one of the installation ways described in [`./install.md`](./install.md).
 
+### 2.1 Look at the tool concepts
+
+The tool is based upon some [concepts](./concepts.md) that you may want to look at now.
+
 ## 3. Create a changelog fragment
 
 From the root folder of the repository run:
