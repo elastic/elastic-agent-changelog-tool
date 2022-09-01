@@ -31,6 +31,10 @@ func FindFileInPR(ctx context.Context, c *Client, owner, repo string, pr int, pa
 				continue
 			}
 
+			if found && *f.Status == "removed" {
+				continue
+			}
+
 			if found {
 				return true, nil
 			}
