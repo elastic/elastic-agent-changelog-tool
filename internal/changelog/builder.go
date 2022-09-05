@@ -117,10 +117,10 @@ func (b Builder) Build(owner, repo string) error {
 			b.changelog.Entries[i].LinkedPR = []int{originalPR}
 		}
 
-		if len(entry.LinkedIssue) == 0 && len(entry.LinkedPR) > 0 {
+		if len(entry.LinkedIssue) == 0 && len(b.changelog.Entries[i].LinkedPR) > 0 {
 			linkedIssues := []int{}
 
-			for _, pr := range entry.LinkedPR {
+			for _, pr := range b.changelog.Entries[i].LinkedPR {
 				tempIssues, err := FindIssues(graphqlClient, context.Background(), owner, repo, pr, 50)
 				if err != nil {
 					log.Printf("%s: could not find linked issues for pr: %s/pull/%d", entry.File.Name, entry.Repository, entry.LinkedPR)
