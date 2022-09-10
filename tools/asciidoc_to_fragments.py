@@ -94,17 +94,15 @@ def parse_line(line, kind):
         except ValueError:
             fragment_field, repo_link = entry_data, default_repolink
 
-        fragment_field = fragment_field.replace("pull", "pr")
-
         if fragment_field in fragment_dict.keys():
             print(f"Skipping {line} -> multiple PRs/issues found\n")
             return
 
-        if fragment_field == "pr":
-            fragment_dict[fragment_field] = ''.join([repo_link, '/pull/', number])
+        if fragment_field == "pull":
+            fragment_dict["pr"] = ''.join([repo_link, '/pull/', number])
             pr_number, pr_repo = number, repo_link
         elif fragment_field == "issue":
-            fragment_dict[fragment_field] = ''.join([repo_link, '/issue/', number])
+            fragment_dict["issue"] = ''.join([repo_link, '/issue/', number])
             issue_number, issue_repo = number, repo_link
     
     if pr_repo:
