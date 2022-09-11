@@ -85,7 +85,7 @@ func TestCreate(t *testing.T) {
 kind: feature
 
 # Change summary; a 80ish characters long description of the change.
-summary:
+summary: foobar
 
 # Long description; in case the summary is not enough to describe the change
 # this field accommodate a description without length limits.
