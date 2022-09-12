@@ -19,6 +19,7 @@
 - Allow the / char in variable names in eql and transpiler. {issue}715[715] {pull}718[718]
 - Fix data duplication for standalone agent on Kubernetes using the default manifest {issue-beats}31512[31512] {pull}742[742]
 - Agent updates will clean up unneeded artifacts. {issue}693[693] {issue}694[694] {pull}752[752]
+- Partial extracted beat result in failure to spawn beat {issue-beats}[21718]
 
 ==== New features
 
@@ -30,3 +31,5 @@
 - Changed the default policy selection logic. When the agent has no policy id or name defined, it will fall back to defaults (defined by $FLEET_SERVER_POLICY_ID and $FLEET_DEFAULT_TOKEN_POLICY_NAME environment variables respectively). {issue-beats}[29774] {pull}226[226]
 - Support scheduled actions and cancellation of pending actions. {issue}393[393] {pull}419[419]
 - Bump node.js version for heartbeat/synthetics to 16.15.0
+- Test PR still open {pull}247[247]
+- Test PR does not exist {pull}100000[100000]
