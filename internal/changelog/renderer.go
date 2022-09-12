@@ -74,7 +74,7 @@ func (r Renderer) Render() error {
 	tmpl, err := template.New("asciidoc-release-notes").
 		Funcs(template.FuncMap{
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
-			"linkPRSource": func(component string, ids []int) string {
+			"linkPRSource": func(component string, ids []string) string {
 				component = "agent" // TODO: remove this when implementing support for multiple components
 
 				res := make([]string, len(ids))
@@ -86,7 +86,7 @@ func (r Renderer) Render() error {
 				return strings.Join(res, " ")
 			},
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
-			"linkIssueSource": func(component string, ids []int) string {
+			"linkIssueSource": func(component string, ids []string) string {
 				component = "agent" // TODO: remove this when implementing support for multiple components
 				res := make([]string, len(ids))
 

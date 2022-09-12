@@ -9,7 +9,7 @@ type Fragment struct {
 	Summary     string `yaml:"summary"`
 	Description string `yaml:"description"`
 	Component   string `yaml:"component"`
-	Pr          int    `yaml:"pr"`
-	Issue       int    `yaml:"issue"`
+	Pr          string `yaml:"pr"`
+	Issue       string `yaml:"issue"`
 	Repository  string `yaml:"repository"`
 }

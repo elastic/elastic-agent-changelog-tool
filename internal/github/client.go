@@ -8,6 +8,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	gh "github.com/google/go-github/v32/github"
 	"github.com/shurcooL/githubv4"
@@ -45,7 +46,7 @@ type graphqlService struct {
 	client *githubv4.Client
 }
 
-func (s *graphqlService) FindIssues(ctx context.Context, owner, repo string, prID, issuesLen int) ([]int, error) {
+func (s *graphqlService) FindIssues(ctx context.Context, owner, repo string, prID, issuesLen int) ([]string, error) {
 	variables := map[string]interface{}{
 		"issuesLen": githubv4.Int(issuesLen),
 		"prID":      githubv4.Int(prID),
@@ -72,10 +73,10 @@ func (s *graphqlService) FindIssues(ctx context.Context, owner, repo string, prI
 		return nil, fmt.Errorf("graphql mutate: %w", err)
 	}
 
-	issues := make([]int, len(q.Repository.PullRequest.ClosingIssuesReferences.Edges))
+	issues := make([]string, len(q.Repository.PullRequest.ClosingIssuesReferences.Edges))
 
 	for i, e := range q.Repository.PullRequest.ClosingIssuesReferences.Edges {
-		issues[i] = int(e.Node.Number)
+		issues[i] = strconv.FormatInt(int64(e.Node.Number), 10)
 	}
 
 	return issues, nil
