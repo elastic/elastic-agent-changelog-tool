@@ -71,9 +71,9 @@ func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
 				return err
 			}
 			if !found {
-				return fmt.Errorf("fragment not present in PR %d, add one of the following to it:\n"+
-					"1) fragment using the new command\n"+
-					"2) label from %q to skip validation", pr, labels)
+				return fmt.Errorf("fragment not present in PR %d, to resolve this do one of the following:\n"+
+					"1) add a fragment using the 'new' command\n"+
+					"2) add a label (one of: %q) to skip validation", pr, labels)
 			}
 
 			return nil
