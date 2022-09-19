@@ -60,7 +60,7 @@ func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
 				return err
 			}
 			if shouldSkip {
-				fmt.Fprintf(cmd.OutOrStdout(), "PR requires no changelog due to label from %q present\n", labels)
+				fmt.Fprintf(cmd.OutOrStdout(), "PR requires no changelog because it has one of these labels: %q\n", labels)
 				return nil
 			}
 
