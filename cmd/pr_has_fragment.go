@@ -60,7 +60,7 @@ func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
 				return err
 			}
 			if shouldSkip {
-				fmt.Fprintln(cmd.OutOrStdout(), "PR requires no changelog")
+				fmt.Fprintf(cmd.OutOrStdout(), "PR requires no changelog due to label from %q present\n", labels)
 				return nil
 			}
 
@@ -71,7 +71,9 @@ func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
 				return err
 			}
 			if !found {
-				return fmt.Errorf("fragment not present in PR %d", pr)
+				return fmt.Errorf("fragment not present in PR %d, add one of the following to it:\n"+
+					"1) fragment using the new command\n"+
+					"2) label from %q to skip validation", pr, labels)
 			}
 
 			return nil
