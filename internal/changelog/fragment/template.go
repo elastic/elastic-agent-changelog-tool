@@ -9,20 +9,18 @@ import (
 	"embed"
 	"fmt"
 	txttempl "text/template"
-
-	"github.com/spf13/afero"
 )
 
 //go:embed template.yaml
 var template embed.FS
 
-func Template(fs afero.Fs, filePath, slug string) ([]byte, error) {
+func Template(slug string) ([]byte, error) {
 	data, err := template.ReadFile("template.yaml")
 	if err != nil {
 		return nil, fmt.Errorf("cannot read embedded template: %w", err)
 	}
 
-	t1, err := txttempl.New("template").Parse(string(data))
+	tmpl, err := txttempl.New("template").Parse(string(data))
 	if err != nil {
 		return nil, fmt.Errorf("cannot parse template: %w", err)
 	}
@@ -32,7 +30,7 @@ func Template(fs afero.Fs, filePath, slug string) ([]byte, error) {
 
 	buf := bytes.NewBuffer(nil)
 
-	err = t1.Execute(buf, vars)
+	err = tmpl.Execute(buf, vars)
 	if err != nil {
 		return nil, fmt.Errorf("cannot execute template: %w", err)
 	}

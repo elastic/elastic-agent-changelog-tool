@@ -61,13 +61,13 @@ func (c FragmentCreator) Create(slug string) error {
 	if err := c.fs.MkdirAll(c.location, fragmentLocPerm); err != nil {
 		return fmt.Errorf("cannot create fragment location folder: %v", err)
 	}
-	filePath := path.Join(c.location, c.filename(slug))
 
-	template, err := Template(c.fs, filePath, slug)
+	template, err := Template(slug)
 	if err != nil {
 		return err
 	}
 
+	filePath := path.Join(c.location, c.filename(slug))
 	if err := afero.WriteFile(c.fs, filePath, template, fragmentPerm); err != nil {
 		return err
 	}
