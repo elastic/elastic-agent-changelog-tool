@@ -64,6 +64,19 @@ def get_event_timestamp(repository, event, number):
         date = datetime.fromisoformat(data["closed_at"].replace('Z', '+00:00'))
         return str(int(datetime.timestamp(date)))
 
+
+def sanitize_title(title):
+    char_to_replace = {" ": "-", "/": "", "\\":"", "`": "", "*": "", "#": "", "%": "", "&":"",
+                       "{":"", "}":"", "!":"", "<":"", ">": "", "?":"", "$":"", "!": "", "'":"", 
+                       '"':"", ":":"", "@": "", "+":"", "|":"", "=": ""}
+
+    for k,v in char_to_replace.items():
+        title = title.replace(k, v)
+    title = title.rstrip(".")
+
+    return title
+                    
+
 def parse_line(line, kind):
     global fragments_counter
     fragments_counter += 1
@@ -76,10 +89,7 @@ def parse_line(line, kind):
     fragment_dict["summary"] = summary.lstrip(field_token).strip()
     fragment_dict["summary"] = fragment_dict["summary"].replace(":", "")
 
-    title = fragment_dict["summary"]
-    title = title.replace(" ", "-")
-    title = title.replace("/", "|")
-    title = title.rstrip(".")
+    title = sanitize_title(fragment_dict["summary"])
 
     pr_repo, issue_repo, fragment_timestamp = "", "", ""
 
