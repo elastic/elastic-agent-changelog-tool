@@ -9,7 +9,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"net/url"
 	"os"
 	"os/exec"
 	"path"
@@ -170,11 +169,6 @@ func collectFragment(fs afero.Fs, path string, info os.FileInfo, err error, file
 }
 
 func ExtractEventNumber(linkType, eventURL string) (string, error) {
-	_, err := url.Parse(eventURL)
-	if err != nil {
-		return "", fmt.Errorf("invalid url: %w", err)
-	}
-
 	urlParts := strings.Split(eventURL, "/")
 
 	if len(urlParts) < 1 {
