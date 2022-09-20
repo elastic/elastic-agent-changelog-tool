@@ -9,6 +9,22 @@ from os import makedirs
 from os.path import expanduser
 from datetime import datetime
 
+# Using this script
+# Run it from destination repository root with:
+# python /path/to/elastic-agent-changelog-tool/tools/asciidoc_to_fragments.py --path CHANGELOG.next.asciidoc --workdir $PWD
+#
+# If errors arise you should at first try to solve them in the source changelog, 
+# so that if you re-run the script you are not required to apply the same fixes
+# again.
+# Fixable errors:
+# - look for duplicated entries
+# - no response from Github API: look for missing or wrong data (es issue number instead of PR number) in {pull}
+# - no PR/issue fields: no {pull} or {issue field present}
+# - multiple PRs/issues found: the tool does not support multiple {pull} or {issue} on the same line; split them or remove all but one {issue} and one {pull}
+# - issue info lost due to multiple repositories: remove the one referring to an external repository
+# - look for files starting with "1000000*", as this timestamp means something is wrong (missing {pull} maybe?)
+#
+# For the remaining errors, fix them in the created fragments.
 
 api_url = "https://api.github.com/repos/"
 github_token_location = "/.elastic/github.token"
