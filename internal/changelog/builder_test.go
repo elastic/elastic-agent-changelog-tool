@@ -41,7 +41,8 @@ func TestFillEmptyPRField(t *testing.T) {
 	require.NoError(t, err)
 	require.Len(t, prIDs, 2)
 	require.NotEmpty(t, prIDs)
-	require.ElementsMatch(t, []int{30979, 31279}, prIDs)
+	require.ElementsMatch(t, []string{
+		"https://github.com/elastic/beats/pull/30979", "https://github.com/elastic/beats/pull/31279"}, prIDs)
 }
 
 func TestFillEmptyPRFieldBadHash(t *testing.T) {
@@ -61,9 +62,15 @@ func TestFindIssues(t *testing.T) {
 
 	graphqlClient := github.NewGraphQLClient(hc)
 
-	issues, err := changelog.FindIssues(graphqlClient, context.Background(), "elastic", "beats", 32501, 50)
+	issues, err := changelog.FindIssues(graphqlClient, context.Background(), "elastic", "beats", "https://github.com/elastic/beats/pull/32501", 50)
 	require.NoError(t, err)
 	require.NotEmpty(t, issues)
 	require.Len(t, issues, 1)
-	require.ElementsMatch(t, issues, []int{32483})
+	require.ElementsMatch(t, issues, []string{"https://github.com/elastic/beats/issues/32483"})
+}
+
+func TestExtractEventNumber(t *testing.T) {
+	id, err := changelog.ExtractEventNumber("pr", "https://github.com/elastic/elastic-agent-changelog-tool/pull/99")
+	require.NoError(t, err)
+	require.Equal(t, id, "99")
 }

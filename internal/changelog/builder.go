@@ -13,6 +13,7 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog/fragment"
@@ -110,20 +111,20 @@ func (b Builder) Build(owner, repo string) error {
 			// Applying heuristics to PR fields
 			originalPR, err := FindOriginalPR(entry.LinkedPR[0], owner, repo, c)
 			if err != nil {
-				log.Printf("%s: check if the PR field is correct in changelog", entry.File.Name)
+				log.Printf("%s: check if the PR field is correct in changelog: %s", entry.File.Name, err.Error())
 				continue
 			}
 
-			b.changelog.Entries[i].LinkedPR = []int{originalPR}
+			b.changelog.Entries[i].LinkedPR = []string{originalPR}
 		}
 
 		if len(entry.LinkedIssue) == 0 && len(b.changelog.Entries[i].LinkedPR) > 0 {
-			linkedIssues := []int{}
+			linkedIssues := []string{}
 
-			for _, pr := range b.changelog.Entries[i].LinkedPR {
-				tempIssues, err := FindIssues(graphqlClient, context.Background(), owner, repo, pr, 50)
+			for _, prURL := range b.changelog.Entries[i].LinkedPR {
+				tempIssues, err := FindIssues(graphqlClient, context.Background(), owner, repo, prURL, 50)
 				if err != nil {
-					log.Printf("%s: could not find linked issues for pr: %s/pull/%d", entry.File.Name, entry.Repository, entry.LinkedPR)
+					log.Printf("%s: could not find linked issues for pr: %s: %s", entry.File.Name, entry.LinkedPR, err.Error())
 					continue
 				}
 
@@ -134,7 +135,13 @@ func (b Builder) Build(owner, repo string) error {
 			}
 
 			b.changelog.Entries[i].LinkedIssue = linkedIssues
+		} else if len(entry.LinkedIssue) == 1 {
+			_, err := ExtractEventNumber("issue", entry.LinkedIssue[0])
+			if err != nil {
+				log.Printf("%s: check if the issue field is correct in changelog: %s", entry.File.Name, err.Error())
+			}
 		}
+
 	}
 
 	data, err := yaml.Marshal(&b.changelog)
@@ -161,6 +168,39 @@ func collectFragment(fs afero.Fs, path string, info os.FileInfo, err error, file
 	return nil
 }
 
+func ExtractEventNumber(linkType, eventURL string) (string, error) {
+	urlParts := strings.Split(eventURL, "/")
+
+	if len(urlParts) < 1 {
+		return "", fmt.Errorf("cant get event number")
+	}
+
+	switch linkType {
+	// maybe use regex to validate instead of a simple string check
+	case "pr":
+		if !strings.Contains(eventURL, "pull") {
+			return "", fmt.Errorf("link is invalid for pr")
+		}
+	case "issue":
+		if !strings.Contains(eventURL, "issues") {
+			return "", fmt.Errorf("link is invalid for issue")
+		}
+	}
+
+	return urlParts[len(urlParts)-1], nil
+}
+
+func CreateEventLink(linkType, owner, repo, eventID string) string {
+	switch linkType {
+	case "issue":
+		return fmt.Sprintf("https://github.com/%s/%s/issues/%s", owner, repo, eventID)
+	case "pr":
+		return fmt.Sprintf("https://github.com/%s/%s/pull/%s", owner, repo, eventID)
+	default:
+		panic("wrong linkType")
+	}
+}
+
 func GetLatestCommitHash(fileName string) (string, error) {
 	response, err := exec.Command("git", "log", "--diff-filter=A", "--format=%H", "changelog/fragments/"+fileName).Output()
 	if err != nil {
@@ -170,40 +210,61 @@ func GetLatestCommitHash(fileName string) (string, error) {
 	return strings.ReplaceAll(string(response), "\n", ""), nil
 }
 
-func FindIssues(graphqlClient *github.ClientGraphQL, ctx context.Context, owner, name string, prID, issuesLen int) ([]int, error) {
-	issues, err := graphqlClient.PR.FindIssues(ctx, owner, name, prID, issuesLen)
+func FindIssues(graphqlClient *github.ClientGraphQL, ctx context.Context, owner, name string, prURL string, issuesLen int) ([]string, error) {
+	prID, err := ExtractEventNumber("pr", prURL)
 	if err != nil {
 		return nil, err
 	}
 
-	return issues, nil
+	prIDInt, _ := strconv.Atoi(prID)
+
+	issues, err := graphqlClient.PR.FindIssues(ctx, owner, name, prIDInt, issuesLen)
+	if err != nil {
+		return nil, err
+	}
+
+	issueLinks := make([]string, len(issues))
+
+	for i, issue := range issues {
+		issueLinks[i] = CreateEventLink("issue", owner, name, issue)
+	}
+
+	return issueLinks, nil
 }
 
-func FillEmptyPRField(commitHash, owner, repo string, c *github.Client) ([]int, error) {
+func FillEmptyPRField(commitHash, owner, repo string, c *github.Client) ([]string, error) {
 	pr, err := github.FindPR(context.Background(), c, owner, repo, commitHash)
 	if err != nil {
-		return []int{}, err
+		return []string{}, err
 	}
 
-	var prIDs []int
+	prLinks := []string{}
 
 	for _, item := range pr.Items {
-		prIDs = append(prIDs, item.PullRequestID)
+		prLinks = append(prLinks, CreateEventLink("pr", owner, repo, strconv.Itoa(item.PullRequestID)))
 	}
 
-	return prIDs, nil
+	return prLinks, nil
 }
 
-func FindOriginalPR(linkedPR int, owner, repo string, c *github.Client) (int, error) {
-	pr, _, err := c.PullRequests.Get(context.Background(), owner, repo, linkedPR)
+func FindOriginalPR(prURL string, owner, repo string, c *github.Client) (string, error) {
+	linkedPR, err := ExtractEventNumber("pr", prURL)
 	if err != nil {
-		return 0, err
+		return "", err
+	}
+
+	linkedPRString, _ := strconv.Atoi(linkedPR)
+
+	pr, _, err := c.PullRequests.Get(context.Background(), owner, repo, linkedPRString)
+	if err != nil {
+		return "", err
 	}
 
 	prID, err := github.TestStrategies(pr, &github.BackportPRNumber{}, &github.PRNumber{})
 	if err != nil {
-		return 0, err
+		return "", err
 	}
 
-	return prID, nil
+	prLink := CreateEventLink("pr", owner, repo, strconv.Itoa(prID))
+	return prLink, nil
 }

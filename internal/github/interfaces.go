@@ -31,5 +31,5 @@ type githubUsersService interface {
 }
 
 type githubGraphQLPRService interface {
-	FindIssues(ctx context.Context, owner, repo string, prID, issuesLen int) ([]int, error)
+	FindIssues(ctx context.Context, owner, repo string, prID, issuesLen int) ([]string, error)
 }
