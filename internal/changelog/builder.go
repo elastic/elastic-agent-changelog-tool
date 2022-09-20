@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"os/exec"
 	"path"
@@ -109,6 +110,12 @@ func (b Builder) Build(owner, repo string) error {
 			b.changelog.Entries[i].LinkedPR = prIDs
 		} else {
 			// Applying heuristics to PR fields
+			owner, repo, err := ExtractOwnerRepo(entry.LinkedPR[0])
+			if err != nil {
+				log.Printf("%s: check if the PR field is correct in changelog: %s", entry.File.Name, err.Error())
+				continue
+			}
+
 			originalPR, err := FindOriginalPR(entry.LinkedPR[0], owner, repo, c)
 			if err != nil {
 				log.Printf("%s: check if the PR field is correct in changelog: %s", entry.File.Name, err.Error())
@@ -122,6 +129,12 @@ func (b Builder) Build(owner, repo string) error {
 			linkedIssues := []string{}
 
 			for _, prURL := range b.changelog.Entries[i].LinkedPR {
+				owner, repo, err := ExtractOwnerRepo(prURL)
+				if err != nil {
+					log.Printf("%s: check if the PR field is correct in changelog: %s", entry.File.Name, err.Error())
+					continue
+				}
+
 				tempIssues, err := FindIssues(graphqlClient, context.Background(), owner, repo, prURL, 50)
 				if err != nil {
 					log.Printf("%s: could not find linked issues for pr: %s: %s", entry.File.Name, entry.LinkedPR, err.Error())
@@ -136,7 +149,7 @@ func (b Builder) Build(owner, repo string) error {
 
 			b.changelog.Entries[i].LinkedIssue = linkedIssues
 		} else if len(entry.LinkedIssue) == 1 {
-			_, err := ExtractEventNumber("issue", entry.LinkedIssue[0])
+			_, err = ExtractEventNumber("issue", entry.LinkedIssue[0])
 			if err != nil {
 				log.Printf("%s: check if the issue field is correct in changelog: %s", entry.File.Name, err.Error())
 			}
@@ -168,11 +181,25 @@ func collectFragment(fs afero.Fs, path string, info os.FileInfo, err error, file
 	return nil
 }
 
+func ExtractOwnerRepo(eventURL string) (string, string, error) {
+	urlParsed, err := url.Parse(eventURL)
+	if err != nil {
+		return "", "", fmt.Errorf("invalid url: %w", err)
+	}
+
+	urlParts := strings.Split(urlParsed.Path, "/")
+	if len(urlParts) < 1 {
+		return "", "", fmt.Errorf("can't get owner or repo")
+	}
+
+	return urlParts[1], urlParts[2], nil
+}
+
 func ExtractEventNumber(linkType, eventURL string) (string, error) {
 	urlParts := strings.Split(eventURL, "/")
 
 	if len(urlParts) < 1 {
-		return "", fmt.Errorf("cant get event number")
+		return "", fmt.Errorf("can't get event number")
 	}
 
 	switch linkType {
