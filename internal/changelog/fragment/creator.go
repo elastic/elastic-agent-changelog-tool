@@ -58,17 +58,17 @@ var fragmentPerm = os.FileMode(0660)
 
 // Create marshal changelog fragment and persist it to file.
 func (c FragmentCreator) Create(slug string) error {
-	data, err := Template()
-	if err != nil {
-		return err
-	}
-
 	if err := c.fs.MkdirAll(c.location, fragmentLocPerm); err != nil {
 		return fmt.Errorf("cannot create fragment location folder: %v", err)
 	}
 
+	template, err := Template(slug)
+	if err != nil {
+		return err
+	}
+
 	filePath := path.Join(c.location, c.filename(slug))
-	if err := afero.WriteFile(c.fs, filePath, data, fragmentPerm); err != nil {
+	if err := afero.WriteFile(c.fs, filePath, template, fragmentPerm); err != nil {
 		return err
 	}
 

@@ -42,10 +42,16 @@ $ elastic-agent-changelog-tool build --version=next --owner <owner> --repo <repo
 the render the consolidated changelog with:
 
 ```
-$ $ elastic-agent-changelog-tool render --version=next --owner <owner> --repo <repo>
+$ elastic-agent-changelog-tool render --version=next --owner <owner> --repo <repo>
 ```
 
 An example is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).
+
+### My PR does not need a changelog
+
+Repositories using this tool are expected to leverage the `pr-has-fragment` command to validate presence of a Changelog Fragment in a Pull Requests. The command can be configured to validate PRs without a Changelog Fragment but labelled with specific labels.
+
+At this moment adding a label named `skip-changelog` or `backport` to a PR will skip the validation, allowing the labelled PR not to contain a Changelog Fragment.
 
 ## I'm a maintainer
 

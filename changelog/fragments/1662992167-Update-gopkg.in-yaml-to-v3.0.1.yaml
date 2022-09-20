@@ -8,10 +8,10 @@
 # - security: impacts on the security of a product or a user’s deployment.
 # - upgrade: important information for someone upgrading from a prior version
 # - other: does not fit into any of the other categories
-kind: feature
+kind: security
 
 # Change summary; a 80ish characters long description of the change.
-summary: {{.Summary}}
+summary: Update gopkg.in/yaml to v3.0.1
 
 # Long description; in case the summary is not enough to describe the change
 # this field accommodate a description without length limits.
