@@ -88,23 +88,19 @@ def get_event_timestamp(repository, event, number):
         return str(int(datetime.timestamp(date)))
 
 def sanitize_filename(s):
-    s = s.replace("*", "")
-    s = s.replace(".", "")
-    s = s.replace("$", "")
-    s = s.replace("`", "")
-    s = s.replace("(", "")
-    s = s.replace(")", "")
-    s = s.replace("[", "")
-    s = s.replace("]", "")
-    s = s.replace("{", "")
-    s = s.replace("}", "")
-    s = s.replace(",", "")
-    s = s.replace("--", "")
-
-    s = s.replace(" ", "-")
-    s = s.replace("/", "-")
-    s = s.replace("|", "-")
+    char_to_remove = ["\\","$","--",
+                      ".",",",
+                      "`","'","\"",
+                      "(",")","[","]","{","}","<",">",
+                      "*","#","@","+","=",":","!","%","&"]
+    for v in char_to_remove:
+        s = s.replace(v, "")
     
+    char_to_replace = [" ","/","|"]
+    replacement = "-"
+    for v in char_to_replace:
+        s = s.replace(v, replacement)
+
     return s
 
 def parse_line(line, kind):
