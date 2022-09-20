@@ -115,7 +115,8 @@ def parse_line(line, kind):
     fragment_dict["summary"] = summary.lstrip(field_token).strip()
     fragment_dict["summary"] = fragment_dict["summary"].replace(":", "")
 
-    filename = sanitize_filename(fragment_dict["summary"].rstrip("."))
+    # sanitize filename and use only first 80 chars to prevent getting a filename too long (that may error on write)
+    filename = sanitize_filename(fragment_dict["summary"].rstrip("."))[:80]
 
     pr_repo, issue_repo, fragment_timestamp = "", "", ""
 
