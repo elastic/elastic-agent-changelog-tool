@@ -87,6 +87,25 @@ def get_event_timestamp(repository, event, number):
         date = datetime.fromisoformat(data["closed_at"].replace('Z', '+00:00'))
         return str(int(datetime.timestamp(date)))
 
+def sanitize_filename(s):
+    s = s.replace("*", "")
+    s = s.replace(".", "")
+    s = s.replace("$", "")
+    s = s.replace("`", "")
+    s = s.replace("(", "")
+    s = s.replace(")", "")
+    s = s.replace("[", "")
+    s = s.replace("]", "")
+    s = s.replace("{", "")
+    s = s.replace("}", "")
+    s = s.replace(",", "")
+    s = s.replace("--", "")
+
+    s = s.replace(" ", "-")
+    s = s.replace("/", "-")
+    
+    return s
+
 def parse_line(line, kind):
     global fragments_counter
     fragments_counter += 1
@@ -99,10 +118,7 @@ def parse_line(line, kind):
     fragment_dict["summary"] = summary.lstrip(field_token).strip()
     fragment_dict["summary"] = fragment_dict["summary"].replace(":", "")
 
-    title = fragment_dict["summary"]
-    title = title.replace(" ", "-")
-    title = title.replace("/", "|")
-    title = title.rstrip(".")
+    filename = sanitize_filename(fragment_dict["summary"].rstrip("."))
 
     pr_repo, issue_repo, fragment_timestamp = "", "", ""
 
@@ -147,7 +163,7 @@ def parse_line(line, kind):
         except KeyError:
             pass
 
-    write_fragment(title, fragment_timestamp, fragment_dict)
+    write_fragment(filename, fragment_timestamp, fragment_dict)
 
 def iterate_lines(f, kind='', skip=True):
     line = next(f, None)
