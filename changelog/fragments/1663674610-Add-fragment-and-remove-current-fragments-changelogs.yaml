@@ -8,10 +8,10 @@
 # - security: impacts on the security of a product or a user’s deployment.
 # - upgrade: important information for someone upgrading from a prior version
 # - other: does not fit into any of the other categories
-kind: security
+kind: feature
 
 # Change summary; a 80ish characters long description of the change.
-summary: Update gopkg.in/yaml to v3.0.1
+summary: Add fragment and remove current fragments/changelogs
 
 # Long description; in case the summary is not enough to describe the change
 # this field accommodate a description without length limits.
@@ -29,7 +29,3 @@ component:
 # Issue number; optional; the GitHub issue related to this changeset (either closes or is part of).
 # If not present is automatically filled by the tooling with the issue linked to the PR number.
 #issue: 1234
-
-# Repository URL; optional; the repository URL related to this changeset and pr and issue numbers.
-# If not present is automatically filled by the tooling based on the repository this file has been committed in.
-#repository: https://github.com/elastic/elastic-agent-changelog-tool
