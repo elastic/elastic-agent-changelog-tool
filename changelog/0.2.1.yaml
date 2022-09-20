@@ -1,0 +1,40 @@
+version: 0.2.1
+entries:
+    - kind: bug-fix
+      summary: Fix logic in pr has fragment
+      description: ""
+      component: ""
+      pr:
+        - 83
+      issue:
+        - 82
+      repository: ""
+      timestamp: 1662369001
+      file:
+        name: 1662369001-Fix-logic-in-pr-has-fragment.yaml
+        checksum: f464b90e4d86face31214241eaf6169561b45dfa
+    - kind: bug-fix
+      summary: Fix issue automation
+      description: ""
+      component: ""
+      pr:
+        - 86
+      issue:
+        - 85
+      repository: ""
+      timestamp: 1662383510
+      file:
+        name: 1662383510-Fix-issue-automation.yaml
+        checksum: 59e7dbf4fecbcc66232f15afdb9a9e185649f8c1
+    - kind: security
+      summary: Update gopkg.in/yaml to v3.0.1
+      description: ""
+      component: ""
+      pr:
+        - 96
+      issue: []
+      repository: ""
+      timestamp: 1662992167
+      file:
+        name: 1662992167-Update-gopkg.in-yaml-to-v3.0.1.yaml
+        checksum: f42662e401a6b095ada81002bf8b3802376bbf49
