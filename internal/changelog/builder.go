@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"os/exec"
 	"path"
@@ -136,7 +137,7 @@ func (b Builder) Build(owner, repo string) error {
 
 			b.changelog.Entries[i].LinkedIssue = linkedIssues
 		} else if len(entry.LinkedIssue) == 1 {
-			_, err := ExtactEventNumber("issue", entry.LinkedIssue[0])
+			_, err := ExtractEventNumber("issue", entry.LinkedIssue[0])
 			if err != nil {
 				log.Printf("%s: check if the issue field is correct in changelog: %s", entry.File.Name, err.Error())
 			}
@@ -168,7 +169,12 @@ func collectFragment(fs afero.Fs, path string, info os.FileInfo, err error, file
 	return nil
 }
 
-func ExtactEventNumber(linkType, eventURL string) (string, error) {
+func ExtractEventNumber(linkType, eventURL string) (string, error) {
+	_, err := url.Parse(eventURL)
+	if err != nil {
+		return "", fmt.Errorf("invalid url: %w", err)
+	}
+
 	urlParts := strings.Split(eventURL, "/")
 
 	if len(urlParts) < 1 {
@@ -197,7 +203,7 @@ func CreateEventLink(linkType, owner, repo, eventID string) string {
 	case "pr":
 		return fmt.Sprintf("https://github.com/%s/%s/pull/%s", owner, repo, eventID)
 	default:
-		return ""
+		panic("wrong linkType")
 	}
 }
 
@@ -211,7 +217,7 @@ func GetLatestCommitHash(fileName string) (string, error) {
 }
 
 func FindIssues(graphqlClient *github.ClientGraphQL, ctx context.Context, owner, name string, prURL string, issuesLen int) ([]string, error) {
-	prID, err := ExtactEventNumber("pr", prURL)
+	prID, err := ExtractEventNumber("pr", prURL)
 	if err != nil {
 		return nil, err
 	}
@@ -248,7 +254,7 @@ func FillEmptyPRField(commitHash, owner, repo string, c *github.Client) ([]strin
 }
 
 func FindOriginalPR(prURL string, owner, repo string, c *github.Client) (string, error) {
-	linkedPR, err := ExtactEventNumber("pr", prURL)
+	linkedPR, err := ExtractEventNumber("pr", prURL)
 	if err != nil {
 		return "", err
 	}

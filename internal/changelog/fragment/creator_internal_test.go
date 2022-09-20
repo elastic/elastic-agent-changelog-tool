@@ -103,10 +103,6 @@ component:
 # Issue number; optional; the GitHub issue related to this changeset (either closes or is part of).
 # If not present is automatically filled by the tooling with the issue linked to the PR number.
 #issue: 1234
-
-# Repository URL; optional; the repository URL related to this changeset and pr and issue numbers.
-# If not present is automatically filled by the tooling based on the repository this file has been committed in.
-#repository: https://github.com/elastic/elastic-agent-changelog-tool
 `
 	got := string(content)
 	assert.Equal(t, expected, got)

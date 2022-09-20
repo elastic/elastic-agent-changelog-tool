@@ -68,3 +68,9 @@ func TestFindIssues(t *testing.T) {
 	require.Len(t, issues, 1)
 	require.ElementsMatch(t, issues, []string{"https://github.com/elastic/beats/issues/32483"})
 }
+
+func TestExtractEventNumber(t *testing.T) {
+	id, err := changelog.ExtractEventNumber("pr", "https://github.com/elastic/elastic-agent-changelog-tool/pull/99")
+	require.NoError(t, err)
+	require.Equal(t, id, "99")
+}

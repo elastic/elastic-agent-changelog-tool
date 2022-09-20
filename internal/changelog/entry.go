@@ -20,7 +20,6 @@ type Entry struct {
 	Component   string   `yaml:"component"`
 	LinkedPR    []string `yaml:"pr"`
 	LinkedIssue []string `yaml:"issue"`
-	Repository  string   `yaml:"repository"`
 
 	Timestamp int64            `yaml:"timestamp"`
 	File      FragmentFileInfo `yaml:"file"`
@@ -36,7 +35,6 @@ func EntryFromFragment(f fragment.File) Entry {
 		Component:   f.Fragment.Component,
 		LinkedPR:    []string{},
 		LinkedIssue: []string{},
-		Repository:  f.Fragment.Repository,
 		Timestamp:   f.Timestamp,
 		File: FragmentFileInfo{
 			Name:     f.Name,
@@ -44,11 +42,11 @@ func EntryFromFragment(f fragment.File) Entry {
 		},
 	}
 
-	if len(f.Fragment.Pr) > 0 {
+	if f.Fragment.Pr != "" {
 		e.LinkedPR = []string{f.Fragment.Pr}
 	}
 
-	if len(f.Fragment.Issue) > 0 {
+	if f.Fragment.Issue != "" {
 		e.LinkedIssue = []string{f.Fragment.Issue}
 	}
 

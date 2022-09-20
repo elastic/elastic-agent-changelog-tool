@@ -11,5 +11,4 @@ type Fragment struct {
 	Component   string `yaml:"component"`
 	Pr          string `yaml:"pr"`
 	Issue       string `yaml:"issue"`
-	Repository  string `yaml:"repository"`
 }
