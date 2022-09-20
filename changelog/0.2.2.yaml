@@ -1,0 +1,15 @@
+version: 0.2.2
+entries:
+    - kind: feature
+      summary: Add fragment summary autocompletion from title
+      description: ""
+      component: ""
+      pr:
+        - 94
+      issue:
+        - 84
+      repository: ""
+      timestamp: 1663587352
+      file:
+        name: 1663587352-Add-fragment-summary-autocompletion-from-title.yaml
+        checksum: ad901864328bdc4c56e3c1b03f7fb1f4f0fe758d
