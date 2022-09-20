@@ -8,6 +8,7 @@ import requests
 from os import makedirs
 from os.path import expanduser
 from datetime import datetime
+from hashlib import sha1
 
 # Using this script
 # Run it from destination repository root with:
@@ -46,19 +47,25 @@ kind_dict = {
 kind_token = "===="
 field_token = "-"
 
-def write_fragment(title, fragment_timestamp, fragment_dict):
+def write_fragment(filename, fragment_timestamp, fragment_dict):
     if not fragment_timestamp:
         fragment_timestamp = str(1000000000 + fragments_counter)
 
     path = "".join([fragments_path,
                     fragment_timestamp,
                     "-",
-                    title,
+                    filename,
                     ".yaml"])
 
     with open(path, 'w+') as f:
         for k, v in fragment_dict.items():
             f.write(f"{k}: {v}\n")
+
+    # print path and SHA1 of it's content, for verification purposes
+    with open(path, 'r') as f:
+        content = f.read()
+        hash_object = sha1(content.encode('utf-8'))
+        print(path, hash_object.hexdigest())
 
 def get_event_timestamp(repository, event, number):
     token_path = ''.join([expanduser("~"), github_token_location])
