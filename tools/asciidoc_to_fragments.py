@@ -129,10 +129,8 @@ def parse_line(line, kind):
             issue_number, issue_repo = number, repo_link
     
     if pr_repo:
-        fragment_dict["repository"] = pr_repo
         fragment_timestamp = get_event_timestamp(pr_repo, "pulls", pr_number)
     elif issue_repo:
-        fragment_dict["repository"] = issue_repo
         fragment_timestamp = get_event_timestamp(issue_repo, "issues", issue_number)
 
     if fragment_timestamp == "not_found":
