@@ -1,0 +1,26 @@
+version: 0.3.0
+entries:
+    - kind: feature
+      summary: Add URL support for pr and issue fields in fragments and changelog
+      description: ""
+      component: ""
+      pr:
+        - https://github.com/elastic/elastic-agent-changelog-tool/pull/95
+      issue:
+        - https://github.com/elastic/elastic-agent-changelog-tool/issues/89
+      timestamp: 1663677931
+      file:
+        name: 1663677931-Add-URL-support-for-pr-and-issue-fields-in-fragments-and-changelog.yaml
+        checksum: 61ed9d0f804326bc9ecac9a6812c65dfe026d645
+    - kind: bug-fix
+      summary: Fix build logic for Github API calls
+      description: ""
+      component: ""
+      pr:
+        - https://github.com/elastic/elastic-agent-changelog-tool/pull/109
+      issue:
+        - https://github.com/elastic/elastic-agent-changelog-tool/issues/108
+      timestamp: 1663757086
+      file:
+        name: 1663757086-Fix-build-logic-for-Github-API-calls.yaml
+        checksum: c7da8f1f0059a9c4058e6829f64a7ab7496202ed
