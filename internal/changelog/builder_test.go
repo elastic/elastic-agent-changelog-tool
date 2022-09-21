@@ -74,3 +74,9 @@ func TestExtractEventNumber(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, id, "99")
 }
+func TestExtractOwnerRepo(t *testing.T) {
+	owner, repo, err := changelog.ExtractOwnerRepo("https://github.com/elastic/beats/pull/20186")
+	require.NoError(t, err)
+	require.Equal(t, owner, "elastic")
+	require.Equal(t, repo, "beats")
+}
