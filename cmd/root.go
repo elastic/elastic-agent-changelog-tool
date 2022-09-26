@@ -14,7 +14,7 @@ import (
 const defaultOwner = "elastic"
 const defaultRepo = "elastic-agent"
 
-var config *settings.Config
+var config settings.Config
 
 func GetOwner(flagOwner string) string {
 	switch {
