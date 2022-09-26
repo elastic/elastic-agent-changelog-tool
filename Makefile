@@ -16,3 +16,8 @@ licenser:
 
 test:
 	go test -v ./...
+
+livetest:
+	rm -f ./internal/changelog/testdata/fixtures/*
+	rm -f ./internal/github/testdata/fixtures/*
+	go test -v ./...
