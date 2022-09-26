@@ -5,6 +5,7 @@
 package settings
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -16,6 +17,28 @@ import (
 
 const envPrefix = "ELASTIC_AGENT_CHANGELOG"
 const configFileFolder = "elastic-agent-changelog-tool"
+
+type Config struct {
+	Owner string `yaml:"owner"`
+	Repo  string `yaml:"repo"`
+	// ...
+}
+
+func LoadConfig() (*Config, error) {
+	viper.AddConfigPath(".")
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.ReadInConfig()
+
+	var cfg Config
+
+	err := viper.Unmarshal(&cfg)
+	if err != nil {
+		return nil, fmt.Errorf("could not unmarshal config: %w", err)
+	}
+
+	return &cfg, nil
+}
 
 // Init initalize settings and default values
 func Init() {

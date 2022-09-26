@@ -52,6 +52,9 @@ func FindPRCommand(appFs afero.Fs) *cobra.Command {
 				return fmt.Errorf("owner flag malformed: %w", err)
 			}
 
+			repo = GetRepo(repo)
+			owner = GetOwner(owner)
+
 			commit := args[0]
 			ctx := context.Background()
 

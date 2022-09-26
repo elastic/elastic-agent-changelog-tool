@@ -33,6 +33,9 @@ func BuildCmd(fs afero.Fs) *cobra.Command {
 				return fmt.Errorf("owner flag malformed: %w", err)
 			}
 
+			repo = GetRepo(repo)
+			owner = GetOwner(owner)
+
 			src := viper.GetString("fragment_location")
 			dest := viper.GetString("changelog_destination")
 

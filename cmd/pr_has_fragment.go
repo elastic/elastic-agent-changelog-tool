@@ -46,6 +46,9 @@ func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
 				return fmt.Errorf("owner flag malformed: %w", err)
 			}
 
+			repo = GetRepo(repo)
+			owner = GetOwner(owner)
+
 			pr, err := strconv.Atoi(args[0])
 			if err != nil {
 				return err
