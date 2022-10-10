@@ -11,7 +11,6 @@ import (
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -56,12 +55,7 @@ func BuildCmd(fs afero.Fs) *cobra.Command {
 	buildCmd.Flags().String("repo", defaultRepo, "target repository")
 	buildCmd.Flags().String("owner", defaultOwner, "target repository owner")
 
-	buildCmd.Flags().VisitAll(func(f *pflag.Flag) {
-		if !f.Changed && viper.IsSet(f.Name) {
-			val := viper.Get(f.Name)
-			buildCmd.Flags().Set(f.Name, fmt.Sprintf("%v", val))
-		}
-	})
+	buildCmd.Flags().VisitAll(viperOverrides(buildCmd))
 
 	buildCmd.Flags().String("version", "", "The version of the consolidated changelog being created")
 	err := buildCmd.MarkFlagRequired("version")
