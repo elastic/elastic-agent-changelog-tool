@@ -14,10 +14,9 @@ import (
 )
 
 const (
-	defaultOwner     = "elastic"
-	defaultRepo      = "elastic-agent"
-	envPrefix        = "ELASTIC_AGENT_CHANGELOG"
-	configFileFolder = "elastic-agent-changelog-tool"
+	defaultOwner = "elastic"
+	defaultRepo  = "elastic-agent"
+	envPrefix    = "ELASTIC_AGENT_CHANGELOG"
 )
 
 type Config struct {
@@ -51,7 +50,6 @@ func Init() {
 }
 
 func setDefaults() {
-	// viper.SetDefault("config_file", path.Join(xdg.ConfigHome(), configFileFolder))
 	viper.SetDefault("config_file", ".")
 
 	// try to compute GIT_REPO_ROOT value if empty
