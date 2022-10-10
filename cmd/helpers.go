@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -21,7 +22,10 @@ func viperOverrides(c *cobra.Command) func(*pflag.Flag) {
 	return func(f *pflag.Flag) {
 		if !f.Changed && viper.IsSet(f.Name) {
 			val := viper.Get(f.Name)
-			c.Flags().Set(f.Name, fmt.Sprintf("%v", val))
+			err := c.Flags().Set(f.Name, fmt.Sprintf("%v", val))
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 }
