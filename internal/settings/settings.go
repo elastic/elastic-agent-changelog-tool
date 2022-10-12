@@ -13,11 +13,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-const (
-	defaultOwner = "elastic"
-	defaultRepo  = "elastic-agent"
-	envPrefix    = "ELASTIC_AGENT_CHANGELOG"
-)
+const envPrefix = "ELASTIC_AGENT_CHANGELOG"
 
 type Config struct {
 	Owner      string `yaml:"owner"`
@@ -71,8 +67,6 @@ func setDefaults() {
 
 	viper.SetDefault("changelog_destination", "changelog")
 	viper.SetDefault("rendered_changelog_destination", "changelog")
-	viper.SetDefault("owner", defaultOwner)
-	viper.SetDefault("repo", defaultRepo)
 }
 
 func setConstants() {
