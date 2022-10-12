@@ -83,5 +83,7 @@ func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
 	prCheckCmd.Flags().String("repo", defaultRepo, "target repository")
 	prCheckCmd.Flags().String("owner", defaultOwner, "target repository owner")
 
+	prCheckCmd.Flags().VisitAll(viperOverrides(prCheckCmd))
+
 	return prCheckCmd
 }

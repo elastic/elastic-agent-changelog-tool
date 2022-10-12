@@ -55,6 +55,8 @@ func BuildCmd(fs afero.Fs) *cobra.Command {
 	buildCmd.Flags().String("repo", defaultRepo, "target repository")
 	buildCmd.Flags().String("owner", defaultOwner, "target repository owner")
 
+	buildCmd.Flags().VisitAll(viperOverrides(buildCmd))
+
 	buildCmd.Flags().String("version", "", "The version of the consolidated changelog being created")
 	err := buildCmd.MarkFlagRequired("version")
 	if err != nil {

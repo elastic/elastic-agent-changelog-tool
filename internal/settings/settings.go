@@ -9,13 +9,11 @@ import (
 	"os"
 	"path"
 
-	"github.com/OpenPeeDeeP/xdg"
 	"github.com/elastic/elastic-agent-changelog-tool/internal/gitreporoot"
 	"github.com/spf13/viper"
 )
 
 const envPrefix = "ELASTIC_AGENT_CHANGELOG"
-const configFileFolder = "elastic-agent-changelog-tool"
 
 // Init initalize settings and default values
 func Init() {
@@ -27,6 +25,8 @@ func Init() {
 	setConstants()
 
 	viper.AddConfigPath(viper.GetString("config_file"))
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
 
 	// TODO: better error handling (skip missing file error)
 	if err := viper.ReadInConfig(); err == nil {
@@ -39,7 +39,7 @@ func Init() {
 }
 
 func setDefaults() {
-	viper.SetDefault("config_file", path.Join(xdg.ConfigHome(), configFileFolder))
+	viper.SetDefault("config_file", ".")
 
 	// try to compute GIT_REPO_ROOT value if empty
 	if os.Getenv("GIT_REPO_ROOT") == "" {

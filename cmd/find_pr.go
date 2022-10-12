@@ -74,5 +74,7 @@ func FindPRCommand(appFs afero.Fs) *cobra.Command {
 	findPRCommand.Flags().String("repo", defaultRepo, "target repository")
 	findPRCommand.Flags().String("owner", defaultOwner, "target repository owner")
 
+	findPRCommand.Flags().VisitAll(viperOverrides(findPRCommand))
+
 	return findPRCommand
 }
