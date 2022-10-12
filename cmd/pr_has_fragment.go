@@ -13,7 +13,6 @@ import (
 	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -84,12 +83,7 @@ func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
 	prCheckCmd.Flags().String("repo", defaultRepo, "target repository")
 	prCheckCmd.Flags().String("owner", defaultOwner, "target repository owner")
 
-	prCheckCmd.Flags().VisitAll(func(f *pflag.Flag) {
-		if !f.Changed && viper.IsSet(f.Name) {
-			val := viper.Get(f.Name)
-			prCheckCmd.Flags().Set(f.Name, fmt.Sprintf("%v", val))
-		}
-	})
+	prCheckCmd.Flags().VisitAll(viperOverrides(prCheckCmd))
 
 	return prCheckCmd
 }

@@ -13,8 +13,6 @@ import (
 	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 )
 
 var errListPRCmdMissingCommitHash = errors.New("find-pr requires commit hash argument")
@@ -76,12 +74,7 @@ func FindPRCommand(appFs afero.Fs) *cobra.Command {
 	findPRCommand.Flags().String("repo", defaultRepo, "target repository")
 	findPRCommand.Flags().String("owner", defaultOwner, "target repository owner")
 
-	findPRCommand.Flags().VisitAll(func(f *pflag.Flag) {
-		if !f.Changed && viper.IsSet(f.Name) {
-			val := viper.Get(f.Name)
-			findPRCommand.Flags().Set(f.Name, fmt.Sprintf("%v", val))
-		}
-	})
+	findPRCommand.Flags().VisitAll(viperOverrides(findPRCommand))
 
 	return findPRCommand
 }
