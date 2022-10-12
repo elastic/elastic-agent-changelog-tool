@@ -15,13 +15,6 @@ import (
 
 const envPrefix = "ELASTIC_AGENT_CHANGELOG"
 
-type Config struct {
-	Owner      string `yaml:"owner"`
-	Repo       string `yaml:"repo"`
-	Repository string `yaml:"repository"`
-	// ...
-}
-
 // Init initalize settings and default values
 func Init() {
 	viper.AutomaticEnv()
