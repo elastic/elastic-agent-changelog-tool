@@ -31,7 +31,7 @@ You must edit the created file compiling all uncommented fields and optionally u
 
 The fragment is created from the template available in [`../internal/changelog/fragment/template.yaml`](../internal/changelog/fragment/template.yaml).
 
-### Viewing the changelog
+### Previewing the changelog
 
 From the repository root folder build the consolidated changelog with:
 
@@ -65,7 +65,7 @@ Given a PR number this command checks for presence of an added Changelog Fragmen
 
 For futrher details look at command usage: `elastic-agent-changelog-tool pr-has-fragment --help`
 
-### Viewing the changelog
+### Previewing the changelog
 
 From the repository root folder build the consolidated changelog with:
 
@@ -80,6 +80,19 @@ $ $ elastic-agent-changelog-tool render --version=next --owner <owner> --repo <r
 ```
 
 An example is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).
+
+### Including the changelog in a pre-release version
+
+Pre-release versions are development releases, it's worth including the changelog but as they are not stable releases, you should not remove the fragments.
+The side effect is that the changelog will include all entries from latest stable release up to current pre-release, but in the end this correctly reflects the content of the provided pre-release.
+
+1. Create consolidated changelog with `$ elastic-agent-changelog-tool build --version <version> --owner <owner> --repo <repo>`;
+* This will create `./changelog/x.y.z.yaml`;
+2. Create rendered changelog with `$ elastic-agent-changelog-tool render --version <version>`;
+* This will generate an asciidoc file in the `changelog/` directory;
+3. Use the rendered changelog.
+
+**Note**: we do not remove fragments, as they will be needed for the stable release version changelog.
 
 ## I'm the release manager
 
