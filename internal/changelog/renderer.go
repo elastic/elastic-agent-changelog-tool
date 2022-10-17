@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/spf13/afero"
+	"github.com/spf13/viper"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -47,36 +48,35 @@ func (r Renderer) Render() error {
 		Changelog Changelog
 		Kinds     map[Kind]bool
 
-		BreakingChange []Entry
-		Deprecation    []Entry
-		BugFix         []Entry
-		Enhancement    []Entry
-		Feature        []Entry
-		KnownIssue     []Entry
-		Security       []Entry
-		Upgrade        []Entry
-		Other          []Entry
+		BreakingChange map[string][]Entry
+		Deprecation    map[string][]Entry
+		BugFix         map[string][]Entry
+		Enhancement    map[string][]Entry
+		Feature        map[string][]Entry
+		KnownIssue     map[string][]Entry
+		Security       map[string][]Entry
+		Upgrade        map[string][]Entry
+		Other          map[string][]Entry
 	}
+
 	td := TemplateData{
-		"{agent}", r.changelog.Version, r.changelog,
+		buildTitleByComponents(r.changelog.Entries), r.changelog.Version, r.changelog,
 		collectKinds(r.changelog.Entries),
-		collectByKind(r.changelog.Entries, BreakingChange),
-		collectByKind(r.changelog.Entries, Deprecation),
-		collectByKind(r.changelog.Entries, BugFix),
-		collectByKind(r.changelog.Entries, Enhancement),
-		collectByKind(r.changelog.Entries, Feature),
-		collectByKind(r.changelog.Entries, KnownIssue),
-		collectByKind(r.changelog.Entries, Security),
-		collectByKind(r.changelog.Entries, Upgrade),
-		collectByKind(r.changelog.Entries, Other),
+		collectByKindMap(r.changelog.Entries, BreakingChange),
+		collectByKindMap(r.changelog.Entries, Deprecation),
+		collectByKindMap(r.changelog.Entries, BugFix),
+		collectByKindMap(r.changelog.Entries, Enhancement),
+		collectByKindMap(r.changelog.Entries, Feature),
+		collectByKindMap(r.changelog.Entries, KnownIssue),
+		collectByKindMap(r.changelog.Entries, Security),
+		collectByKindMap(r.changelog.Entries, Upgrade),
+		collectByKindMap(r.changelog.Entries, Other),
 	}
 
 	tmpl, err := template.New("asciidoc-release-notes").
 		Funcs(template.FuncMap{
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
 			"linkPRSource": func(component string, ids []string) string {
-				component = "agent" // TODO: remove this when implementing support for multiple components
-
 				res := make([]string, len(ids))
 
 				for i, id := range ids {
@@ -87,7 +87,6 @@ func (r Renderer) Render() error {
 			},
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
 			"linkIssueSource": func(component string, ids []string) string {
-				component = "agent" // TODO: remove this when implementing support for multiple components
 				res := make([]string, len(ids))
 
 				for i, id := range ids {
@@ -147,6 +146,23 @@ func collectKinds(items []Entry) map[Kind]bool {
 	return kinds
 }
 
+func collectByKindMap(items []Entry, k Kind) map[string][]Entry {
+	componentEntries := map[string][]Entry{}
+
+	for _, e := range items {
+		if e.Kind == k {
+			for _, c := range viper.GetStringSlice("components") {
+				if c != e.Component {
+					continue
+				}
+				componentEntries[e.Component] = append(componentEntries[e.Component], e)
+			}
+		}
+	}
+
+	return componentEntries
+}
+
 func collectByKind(items []Entry, k Kind) []Entry {
 	entries := []Entry{}
 
@@ -157,4 +173,31 @@ func collectByKind(items []Entry, k Kind) []Entry {
 	}
 
 	return entries
+}
+
+func buildTitleByComponents(entries []Entry) string {
+	matchingComponents := map[string]struct{}{}
+	entriesComponents := map[string]struct{}{}
+	for _, e := range entries {
+		entriesComponents[e.Component] = struct{}{}
+		for _, c := range viper.GetStringSlice("components") {
+			if c != e.Component {
+				continue
+			}
+			matchingComponents[c] = struct{}{}
+		}
+	}
+
+	for k := range entriesComponents {
+		if _, ok := matchingComponents[k]; !ok {
+			log.Printf("Component [%s] not found in config", k)
+		}
+	}
+
+	components := []string{}
+	for k := range matchingComponents {
+		components = append(components, k)
+	}
+
+	return strings.Join(components, " and ")
 }

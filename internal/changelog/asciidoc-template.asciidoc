@@ -11,8 +11,11 @@ Review important information about the {{.Component}} {{.Version}} release.
 [[security-updates-{{.Version}}]]
 === Security updates
 
-{{.Component}}::{{ range $item := .Security }}
+{{ range $k, $v := .Security }}
+{{ $k }}::
+{{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{ if .BreakingChange -}}
@@ -25,8 +28,11 @@ performance. Before you upgrade, review the breaking changes, then mitigate the
 impact to your application.
 
 // TODO: add details and impact
-{{.Component}}::{{ range $item := .BreakingChange }}
+{{ range $k, $v := .BreakingChange }}
+{{ $k }}::
+{{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{ if .KnownIssue -}}
@@ -35,8 +41,11 @@ impact to your application.
 === Known issues
 
 // TODO: add details and impact
-{{.Component}}::{{ range $item := .KnownIssue }}
+{{ range $k, $v := .KnownIssue }}
+{{ $k }}::
+{{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{ if .Deprecation -}}
@@ -49,8 +58,11 @@ The following functionality is deprecated in {{.Version}}, and will be removed i
 application, but we strongly recommend you make the necessary updates after you
 upgrade to {{.Version}}.
 
-{{.Component}}::{{ range $item := .Deprecation }}
+{{ range $k, $v := .Deprecation }}
+{{ $k }}::
+{{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{ if .Feature -}}
@@ -60,8 +72,11 @@ upgrade to {{.Version}}.
 
 The {{.Version}} release adds the following new and notable features.
 
-{{.Component}}::{{ range $item := .Feature }}
+{{ range $k, $v := .Feature }}
+{{ $k }}::
+{{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{ if .Enhancement }}
@@ -69,8 +84,11 @@ The {{.Version}} release adds the following new and notable features.
 [[enhancements-{{.Version}}]]
 === Enhancements
 
-{{.Component}}::{{ range $item := .Enhancement }}
+{{ range $k, $v := .Enhancement }}
+{{ $k }}::
+{{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{ if .BugFix }}
@@ -78,8 +96,11 @@ The {{.Version}} release adds the following new and notable features.
 [[bug-fixes-{{.Version}}]]
 === Bug fixes
 
-{{.Component}}::{{ range $item := .BugFix }}
+{{ range $k, $v := .BugFix }}
+{{ $k }}::
+{{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- end }}
 {{- end }}
 {{- end }}
 
