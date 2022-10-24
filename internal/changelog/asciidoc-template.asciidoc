@@ -3,7 +3,6 @@
 [[release-notes-{{.Version}}]]
 == {{.Component}} {{.Version}}
 
-// TODO: support multiple components
 Review important information about the {{.Component}} {{.Version}} release.
 
 {{ if .Security -}}

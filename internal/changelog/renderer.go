@@ -155,7 +155,16 @@ func collectByKindMap(items []Entry, k Kind) map[string][]Entry {
 				if c != e.Component {
 					continue
 				}
+
 				componentEntries[e.Component] = append(componentEntries[e.Component], e)
+			}
+		}
+	}
+
+	if len(componentEntries) == 0 {
+		for _, e := range items {
+			if e.Kind == k {
+				componentEntries["unidentified component"] = append(componentEntries[e.Component], e)
 			}
 		}
 	}
@@ -178,10 +187,15 @@ func collectByKind(items []Entry, k Kind) []Entry {
 func buildTitleByComponents(entries []Entry) string {
 	matchingComponents := map[string]struct{}{}
 	entriesComponents := map[string]struct{}{}
+	var componentNotFound bool
+
 	for _, e := range entries {
-		entriesComponents[e.Component] = struct{}{}
+		if e.Component == "" {
+			componentNotFound = true
+		}
 		for _, c := range viper.GetStringSlice("components") {
 			if c != e.Component {
+				componentNotFound = true
 				continue
 			}
 			matchingComponents[c] = struct{}{}
@@ -199,5 +213,12 @@ func buildTitleByComponents(entries []Entry) string {
 		components = append(components, k)
 	}
 
-	return strings.Join(components, " and ")
+	switch {
+	case len(components) == 0:
+		return "unspecified component"
+	case componentNotFound == true:
+		return fmt.Sprintf("%s %s", strings.Join(components, " and "), "and unidentified component")
+	default:
+		return strings.Join(components, " and ")
+	}
 }
