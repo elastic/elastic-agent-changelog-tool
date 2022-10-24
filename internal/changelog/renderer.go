@@ -216,7 +216,7 @@ func buildTitleByComponents(entries []Entry) string {
 	switch {
 	case len(components) == 0:
 		return "unspecified component"
-	case componentNotFound == true:
+	case componentNotFound:
 		return fmt.Sprintf("%s %s", strings.Join(components, " and "), "and unidentified component")
 	default:
 		return strings.Join(components, " and ")
