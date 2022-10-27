@@ -146,25 +146,15 @@ func collectKinds(items []Entry) map[Kind]bool {
 	return kinds
 }
 
-func collectByKindMap(items []Entry, k Kind) map[string][]Entry {
+func collectByKindMap(entries []Entry, k Kind) map[string][]Entry {
 	componentEntries := map[string][]Entry{}
 
-	for _, e := range items {
+	for _, e := range entries {
 		if e.Kind == k {
-			for _, c := range viper.GetStringSlice("components") {
-				if c != e.Component {
-					continue
-				}
-
+			if len(e.Component) > 0 {
 				componentEntries[e.Component] = append(componentEntries[e.Component], e)
-			}
-		}
-	}
-
-	if len(componentEntries) == 0 {
-		for _, e := range items {
-			if e.Kind == k {
-				componentEntries["unidentified component"] = append(componentEntries[e.Component], e)
+			} else {
+				componentEntries[""] = append(componentEntries[""], e)
 			}
 		}
 	}
@@ -185,40 +175,38 @@ func collectByKind(items []Entry, k Kind) []Entry {
 }
 
 func buildTitleByComponents(entries []Entry) string {
-	matchingComponents := map[string]struct{}{}
-	entriesComponents := map[string]struct{}{}
-	var componentNotFound bool
+	configComponents := viper.GetStringSlice("components")
 
-	for _, e := range entries {
-		if e.Component == "" {
-			componentNotFound = true
-		}
-		for _, c := range viper.GetStringSlice("components") {
-			if c != e.Component {
-				componentNotFound = true
-				continue
+	switch len(configComponents) {
+	case 0:
+		return ""
+	case 1:
+		c := configComponents[0]
+		for _, e := range entries {
+			if c != e.Component && len(e.Component) > 0 {
+				log.Fatalf("Component [%s] not found in config", e.Component)
 			}
-			matchingComponents[c] = struct{}{}
 		}
-	}
-
-	for k := range entriesComponents {
-		if _, ok := matchingComponents[k]; !ok {
-			log.Printf("Component [%s] not found in config", k)
-		}
-	}
-
-	components := []string{}
-	for k := range matchingComponents {
-		components = append(components, k)
-	}
-
-	switch {
-	case len(components) == 0:
-		return "unspecified component"
-	case componentNotFound:
-		return fmt.Sprintf("%s %s", strings.Join(components, " and "), "and unidentified component")
+		return c
 	default:
-		return strings.Join(components, " and ")
+		var match string
+		for _, e := range entries {
+			if e.Component == "" {
+				log.Fatalf("Component cannot be assumed, choose it from config values: %s", e.File.Name)
+			}
+
+			match = ""
+			for _, c := range configComponents {
+				if e.Component != c {
+					continue
+				}
+				match = e.Component
+			}
+
+			if match == "" {
+				log.Printf("Component [%s] not found in config", e.Component)
+			}
+		}
+		return match
 	}
 }
