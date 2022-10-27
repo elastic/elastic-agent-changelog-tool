@@ -204,7 +204,7 @@ func buildTitleByComponents(entries []Entry) string {
 			}
 
 			if match == "" {
-				log.Printf("Component [%s] not found in config", e.Component)
+				log.Fatalf("Component [%s] not found in config", e.Component)
 			}
 		}
 		return match
