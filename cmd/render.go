@@ -14,11 +14,16 @@ import (
 	"github.com/spf13/viper"
 )
 
+const RenderLongDescription = `Use this command to render the consolidated changelog.
+
+--version flag is required, points to file in /changelogs
+--template_file is optional, default: asciidoc-template.asciidoc`
+
 func RenderCmd(fs afero.Fs) *cobra.Command {
 	renderCmd := &cobra.Command{
 		Use:   "render",
 		Short: "Render a changelog in an asciidoc file",
-		Long:  "Render a changelog in an asciidoc file",
+		Long:  RenderLongDescription,
 		Args: func(cmd *cobra.Command, args []string) error {
 			return nil
 		},
@@ -31,12 +36,21 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 				return fmt.Errorf("error parsing flag 'version': %w", err)
 			}
 
+			templateFile, err := cmd.Flags().GetString("template_file")
+			if err != nil {
+				return fmt.Errorf("error parsing flag 'template_file': %w", err)
+			}
+
+			if templateFile == "" {
+				templateFile = viper.GetString("template_file")
+			}
+
 			c, err := changelog.FromFile(fs, fmt.Sprintf("./%s/%s.yaml", dest, version))
 			if err != nil {
 				return fmt.Errorf("error loading changelog from file: %w", err)
 			}
 
-			r := changelog.NewRenderer(fs, c, renderedDest)
+			r := changelog.NewRenderer(fs, c, renderedDest, templateFile)
 
 			if err := r.Render(); err != nil {
 				return fmt.Errorf("cannot build asciidoc file: %w", err)
@@ -46,6 +60,7 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 		},
 	}
 
+	renderCmd.Flags().String("template_file", "", "The template used to generate the changelog")
 	renderCmd.Flags().String("version", "", "The version of the consolidated changelog being created")
 	err := renderCmd.MarkFlagRequired("version")
 	if err != nil {

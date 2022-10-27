@@ -60,6 +60,8 @@ func setDefaults() {
 
 	viper.SetDefault("changelog_destination", "changelog")
 	viper.SetDefault("rendered_changelog_destination", "changelog")
+
+	viper.SetDefault("template_file", "asciidoc-template.asciidoc")
 }
 
 func setConstants() {

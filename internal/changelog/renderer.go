@@ -22,14 +22,16 @@ type Renderer struct {
 	changelog Changelog
 	fs        afero.Fs
 	// dest is the destination location where the changelog is written to
-	dest string
+	dest  string
+	templ string
 }
 
-func NewRenderer(fs afero.Fs, c Changelog, dest string) *Renderer {
+func NewRenderer(fs afero.Fs, c Changelog, dest string, templ string) *Renderer {
 	return &Renderer{
 		changelog: c,
 		fs:        fs,
 		dest:      dest,
+		templ:     templ,
 	}
 }
 
@@ -124,11 +126,11 @@ func (r Renderer) Render() error {
 	return afero.WriteFile(r.fs, outFile, data.Bytes(), changelogFilePerm)
 }
 
-//go:embed asciidoc-template.asciidoc
+//go:embed *.asciidoc
 var asciidocTemplate embed.FS
 
 func (r Renderer) Template() ([]byte, error) {
-	data, err := asciidocTemplate.ReadFile("asciidoc-template.asciidoc")
+	data, err := asciidocTemplate.ReadFile(r.templ)
 	if err != nil {
 		return []byte{}, fmt.Errorf("cannot read embedded template: %w", err)
 	}

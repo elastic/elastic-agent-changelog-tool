@@ -34,7 +34,7 @@ func TestRenderer(t *testing.T) {
 	c, err := changelog.FromFile(fs, inFile)
 	require.NoError(t, err)
 
-	r := changelog.NewRenderer(fs, c, dest)
+	r := changelog.NewRenderer(fs, c, dest, "asciidoc-template.asciidoc")
 
 	err = r.Render()
 	require.Nil(t, err)
