@@ -42,7 +42,7 @@ $ elastic-agent-changelog-tool build --version=next --owner <owner> --repo <repo
 the render the consolidated changelog with:
 
 ```
-$ elastic-agent-changelog-tool render --version=next --owner <owner> --repo <repo>
+$ elastic-agent-changelog-tool render --version=next
 ```
 
 An example is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).
@@ -76,7 +76,7 @@ $ elastic-agent-changelog-tool build --version=next --owner <owner> --repo <repo
 the render the consolidated changelog with:
 
 ```
-$ $ elastic-agent-changelog-tool render --version=next --owner <owner> --repo <repo>
+$ $ elastic-agent-changelog-tool render --version=next
 ```
 
 An example is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).
