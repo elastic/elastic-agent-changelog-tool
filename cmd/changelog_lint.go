@@ -23,8 +23,6 @@ func ChangelogLintCmd(fs afero.Fs) *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-
-			// src := viper.GetString("fragment_location")
 			dest := viper.GetString("changelog_destination")
 
 			version, err := cmd.Flags().GetString("version")
