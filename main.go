@@ -25,6 +25,7 @@ func main() {
 	rootCmd.AddCommand(cmd.PrHasFragmentCommand(appFs))
 	rootCmd.AddCommand(cmd.RenderCmd(appFs))
 	rootCmd.AddCommand(cmd.VersionCmd())
+	rootCmd.AddCommand(cmd.ChangelogLintCmd(appFs))
 
 	err := rootCmd.Execute()
 	if err != nil {
