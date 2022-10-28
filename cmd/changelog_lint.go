@@ -54,7 +54,7 @@ func ChangelogLintCmd(fs afero.Fs) *cobra.Command {
 
 	lintCmd.Flags().VisitAll(viperOverrides(lintCmd))
 
-	lintCmd.Flags().String("version", "", "The version of the consolidated changelog being created")
+	lintCmd.Flags().String("version", "", "The version of the consolidated changelog subject to linting")
 	lintCmd.Flags().Bool("relaxed", false, "Relaxed mode will only log erros, without terminating execution")
 	err := lintCmd.MarkFlagRequired("version")
 	if err != nil {
