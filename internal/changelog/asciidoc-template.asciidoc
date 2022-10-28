@@ -11,7 +11,7 @@ Review important information about the {{.Component}} {{.Version}} release.
 === Security updates
 
 {{ range $k, $v := .Security }}
-{{ $k }}::
+{{ $k | header2}}
 {{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
 {{- end }}
@@ -28,7 +28,7 @@ impact to your application.
 
 // TODO: add details and impact
 {{ range $k, $v := .BreakingChange }}
-{{ $k }}::
+{{ $k | header2}}
 {{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
 {{- end }}
@@ -41,7 +41,7 @@ impact to your application.
 
 // TODO: add details and impact
 {{ range $k, $v := .KnownIssue }}
-{{ $k }}::
+{{ $k | header2}}
 {{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
 {{- end }}
@@ -58,9 +58,9 @@ application, but we strongly recommend you make the necessary updates after you
 upgrade to {{.Version}}.
 
 {{ range $k, $v := .Deprecation }}
-{{ $k }}::
+{{ $k | header2}}
 {{ range $item := $v }}
-* {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+* {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}{ $k | section}}::$k }}::
 {{- end }}
 {{- end }}
 {{- end }}
@@ -72,7 +72,7 @@ upgrade to {{.Version}}.
 The {{.Version}} release adds the following new and notable features.
 
 {{ range $k, $v := .Feature }}
-{{ $k }}::
+{{ $k | header2}}
 {{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
 {{- end }}
@@ -84,7 +84,7 @@ The {{.Version}} release adds the following new and notable features.
 === Enhancements
 
 {{ range $k, $v := .Enhancement }}
-{{ $k }}::
+{{ $k | header2}}
 {{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
 {{- end }}
@@ -96,7 +96,7 @@ The {{.Version}} release adds the following new and notable features.
 === Bug fixes
 
 {{ range $k, $v := .BugFix }}
-{{ $k }}::
+{{ $k | header2}}
 {{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
 {{- end }}

@@ -73,7 +73,7 @@ func (r Renderer) Render() error {
 		collectByKindMap(r.changelog.Entries, Other),
 	}
 
-	tmpl, err := template.New("asciidoc-release-notes").
+	tmpl, err := template.New("release-notes").
 		Funcs(template.FuncMap{
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
 			"linkPRSource": func(component string, ids []string) string {
@@ -101,6 +101,15 @@ func (r Renderer) Render() error {
 				s2.WriteString(cases.Title(language.English).String(s1))
 				if !strings.HasSuffix(s1, ".") {
 					s2.WriteString(".")
+				}
+				return s2.String()
+			},
+			// Ensure components have section styling
+			"header2": func(s1 string) string {
+				s2 := strings.Builder{}
+				s2.WriteString(s1)
+				if !strings.HasSuffix(s1, "::") && s1 != "" {
+					s2.WriteString("::")
 				}
 				return s2.String()
 			},
