@@ -16,72 +16,15 @@ func NewLinter(fs afero.Fs) Linter {
 }
 
 type Linter struct {
-	fs         afero.Fs
-	validators map[string]func(entry Entry) error
-	errors     []error
+	fs              afero.Fs
+	entryValidators entryValidators
+	errors          []error
 }
 
 func newLinter(fs afero.Fs) Linter {
 	return Linter{
-		fs: fs,
-		validators: map[string]func(entry Entry) error{
-			"multiplePRIDs": func(entry Entry) error {
-				if len(entry.LinkedPR) > 1 {
-					return fmt.Errorf("changelog entry: %s has multiple PR ids", entry.File.Name)
-				}
-
-				return nil
-			},
-			"noPRIDs": func(entry Entry) error {
-				if len(entry.LinkedPR) == 0 {
-					return fmt.Errorf("changelog entry: %s has no PR id", entry.File.Name)
-				}
-
-				return nil
-			},
-			"noIssueID": func(entry Entry) error {
-				if len(entry.LinkedIssue) == 0 {
-					return fmt.Errorf("changelog entry: %s has no issue id", entry.File.Name)
-				}
-
-				return nil
-			},
-			// multiple issues check?
-			"validComponent": func(entry Entry) error {
-				configComponents := viper.GetStringSlice("components")
-
-				switch len(configComponents) {
-				case 0:
-					return nil
-				case 1:
-					c := configComponents[0]
-
-					if c != entry.Component && len(entry.Component) > 0 {
-						return fmt.Errorf("Component [%s] not found in config", entry.Component)
-					}
-				default:
-					var match string
-
-					if entry.Component == "" {
-						return fmt.Errorf("Component cannot be assumed, choose it from config values: %s", entry.File.Name)
-					}
-
-					match = ""
-					for _, c := range configComponents {
-						if entry.Component != c {
-							continue
-						}
-						match = entry.Component
-					}
-
-					if match == "" {
-						return fmt.Errorf("Component [%s] not found in config", entry.Component)
-					}
-				}
-
-				return nil
-			},
-		},
+		fs:              fs,
+		entryValidators: defaultEntryValidators,
 	}
 }
 
@@ -94,7 +37,7 @@ func (l Linter) Lint(dest, version string) []error {
 	}
 
 	for _, entry := range c.Entries {
-		for _, validator := range l.validators {
+		for _, validator := range l.entryValidators {
 			err := validator(entry)
 			if err != nil {
 				l.errors = append(l.errors, err)
@@ -103,4 +46,73 @@ func (l Linter) Lint(dest, version string) []error {
 	}
 
 	return l.errors
+}
+
+type entryValidationFn func(Entry) error
+type entryValidators map[string]entryValidationFn
+
+var defaultEntryValidators = entryValidators{
+	"pr_multipleids":  validator_PRMultipleIDs,
+	"pr_noids":        validator_PRnoIDs,
+	"issue_noids":     validator_IssueNoIDs,
+	"component_valid": validator_componentValid(viper.GetStringSlice("components")),
+}
+
+func validator_PRMultipleIDs(entry Entry) error {
+	if len(entry.LinkedPR) > 1 {
+		return fmt.Errorf("changelog entry: %s has multiple PR ids", entry.File.Name)
+	}
+
+	return nil
+}
+
+func validator_PRnoIDs(entry Entry) error {
+	if len(entry.LinkedPR) == 0 {
+		return fmt.Errorf("changelog entry: %s has no PR id", entry.File.Name)
+	}
+
+	return nil
+}
+
+func validator_IssueNoIDs(entry Entry) error {
+	if len(entry.LinkedIssue) == 0 {
+		return fmt.Errorf("changelog entry: %s has no issue id", entry.File.Name)
+	}
+
+	return nil
+}
+
+func validator_componentValid(configComponents []string) entryValidationFn {
+	return func(entry Entry) error {
+		switch len(configComponents) {
+		case 0:
+			return nil
+		case 1:
+			c := configComponents[0]
+
+			if c != entry.Component && len(entry.Component) > 0 {
+				return fmt.Errorf("Component [%s] not found in config", entry.Component)
+			}
+		default:
+			var match string
+
+			if entry.Component == "" {
+				return fmt.Errorf("Component cannot be assumed, choose it from config values: %s", entry.File.Name)
+			}
+
+			match = ""
+			for _, c := range configComponents {
+				if entry.Component != c {
+					continue
+				}
+				match = entry.Component
+			}
+
+			if match == "" {
+				return fmt.Errorf("Component [%s] not found in config", entry.Component)
+			}
+		}
+
+		return nil
+	}
 }
