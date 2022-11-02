@@ -91,13 +91,13 @@ func validator_componentValid(configComponents []string) entryValidationFn {
 			c := configComponents[0]
 
 			if c != entry.Component && len(entry.Component) > 0 {
-				return fmt.Errorf("Component [%s] not found in config", entry.Component)
+				return fmt.Errorf("changelog entry: %s -> component [%s] not found in config: %s", entry.File.Name, entry.Component, configComponents)
 			}
 		default:
 			var match string
 
 			if entry.Component == "" {
-				return fmt.Errorf("Component cannot be assumed, choose it from config values: %s", entry.File.Name)
+				return fmt.Errorf("changelog entry: %s -> component cannot be assumed, choose it from config: %s", entry.File.Name, configComponents)
 			}
 
 			match = ""
@@ -109,7 +109,7 @@ func validator_componentValid(configComponents []string) entryValidationFn {
 			}
 
 			if match == "" {
-				return fmt.Errorf("Component [%s] not found in config", entry.Component)
+				return fmt.Errorf("changelog entry: %s -> component [%s] not found in config: %s", entry.File.Name, entry.Component, configComponents)
 			}
 		}
 
