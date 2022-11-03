@@ -134,13 +134,24 @@ func (r Renderer) Render() error {
 	return afero.WriteFile(r.fs, outFile, data.Bytes(), changelogFilePerm)
 }
 
-//go:embed *.asciidoc
+//go:embed asciidoc-template.asciidoc
 var asciidocTemplate embed.FS
 
 func (r Renderer) Template() ([]byte, error) {
-	data, err := asciidocTemplate.ReadFile(r.templ)
+	var data []byte
+	var err error
+	if r.templ == "asciidoc-template.asciidoc" {
+		data, err = asciidocTemplate.ReadFile(r.templ)
+		if err != nil {
+			return []byte{}, fmt.Errorf("cannot read embedded template: %w", err)
+		}
+
+		return data, nil
+	}
+
+	data, err = afero.ReadFile(r.fs, fmt.Sprintf("./templates/%s", r.templ))
 	if err != nil {
-		return []byte{}, fmt.Errorf("cannot read embedded template: %w", err)
+		return []byte{}, fmt.Errorf("cannot read custom template: %w", err)
 	}
 
 	return data, nil
