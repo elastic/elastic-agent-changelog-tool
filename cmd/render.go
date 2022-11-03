@@ -17,7 +17,7 @@ import (
 const RenderLongDescription = `Use this command to render the consolidated changelog.
 
 --version flag is required, points to file in /changelogs
---template_file is optional, default: asciidoc-template.asciidoc`
+--template_file is optional, specify it from templates folder, default: internal/changelog/asciidoc-template.asciidoc`
 
 func RenderCmd(fs afero.Fs) *cobra.Command {
 	renderCmd := &cobra.Command{
