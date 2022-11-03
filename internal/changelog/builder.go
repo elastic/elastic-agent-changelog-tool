@@ -192,6 +192,10 @@ func ExtractOwnerRepo(eventURL string) (string, string, error) {
 		return "", "", fmt.Errorf("can't get owner or repo")
 	}
 
+	if len(urlParts) < 3 {
+		return "", "", fmt.Errorf("parsed url (%s) does not have required parts", eventURL)
+	}
+
 	return urlParts[1], urlParts[2], nil
 }
 
