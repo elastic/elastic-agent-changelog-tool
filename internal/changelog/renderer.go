@@ -14,6 +14,7 @@ import (
 	"strings"
 
 	"github.com/spf13/afero"
+	"github.com/spf13/viper"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 )
@@ -49,36 +50,35 @@ func (r Renderer) Render() error {
 		Changelog Changelog
 		Kinds     map[Kind]bool
 
-		BreakingChange []Entry
-		Deprecation    []Entry
-		BugFix         []Entry
-		Enhancement    []Entry
-		Feature        []Entry
-		KnownIssue     []Entry
-		Security       []Entry
-		Upgrade        []Entry
-		Other          []Entry
-	}
-	td := TemplateData{
-		"{agent}", r.changelog.Version, r.changelog,
-		collectKinds(r.changelog.Entries),
-		collectByKind(r.changelog.Entries, BreakingChange),
-		collectByKind(r.changelog.Entries, Deprecation),
-		collectByKind(r.changelog.Entries, BugFix),
-		collectByKind(r.changelog.Entries, Enhancement),
-		collectByKind(r.changelog.Entries, Feature),
-		collectByKind(r.changelog.Entries, KnownIssue),
-		collectByKind(r.changelog.Entries, Security),
-		collectByKind(r.changelog.Entries, Upgrade),
-		collectByKind(r.changelog.Entries, Other),
+		BreakingChange map[string][]Entry
+		Deprecation    map[string][]Entry
+		BugFix         map[string][]Entry
+		Enhancement    map[string][]Entry
+		Feature        map[string][]Entry
+		KnownIssue     map[string][]Entry
+		Security       map[string][]Entry
+		Upgrade        map[string][]Entry
+		Other          map[string][]Entry
 	}
 
-	tmpl, err := template.New("asciidoc-release-notes").
+	td := TemplateData{
+		buildTitleByComponents(r.changelog.Entries), r.changelog.Version, r.changelog,
+		collectKinds(r.changelog.Entries),
+		collectByKindMap(r.changelog.Entries, BreakingChange),
+		collectByKindMap(r.changelog.Entries, Deprecation),
+		collectByKindMap(r.changelog.Entries, BugFix),
+		collectByKindMap(r.changelog.Entries, Enhancement),
+		collectByKindMap(r.changelog.Entries, Feature),
+		collectByKindMap(r.changelog.Entries, KnownIssue),
+		collectByKindMap(r.changelog.Entries, Security),
+		collectByKindMap(r.changelog.Entries, Upgrade),
+		collectByKindMap(r.changelog.Entries, Other),
+	}
+
+	tmpl, err := template.New("release-notes").
 		Funcs(template.FuncMap{
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
 			"linkPRSource": func(component string, ids []string) string {
-				component = "agent" // TODO: remove this when implementing support for multiple components
-
 				res := make([]string, len(ids))
 
 				for i, id := range ids {
@@ -89,7 +89,6 @@ func (r Renderer) Render() error {
 			},
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
 			"linkIssueSource": func(component string, ids []string) string {
-				component = "agent" // TODO: remove this when implementing support for multiple components
 				res := make([]string, len(ids))
 
 				for i, id := range ids {
@@ -104,6 +103,15 @@ func (r Renderer) Render() error {
 				s2.WriteString(cases.Title(language.English).String(s1))
 				if !strings.HasSuffix(s1, ".") {
 					s2.WriteString(".")
+				}
+				return s2.String()
+			},
+			// Ensure components have section styling
+			"header2": func(s1 string) string {
+				s2 := strings.Builder{}
+				s2.WriteString(s1)
+				if !strings.HasSuffix(s1, "::") && s1 != "" {
+					s2.WriteString("::")
 				}
 				return s2.String()
 			},
@@ -149,6 +157,22 @@ func collectKinds(items []Entry) map[Kind]bool {
 	return kinds
 }
 
+func collectByKindMap(entries []Entry, k Kind) map[string][]Entry {
+	componentEntries := map[string][]Entry{}
+
+	for _, e := range entries {
+		if e.Kind == k {
+			if len(e.Component) > 0 {
+				componentEntries[e.Component] = append(componentEntries[e.Component], e)
+			} else {
+				componentEntries[""] = append(componentEntries[""], e)
+			}
+		}
+	}
+
+	return componentEntries
+}
+
 func collectByKind(items []Entry, k Kind) []Entry {
 	entries := []Entry{}
 
@@ -159,4 +183,41 @@ func collectByKind(items []Entry, k Kind) []Entry {
 	}
 
 	return entries
+}
+
+func buildTitleByComponents(entries []Entry) string {
+	configComponents := viper.GetStringSlice("components")
+
+	switch len(configComponents) {
+	case 0:
+		return ""
+	case 1:
+		c := configComponents[0]
+		for _, e := range entries {
+			if c != e.Component && len(e.Component) > 0 {
+				log.Fatalf("Component [%s] not found in config", e.Component)
+			}
+		}
+		return c
+	default:
+		var match string
+		for _, e := range entries {
+			if e.Component == "" {
+				log.Fatalf("Component cannot be assumed, choose it from config values: %s", e.File.Name)
+			}
+
+			match = ""
+			for _, c := range configComponents {
+				if e.Component != c {
+					continue
+				}
+				match = e.Component
+			}
+
+			if match == "" {
+				log.Fatalf("Component [%s] not found in config", e.Component)
+			}
+		}
+		return match
+	}
 }
