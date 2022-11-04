@@ -16,8 +16,8 @@ import (
 
 const RenderLongDescription = `Use this command to render the consolidated changelog.
 
---version flag is required, points to file in /changelogs
---template_file is optional, specify it from templates folder, default: internal/changelog/asciidoc-template.asciidoc`
+--version is required. Points to the consolidated changelog file name in 'changelogs' folder
+--template is optional. Specify it from assets folder. Default: internal/changelog/asciidoc-template.asciidoc`
 
 func RenderCmd(fs afero.Fs) *cobra.Command {
 	renderCmd := &cobra.Command{
@@ -36,13 +36,9 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 				return fmt.Errorf("error parsing flag 'version': %w", err)
 			}
 
-			templateFile, err := cmd.Flags().GetString("template_file")
+			template, err := cmd.Flags().GetString("template")
 			if err != nil {
-				return fmt.Errorf("error parsing flag 'template_file': %w", err)
-			}
-
-			if templateFile == "" {
-				templateFile = viper.GetString("template_file")
+				return fmt.Errorf("error parsing flag 'template': %w", err)
 			}
 
 			c, err := changelog.FromFile(fs, fmt.Sprintf("./%s/%s.yaml", dest, version))
@@ -50,7 +46,7 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 				return fmt.Errorf("error loading changelog from file: %w", err)
 			}
 
-			r := changelog.NewRenderer(fs, c, renderedDest, templateFile)
+			r := changelog.NewRenderer(fs, c, renderedDest, template)
 
 			if err := r.Render(); err != nil {
 				return fmt.Errorf("cannot build asciidoc file: %w", err)
@@ -60,7 +56,7 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 		},
 	}
 
-	renderCmd.Flags().String("template_file", "", "The template used to generate the changelog")
+	renderCmd.Flags().String("template", viper.GetString("template"), "The template used to generate the changelog")
 	renderCmd.Flags().String("version", "", "The version of the consolidated changelog being created")
 	err := renderCmd.MarkFlagRequired("version")
 	if err != nil {

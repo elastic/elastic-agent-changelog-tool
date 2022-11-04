@@ -134,22 +134,32 @@ func (r Renderer) Render() error {
 	return afero.WriteFile(r.fs, outFile, data.Bytes(), changelogFilePerm)
 }
 
+// Binds strings to the actual template file name
+// These strings can be used in the config template field or renderer template flag
+func getEmbeddedTemplates() map[string]string {
+	return map[string]string{
+		"asciidoc-embedded": "asciidoc-template.asciidoc",
+	}
+}
+
 //go:embed asciidoc-template.asciidoc
 var asciidocTemplate embed.FS
 
 func (r Renderer) Template() ([]byte, error) {
 	var data []byte
 	var err error
-	if r.templ == "asciidoc-template.asciidoc" {
-		data, err = asciidocTemplate.ReadFile(r.templ)
+
+	embeddedFileName, ok := getEmbeddedTemplates()[r.templ]
+	if ok {
+		data, err = asciidocTemplate.ReadFile(embeddedFileName)
 		if err != nil {
-			return []byte{}, fmt.Errorf("cannot read embedded template: %w", err)
+			return []byte{}, fmt.Errorf("cannot read embedded template: %s %w", embeddedFileName, err)
 		}
 
 		return data, nil
 	}
 
-	data, err = afero.ReadFile(r.fs, fmt.Sprintf("./templates/%s", r.templ))
+	data, err = afero.ReadFile(r.fs, fmt.Sprintf("./assets/%s", r.templ))
 	if err != nil {
 		return []byte{}, fmt.Errorf("cannot read custom template: %w", err)
 	}

@@ -1,4 +1,4 @@
 owner: elastic
 repo: elastic-agent-changelog-tool
-template_file: custom-template.asciidoc
+template: asciidoc-embedded
 components: [elastic-agent-changelog-tool]
