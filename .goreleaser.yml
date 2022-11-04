@@ -6,3 +6,14 @@ builds:
       - -X github.com/elastic/elastic-agent-changelog-tool/internal/version.CommitHash={{.ShortCommit}}
       - -X github.com/elastic/elastic-agent-changelog-tool/internal/version.SourceDateEpoch={{.CommitDate}}
       - -X github.com/elastic/elastic-agent-changelog-tool/internal/version.Tag={{.Tag}}
+dockers:
+  - image_templates:
+    - "docker.elastic.co/observability-ci/{{.ProjectName}}"
+    - "docker.elastic.co/observability-ci/{{.ProjectName}}:{{ .Tag }}"
+    skip_push: true
+    build_flag_templates:
+    - "--pull"
+    - "--label=org.opencontainers.image.created={{.Date}}"
+    - "--label=org.opencontainers.image.title={{.ProjectName}}"
+    - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+    - "--label=org.opencontainers.image.version={{.Version}}"
