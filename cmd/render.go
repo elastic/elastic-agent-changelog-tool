@@ -8,16 +8,21 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/elastic/elastic-agent-changelog-tool/internal/assets"
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-const RenderLongDescription = `Use this command to render the consolidated changelog.
+var RenderLongDescription = fmt.Sprintf(`Use this command to render the consolidated changelog.
 
 --version is required. Consolidated changelog version (x.y.z) in 'changelogs' folder
---template is optional. File from 'assets' folder or string binded to an embedded template. Default: asciidoc-embedded`
+--template is optional. Specify full path to your template file or use predefined templates. Default: asciidoc-embedded
+
+Predefined templates:
+%s
+`, assets.GetEmbeddedTemplates().String())
 
 func RenderCmd(fs afero.Fs) *cobra.Command {
 	renderCmd := &cobra.Command{
