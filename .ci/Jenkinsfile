@@ -89,6 +89,8 @@ pipeline {
       steps {
         dir("${BASE_DIR}"){
           goReleaser() {
+            // Ensure that tags are present so goreleaser can build the changelog from the last release.
+            gitCmd(cmd: 'fetch', args: '--unshallow --tags')
             sh(label: 'goreleaser', script: 'goreleaser release')
           }
         }
@@ -126,8 +128,6 @@ def goReleaser(Closure body) {
   withGoEnv() {
     sh(label: 'install goreleaser', script: 'go install github.com/goreleaser/goreleaser@v1.6.3')
     withCredentials([string(credentialsId: "${env.GITHUB_TOKEN_CREDENTIALS}", variable: 'GITHUB_TOKEN')]) {
-      // Ensure that tags are present so goreleaser can build the changelog from the last release.
-      gitCmd(cmd: 'fetch', args: '--unshallow --tags')
       body()
     }
   }
