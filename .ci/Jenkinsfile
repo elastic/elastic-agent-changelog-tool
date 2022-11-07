@@ -12,6 +12,8 @@ pipeline {
     PIPELINE_LOG_LEVEL = 'INFO'
     GITHUB_TOKEN_CREDENTIALS = "2a9602aa-ab9f-4e52-baf3-b71ca88469c7"
     SLACK_CHANNEL = '#elastic-agent-control-plane'
+    DOCKER_ELASTIC_SECRET = 'secret/observability-team/ci/docker-registry/prod'
+    DOCKER_REGISTRY = 'docker.elastic.co'
   }
   options {
     timeout(time: 1, unit: 'HOURS')
@@ -76,8 +78,9 @@ pipeline {
         deleteDir()
         unstash 'source'
         dir("${BASE_DIR}"){
+          dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
           withGoEnv() {
-            sh 'go install github.com/goreleaser/goreleaser@v1.6.3'
+            sh(label: 'install goreleaser', script: 'go install github.com/goreleaser/goreleaser@v1.6.3')
             withCredentials([string(credentialsId: "${env.GITHUB_TOKEN_CREDENTIALS}", variable: 'GITHUB_TOKEN')]) {
               // Ensure that tags are present so goreleaser can build the changelog from the last release.
               gitCmd(cmd: 'fetch', args: '--unshallow --tags')
