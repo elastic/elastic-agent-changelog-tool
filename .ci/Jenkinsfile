@@ -71,15 +71,12 @@ pipeline {
         }
       }
     }
-    stage('Prepare') {
+    stage('Snapshot') {
       options { skipDefaultCheckout() }
+      when { not { tag pattern: '.*', comparator: 'REGEXP' } }
       steps {
-        deleteDir()
-        unstash 'source'
-        dir("${BASE_DIR}"){
-          goReleaser() {
-            sh(label: 'goreleaser', script: 'goreleaser release --prepare')
-          }
+        goReleaser() {
+          sh(label: 'goreleaser --snapshot', script: 'goreleaser release --snapshot')
         }
       }
     }
@@ -87,12 +84,10 @@ pipeline {
       options { skipDefaultCheckout() }
       when { tag pattern: 'v\\d+\\.\\d+\\.\\d+.*', comparator: 'REGEXP' }
       steps {
-        dir("${BASE_DIR}"){
-          goReleaser() {
-            // Ensure that tags are present so goreleaser can build the changelog from the last release.
-            gitCmd(cmd: 'fetch', args: '--unshallow --tags')
-            sh(label: 'goreleaser', script: 'goreleaser release')
-          }
+        goReleaser() {
+          // Ensure that tags are present so goreleaser can build the changelog from the last release.
+          gitCmd(cmd: 'fetch', args: '--unshallow --tags')
+          sh(label: 'goreleaser release', script: 'goreleaser release')
         }
       }
       post {
@@ -124,11 +119,15 @@ def notifyStatus(def args = [:]) {
 
 
 def goReleaser(Closure body) {
-	dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
-  withGoEnv() {
-    sh(label: 'install goreleaser', script: 'go install github.com/goreleaser/goreleaser@v1.6.3')
-    withCredentials([string(credentialsId: "${env.GITHUB_TOKEN_CREDENTIALS}", variable: 'GITHUB_TOKEN')]) {
-      body()
+  deleteDir()
+  unstash 'source'
+  dir("${BASE_DIR}"){
+    dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
+    withGoEnv() {
+      sh(label: 'install goreleaser', script: 'go install github.com/goreleaser/goreleaser@v1.6.3')
+      withCredentials([string(credentialsId: "${env.GITHUB_TOKEN_CREDENTIALS}", variable: 'GITHUB_TOKEN')]) {
+        body()
+      }
     }
   }
 }
