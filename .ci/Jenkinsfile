@@ -71,22 +71,23 @@ pipeline {
         }
       }
     }
+    stage('Snapshot') {
+      options { skipDefaultCheckout() }
+      when { not { tag pattern: '.*', comparator: 'REGEXP' } }
+      steps {
+        goReleaser() {
+          sh(label: 'goreleaser --snapshot', script: 'goreleaser release --snapshot')
+        }
+      }
+    }
     stage('Release') {
       options { skipDefaultCheckout() }
       when { tag pattern: 'v\\d+\\.\\d+\\.\\d+.*', comparator: 'REGEXP' }
       steps {
-        deleteDir()
-        unstash 'source'
-        dir("${BASE_DIR}"){
-          dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
-          withGoEnv() {
-            sh(label: 'install goreleaser', script: 'go install github.com/goreleaser/goreleaser@v1.6.3')
-            withCredentials([string(credentialsId: "${env.GITHUB_TOKEN_CREDENTIALS}", variable: 'GITHUB_TOKEN')]) {
-              // Ensure that tags are present so goreleaser can build the changelog from the last release.
-              gitCmd(cmd: 'fetch', args: '--unshallow --tags')
-              sh(label: 'goreleaser', script: 'goreleaser release')
-            }
-          }
+        goReleaser() {
+          // Ensure that tags are present so goreleaser can build the changelog from the last release.
+          gitCmd(cmd: 'fetch', args: '--unshallow --tags')
+          sh(label: 'goreleaser release', script: 'goreleaser release')
         }
       }
       post {
@@ -114,4 +115,19 @@ def notifyStatus(def args = [:]) {
                       to: "${env.NOTIFY_TO}",
                       subject: args.subject,
                       body: args.body)
+}
+
+
+def goReleaser(Closure body) {
+  deleteDir()
+  unstash 'source'
+  dir("${BASE_DIR}"){
+    dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
+    withGoEnv() {
+      sh(label: 'install goreleaser', script: 'go install github.com/goreleaser/goreleaser@v1.6.3')
+      withCredentials([string(credentialsId: "${env.GITHUB_TOKEN_CREDENTIALS}", variable: 'GITHUB_TOKEN')]) {
+        body()
+      }
+    }
+  }
 }
