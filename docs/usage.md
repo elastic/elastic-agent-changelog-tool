@@ -33,6 +33,8 @@ The fragment is created from the template available in [`../internal/changelog/f
 
 ### Previewing the changelog
 
+These steps require [GitHub Authentication](./github-authentication.md).
+
 From the repository root folder build the consolidated changelog with:
 
 ```
@@ -60,12 +62,16 @@ You may also be interested in  viewing the changelog for unreleased changes.
 
 ### Ensuring Changelog Fragment presence in PRs
 
+These steps require [GitHub Authentication](./github-authentication.md).
+
 `elastic-agent-chagelog-tool` has a dedicated command for this: `pr-has-fragment`.
 Given a PR number this command checks for presence of an added Changelog Fragment.
 
 For futrher details look at command usage: `elastic-agent-changelog-tool pr-has-fragment --help`
 
 ### Previewing the changelog
+
+These steps require [GitHub Authentication](./github-authentication.md).
 
 From the repository root folder build the consolidated changelog with:
 
@@ -83,6 +89,8 @@ An example is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).
 
 ### Including the changelog in a pre-release version
 
+These steps require [GitHub Authentication](./github-authentication.md).
+
 Pre-release versions are development releases, it's worth including the changelog but as they are not stable releases, you should not remove the fragments.
 The side effect is that the changelog will include all entries from latest stable release up to current pre-release, but in the end this correctly reflects the content of the provided pre-release.
 
@@ -99,6 +107,8 @@ The side effect is that the changelog will include all entries from latest stabl
 > NOTE: This instructions are for the 0.2.0 milestone (when ready). As more features and automation is added the process will become simpler.
 
 ### Preparing the changelog
+
+These steps require [GitHub Authentication](./github-authentication.md).
 
 * Wait for the last BC of the release. If another BC is generated after that or a patch version for a previous minor is released, you might need to restart the process.
 * Create a branch **from the commit of the BC**.
