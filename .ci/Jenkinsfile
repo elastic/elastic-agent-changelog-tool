@@ -87,7 +87,7 @@ pipeline {
         goReleaser() {
           // Ensure that tags are present so goreleaser can build the changelog from the last release.
           gitCmd(cmd: 'fetch', args: '--unshallow --tags')
-          sh(label: 'goreleaser release', script: 'goreleaser release --debug')
+          sh(label: 'goreleaser release', script: 'goreleaser release')
         }
       }
       post {
