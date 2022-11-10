@@ -122,10 +122,10 @@ def goReleaser(Closure body) {
   deleteDir()
   unstash 'source'
   dir("${BASE_DIR}"){
-    dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
     withGoEnv() {
       sh(label: 'install goreleaser', script: 'go install github.com/goreleaser/goreleaser@v1.6.3')
       withCredentials([string(credentialsId: "${env.GITHUB_TOKEN_CREDENTIALS}", variable: 'GITHUB_TOKEN')]) {
+        dockerLogin(secret: "${DOCKER_ELASTIC_SECRET}", registry: "${DOCKER_REGISTRY}")
         body()
       }
     }
