@@ -138,8 +138,7 @@ func (r Renderer) Template() ([]byte, error) {
 	var data []byte
 	var err error
 
-	embeddedFileName, ok := assets.GetEmbeddedTemplates()[r.templ]
-	if ok {
+	if embeddedFileName, ok := assets.GetEmbeddedTemplates()[r.templ]; ok {
 		data, err = assets.AsciidocTemplate.ReadFile(embeddedFileName)
 		if err != nil {
 			return []byte{}, fmt.Errorf("cannot read embedded template: %s %w", embeddedFileName, err)
