@@ -105,5 +105,8 @@ component:
 #issue: 1234
 `
 	got := string(content)
-	assert.Equal(t, expected, got)
+	assert.Equal(t, expected, got, `This test exists to force review on changes to the Changelog Fragment template, as changing the template may introduce breaking changes.
+This test is here to double check and confirm the choice of changing it. If the change introduce a breaking change, make sure to create a proper upgrade path for users.
+If you changed the template and this test break, you know why.
+`)
 }
