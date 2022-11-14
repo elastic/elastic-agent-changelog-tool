@@ -6,13 +6,13 @@ package changelog
 
 import (
 	"bytes"
-	"embed"
 	"fmt"
 	"html/template"
 	"log"
 	"path"
 	"strings"
 
+	"github.com/elastic/elastic-agent-changelog-tool/internal/assets"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
 	"golang.org/x/text/cases"
@@ -23,14 +23,16 @@ type Renderer struct {
 	changelog Changelog
 	fs        afero.Fs
 	// dest is the destination location where the changelog is written to
-	dest string
+	dest  string
+	templ string
 }
 
-func NewRenderer(fs afero.Fs, c Changelog, dest string) *Renderer {
+func NewRenderer(fs afero.Fs, c Changelog, dest string, templ string) *Renderer {
 	return &Renderer{
 		changelog: c,
 		fs:        fs,
 		dest:      dest,
+		templ:     templ,
 	}
 }
 
@@ -132,13 +134,22 @@ func (r Renderer) Render() error {
 	return afero.WriteFile(r.fs, outFile, data.Bytes(), changelogFilePerm)
 }
 
-//go:embed asciidoc-template.asciidoc
-var asciidocTemplate embed.FS
-
 func (r Renderer) Template() ([]byte, error) {
-	data, err := asciidocTemplate.ReadFile("asciidoc-template.asciidoc")
+	var data []byte
+	var err error
+
+	if embeddedFileName, ok := assets.GetEmbeddedTemplates()[r.templ]; ok {
+		data, err = assets.AsciidocTemplate.ReadFile(embeddedFileName)
+		if err != nil {
+			return []byte{}, fmt.Errorf("cannot read embedded template: %s %w", embeddedFileName, err)
+		}
+
+		return data, nil
+	}
+
+	data, err = afero.ReadFile(r.fs, r.templ)
 	if err != nil {
-		return []byte{}, fmt.Errorf("cannot read embedded template: %w", err)
+		return []byte{}, fmt.Errorf("cannot read custom template: %w", err)
 	}
 
 	return data, nil

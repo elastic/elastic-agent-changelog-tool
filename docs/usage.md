@@ -39,11 +39,12 @@ From the repository root folder build the consolidated changelog with:
 $ elastic-agent-changelog-tool build --version=next --owner <owner> --repo <repo>
 ```
 
-the render the consolidated changelog with:
+then render the consolidated changelog with:
+```
+$ elastic-agent-changelog-tool render --version=next --template <template>
+```
 
-```
-$ elastic-agent-changelog-tool render --version=next --owner <owner> --repo <repo>
-```
+The template value can be chosen from a predefined internal list of templates (`render --help`) or use a full path to your template file.
 
 An example is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).
 
@@ -73,11 +74,11 @@ From the repository root folder build the consolidated changelog with:
 $ elastic-agent-changelog-tool build --version=next --owner <owner> --repo <repo>
 ```
 
-the render the consolidated changelog with:
-
+then render the consolidated changelog with:
 ```
-$ $ elastic-agent-changelog-tool render --version=next --owner <owner> --repo <repo>
+$ $ elastic-agent-changelog-tool render --version=next --template <template>
 ```
+The template value can be chosen from a predefined internal list of templates (`render --help`) or use a full path to your template file.
 
 An example is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).
 
@@ -88,7 +89,7 @@ The side effect is that the changelog will include all entries from latest stabl
 
 1. Create consolidated changelog with `$ elastic-agent-changelog-tool build --version <version> --owner <owner> --repo <repo>`;
 * This will create `./changelog/x.y.z.yaml`;
-2. Create rendered changelog with `$ elastic-agent-changelog-tool render --version <version>`;
+2. Create rendered changelog with `$ elastic-agent-changelog-tool render --version <version> --template <template>`;
 * This will generate an asciidoc file in the `changelog/` directory;
 3. Use the rendered changelog.
 
@@ -119,7 +120,7 @@ $ elastic-agent-changelog-tool cleanup
 * Commit the previous changes (consolidated changelod and removed files)
 * From the root folder of the repository run:
 ```
-$ elastic-agent-changelog-tool render --version x.y.z
+$ elastic-agent-changelog-tool render --version x.y.z --template <template>
 ```
 * This will generate an asciidoc fragment in the `changelog/` directory.
 * Integrate the generated fragment into the changelog. If the changelog is stored in the same repository, commit the changes in this same branch.
