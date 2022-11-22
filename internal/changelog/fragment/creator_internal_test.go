@@ -94,16 +94,19 @@ summary: foobar
 # Affected component; a word indicating the component this changeset affects.
 component:
 
-# PR number; optional; the PR number that added the changeset.
+# PR URL; optional; the PR number that added the changeset.
 # If not present is automatically filled by the tooling finding the PR where this changelog fragment has been added.
 # NOTE: the tooling supports backports, so it's able to fill the original PR number instead of the backport PR number.
 # Please provide it if you are adding a fragment for a different PR.
-#pr: 1234
+#pr: https://github.com/owner/repo/1234
 
-# Issue number; optional; the GitHub issue related to this changeset (either closes or is part of).
+# Issue URL; optional; the GitHub issue related to this changeset (either closes or is part of).
 # If not present is automatically filled by the tooling with the issue linked to the PR number.
-#issue: 1234
+#issue: https://github.com/owner/repo/1234
 `
 	got := string(content)
-	assert.Equal(t, expected, got)
+	assert.Equal(t, expected, got, `This test exists to force review on changes to the Changelog Fragment template, as changing the template may introduce breaking changes.
+This test is here to double check and confirm the choice of changing it. If the change introduce a breaking change, make sure to create a proper upgrade path for users.
+If you changed the template and this test break, you know why.
+`)
 }

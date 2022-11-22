@@ -47,22 +47,18 @@ summary:
 # Affected component; a word indicating the component this changeset affects.
 component:
 
-# PR number; optional; the PR number that added the changeset.
+# PR URL; optional; the PR number that added the changeset.
 # If not present is automatically filled by the tooling finding the PR where this changelog fragment has been added.
 # NOTE: the tooling supports backports, so it's able to fill the original PR number instead of the backport PR number.
 # Please provide it if you are adding a fragment for a different PR.
-#pr: 1234
+#pr: https://github.com/owner/repo/1234
 
-# Issue number; optional; the GitHub issue related to this changeset (either closes or is part of).
+# Issue URL; optional; the GitHub issue related to this changeset (either closes or is part of).
 # If not present is automatically filled by the tooling with the issue linked to the PR number.
-#issue: 1234
-
-# Repository URL; optional; the repository URL related to this changeset and pr and issue numbers.
-# If not present is automatically filled by the tooling based on the repository this file has been committed in.
-#repository: https://github.com/elastic/elastic-agent-changelog-tool
+#issue: https://github.com/owner/repo/1234
 ```
 
-Ensure `kind` is correct and fill the `summary` field with a brief description. You can ignore `component`, but you must set `pr`, `issue` and `repository` manually, the logic to fill them automatically is still work in progress.
+Ensure `kind` is correct and fill the `summary` field with a brief description.
 
 Save and close the file.
 
@@ -82,8 +78,10 @@ entries:
     - summary: Add Changelog Fragment creation
       description: ""
       kind: feature
-      pr: 13
-      issue: 21
+      pr:
+          - https://github.com/elastic/elastic-agent-changelog-tool/pull/13
+      issue: 
+          - https://github.com/elastic/elastic-agent-changelog-tool/issues/21
       timestamp: 1649924282
       file:
         name: 1649924282-changelog-fragment-creation.yaml
