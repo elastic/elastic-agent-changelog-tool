@@ -64,7 +64,7 @@ Save and close the file.
 
 ## 4. Create the consolidated changelog
 
-From the root folder of the repository run:
+From the root folder of the `elastic-agent-changelog-tool` repository run:
 
 ```
 $ elastic-agent-changelog-tool build --version 0.1.0
