@@ -77,6 +77,9 @@ func (r Renderer) Render() error {
 
 	tmpl, err := template.New("release-notes").
 		Funcs(template.FuncMap{
+			"crossreferenceList": func(ids []string) string {
+				return strings.Join(ids, "-")
+			},
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
 			"linkPRSource": func(component string, ids []string) string {
 				res := make([]string, len(ids))
