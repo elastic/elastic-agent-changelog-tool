@@ -1,0 +1,52 @@
+version: 0.4.0
+entries:
+    - kind: feature
+      summary: Add config capabilities for owner and repository
+      description: ""
+      component: ""
+      pr: []
+      issue: []
+      timestamp: 1664192272
+      file:
+        name: 1664192272-Add-config-capabilities-for-owner-and-repository.yaml
+        checksum: 788741c92d7c9ab28dc159b09831d73c5e98c5b3
+    - kind: feature
+      summary: Add multiple component support
+      description: ""
+      component: ""
+      pr: []
+      issue: []
+      timestamp: 1666868151
+      file:
+        name: 1666868151-Add-multiple-component-support.yaml
+        checksum: 864fb9ae1ab2aefb5b45540a222ea59027138077
+    - kind: feature
+      summary: Custom template support for render
+      description: ""
+      component: ""
+      pr: []
+      issue: []
+      timestamp: 1666881492
+      file:
+        name: 1666881492-Custom-template-support-for-render.yaml
+        checksum: d66931fc372d1d16494ab36413234e7f5572bafa
+    - kind: feature
+      summary: Add changelong lint command to validate the fields
+      description: ""
+      component: ""
+      pr: []
+      issue: []
+      timestamp: 1666956886
+      file:
+        name: 1666956886-Add-changelong-lint-command.yaml
+        checksum: cb91070a1f61bfa0d5067621399e16ab4455515d
+    - kind: bug-fix
+      summary: handle missing failure case to URL extraction
+      description: ""
+      component: ""
+      pr: []
+      issue: []
+      timestamp: 1667229980
+      file:
+        name: 1667229980-handle-missing-failure-case-to-URL-extraction.yaml
+        checksum: 5d63f8dacda4e8c7f706f721b3baaec1778651cb
