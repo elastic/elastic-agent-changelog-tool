@@ -17,6 +17,7 @@ Review important information about the {{.Component}} {{.Version}} release.
 {{- end }}
 {{- end }}
 {{- end }}
+
 {{ if .BreakingChange -}}
 [discrete]
 [[breaking-changes-{{.Version}}]]
@@ -34,6 +35,7 @@ impact to your application.
 {{- end }}
 {{- end }}
 {{- end }}
+
 {{ if .KnownIssue -}}
 [discrete]
 [[known-issues-{{.Version}}]]
@@ -47,6 +49,7 @@ impact to your application.
 {{- end }}
 {{- end }}
 {{- end }}
+
 {{ if .Deprecation -}}
 [discrete]
 [[deprecations-{{.Version}}]]
@@ -64,6 +67,7 @@ upgrade to {{.Version}}.
 {{- end }}
 {{- end }}
 {{- end }}
+
 {{ if .Feature -}}
 [discrete]
 [[new-features-{{.Version}}]]
@@ -78,6 +82,7 @@ The {{.Version}} release adds the following new and notable features.
 {{- end }}
 {{- end }}
 {{- end }}
+
 {{ if .Enhancement }}
 [discrete]
 [[enhancements-{{.Version}}]]
@@ -90,6 +95,7 @@ The {{.Version}} release adds the following new and notable features.
 {{- end }}
 {{- end }}
 {{- end }}
+
 {{ if .BugFix }}
 [discrete]
 [[bug-fixes-{{.Version}}]]
