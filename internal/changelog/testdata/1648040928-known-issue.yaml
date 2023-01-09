@@ -1,2 +1,5 @@
 kind: known-issue
 summary: a known issue
+description: This paragraph to describe details and impact of this known issue
+issue: 1234
+component: whatever

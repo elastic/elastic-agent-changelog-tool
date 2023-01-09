@@ -1,2 +1,5 @@
 kind: breaking-change
 summary: a breaking change
+description: This paragraph to describe details and impact of this breaking change
+pr: 1234
+component: whatever
