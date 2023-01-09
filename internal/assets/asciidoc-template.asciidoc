@@ -31,7 +31,13 @@ impact to your application.
 {{ range $k, $v := .BreakingChange }}
 {{ $k | header2}}
 {{ range $item := $v }}
-* {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+[discrete]
+[[breaking-{{crossreferenceList $item.LinkedPR}}]]
+.{{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+[%collapsible]
+====
+{{ $item.Description }}
+====
 {{- end }}
 {{- end }}
 {{- end }}
@@ -45,7 +51,13 @@ impact to your application.
 {{ range $k, $v := .KnownIssue }}
 {{ $k | header2}}
 {{ range $item := $v }}
-* {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+[discrete]
+[[known-issue-issue-{{crossreferenceList $item.LinkedIssue}}]]
+.{{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+[%collapsible]
+====
+{{ $item.Description }}
+====
 {{- end }}
 {{- end }}
 {{- end }}
