@@ -89,6 +89,7 @@ summary: foobar
 
 # Long description; in case the summary is not enough to describe the change
 # this field accommodate a description without length limits.
+# NOTE: This field will be rendered only for breaking-change and known-issue kinds at the moment.
 #description:
 
 # Affected component; a word indicating the component this changeset affects.
