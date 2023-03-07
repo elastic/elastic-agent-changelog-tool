@@ -1,0 +1,13 @@
+version: 0.5.0
+entries:
+    - kind: feature
+      summary: Support rendering description for breaking changes and known issues.
+      description: ""
+      component: ""
+      pr:
+        - https://github.com/elastic/elastic-agent-changelog-tool/pull/129
+      issue: []
+      timestamp: 1673258661
+      file:
+        name: 1673258661-Support-rendering-description.yaml
+        checksum: 20e5dcbdcbb2522cf39b73e366fb0c1874fd703e
