@@ -112,6 +112,23 @@ The {{.Version}} release adds the following new and notable features.
 {{- end }}
 {{- end }}
 
+{{ if .Upgrade }}
+[discrete]
+[[upgrades-{{.Version}}]]
+=== Upgrades
+
+{{ range $k, $v := .Upgrade }}
+{{ $k | header2}}
+{{ range $item := $v }}
+* {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- if $item.Description }}
++
+{{ $item.Description }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
+
 {{ if .BugFix }}
 [discrete]
 [[bug-fixes-{{.Version}}]]

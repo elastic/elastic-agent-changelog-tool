@@ -48,7 +48,8 @@ func TestRenderer(t *testing.T) {
 		switch e.Kind {
 		// NOTE: this is the list of kinds of entries we expect to see
 		// in the rendered changelog (not all kinds are expected)
-		case changelog.BreakingChange, changelog.Feature, changelog.KnownIssue:
+		case changelog.BreakingChange, changelog.Feature, changelog.KnownIssue,
+			changelog.Upgrade:
 			require.Contains(t, strings.ToLower(string(out)), e.Summary)
 			require.Contains(t, string(out), e.Description)
 		case changelog.Deprecation, changelog.BugFix, changelog.Enhancement,
