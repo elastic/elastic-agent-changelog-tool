@@ -1,0 +1,26 @@
+version: 0.6.0
+entries:
+    - kind: feature
+      summary: Render description for kind feature
+      description: ""
+      component: ""
+      pr:
+        - https://github.com/elastic/elastic-agent-changelog-tool/pull/134
+      issue:
+        - https://github.com/elastic/elastic-agent-changelog-tool/issues/133
+      timestamp: 1678182005
+      file:
+        name: 1678182005-Render-description-for-kind-feature.yaml
+        checksum: a1a8949f6fdcd3177582354dcf8fa961d6680704
+    - kind: feature
+      summary: Render kind upgrade
+      description: ""
+      component: ""
+      pr:
+        - https://github.com/elastic/elastic-agent-changelog-tool/pull/137
+      issue:
+        - https://github.com/elastic/elastic-agent-changelog-tool/issues/132
+      timestamp: 1678187521
+      file:
+        name: 1678187521-Render-kind-upgrade.yaml
+        checksum: a514b27fc29d7dc03aba6a5e5c6e43b8ca6d0d53
