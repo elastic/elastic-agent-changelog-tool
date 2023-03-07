@@ -13,7 +13,7 @@ jobs:
       - name: get go version
         run: |
           gv=$(cat .go-version)
-          echo "::set-output name=go::$gv"
+          echo "go=$gv" >> $GITHUB_OUTPUT
         id: version
 
       - name: install Go
@@ -34,7 +34,7 @@ jobs:
       - name: get go version
         run: |
           gv=$(cat .go-version)
-          echo "::set-output name=go::$gv"
+          echo "go=$gv" >> $GITHUB_OUTPUT
         id: version
 
       - name: install Go
@@ -55,7 +55,7 @@ jobs:
       - name: get go version
         run: |
           gv=$(cat .go-version)
-          echo "::set-output name=go::$gv"
+          echo "go=$gv" >> $GITHUB_OUTPUT
         id: version
 
       - name: install Go
@@ -77,7 +77,7 @@ jobs:
       - name: get go version
         run: |
           gv=$(cat .go-version)
-          echo "::set-output name=go::$gv"
+          echo "go=$gv" >> $GITHUB_OUTPUT
         id: version
 
       - name: install Go
@@ -100,7 +100,7 @@ jobs:
       - name: get go version
         run: |
           gv=$(cat .go-version)
-          echo "::set-output name=go::$gv"
+          echo "go=$gv" >> $GITHUB_OUTPUT
         id: version
 
       - name: install Go
