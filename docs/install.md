@@ -17,6 +17,14 @@ $ go install github.com/elastic/elastic-agent-changelog-tool@latest
 _Please make sure that you've correctly [setup environment variables](https://golang.org/doc/gopath_code.html#GOPATH) -
 `$GOPATH` and `$PATH`, and `elastic-agent-changelog-tool` should be accessible from your `$PATH`._
 
+## Use Docker image
+
+Docker images for these project are available at `docker.elastic.co/observability-ci/elastic-agent-changelog-tool`. You can pull the latest released tag with:
+
+```
+$ docker pull docker.elastic.co/observability-ci/elastic-agent-changelog-tool:<tag>
+```
+
 ## Install from source code
 
 If you have a `go` development environment, you can clone this repo and build the source files with:
