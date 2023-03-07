@@ -91,6 +91,10 @@ The {{.Version}} release adds the following new and notable features.
 {{ $k | header2}}
 {{ range $item := $v }}
 * {{ $item.Summary | beautify }} {{ linkPRSource $item.Component $item.LinkedPR }} {{ linkIssueSource $item.Component $item.LinkedIssue }}
+{{- if $item.Description }}
++
+{{ $item.Description }}
+{{- end }}
 {{- end }}
 {{- end }}
 {{- end }}
