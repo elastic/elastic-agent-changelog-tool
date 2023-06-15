@@ -46,7 +46,7 @@ func NewCmd() *cobra.Command {
 		},
 	}
 
-	newCmd.Flags().String("title", viper.GetString("title"), "The title for the changelog")
+	newCmd.Flags().String("title", "", "The title for the changelog")
 
 	return newCmd
 }
