@@ -1,0 +1,13 @@
+version: 0.6.1
+entries:
+    - kind: bug-fix
+      summary: 'Remove : char from filename'
+      description: Double colon is a valid filename character on Linux but not on Windows or macOS. As such is preferred to always strip it from fragment filenames.
+      component: ""
+      pr:
+        - https://github.com/elastic/elastic-agent-changelog-tool/pull/143
+      issue: []
+      timestamp: 1687169387
+      file:
+        name: 1687169387-fragment-filename-sanitize.yaml
+        checksum: 942b23ea2161b44d0758e8bb9652a6d9e84758ee
