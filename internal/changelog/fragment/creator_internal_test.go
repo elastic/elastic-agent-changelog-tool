@@ -53,6 +53,7 @@ func TestSanitizeFilename(t *testing.T) {
 		{input: "foo/bar", want: "foo-bar"},
 		{input: "foo\\bar", want: "foo-bar"},
 		{input: "foo bar/foobar\\", want: "foo-bar-foobar-"},
+		{input: "foo bar: foobar", want: "foo-bar-foobar"},
 	}
 
 	for _, tc := range tests {
