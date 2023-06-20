@@ -5,13 +5,13 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog/fragment"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os/exec"
+	"strings"
 )
 
 func NewCmd() *cobra.Command {
@@ -23,17 +23,21 @@ func NewCmd() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
-			title, err := cmd.Flags().GetString("title")
-			if err != nil {
-				return fmt.Errorf("error parsing flag 'title': %w", err)
-			}
-
-			if title == "" {
-				title, err = defaultTitle()
+			// Determine changelog fragment title
+			var title string
+			if len(args) > 0 {
+				// Title is the string that follows "elastic-agent-changelog-tool new"
+				title = strings.Join(args, " ")
+			} else {
+				// Title is the name of the git branch
+				var err error
+				title, err = gitBranchName()
 				if err != nil {
 					return fmt.Errorf("error setting default title: %w", err)
 				}
 			}
+
+			title = strings.ToLower(strings.TrimSpace(title))
 
 			location := viper.GetString("fragment_location")
 			fc := fragment.NewCreator(afero.NewOsFs(), location)
@@ -51,7 +55,7 @@ func NewCmd() *cobra.Command {
 	return newCmd
 }
 
-func defaultTitle() (string, error) {
+func gitBranchName() (string, error) {
 	// git symbolic-ref --short HEAD
 	cmd := exec.Command("git", "symbolic-ref", "--short", "HEAD")
 	stdout, err := cmd.Output()
@@ -59,6 +63,5 @@ func defaultTitle() (string, error) {
 		return "", fmt.Errorf("unable to determine git branch: %w", err)
 	}
 
-	branchName := bytes.ToLower(bytes.TrimSpace(stdout))
-	return string(branchName), nil
+	return string(stdout), nil
 }
