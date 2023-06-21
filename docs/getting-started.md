@@ -44,7 +44,7 @@ summary:
 # this field accommodate a description without length limits.
 #description:
 
-# Affected component; a word indicating the component this changeset affects.
+# Affected component; usually one of "elastic-agent", "fleet-server", "filebeat", "metricbeat", "auditbeat", "all", etc.
 component:
 
 # PR URL; optional; the PR number that added the changeset.
