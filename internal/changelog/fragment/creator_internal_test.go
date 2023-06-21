@@ -93,7 +93,7 @@ summary: foobar
 # NOTE: This field will be rendered only for breaking-change and known-issue kinds at the moment.
 #description:
 
-# Affected component; a word indicating the component this changeset affects.
+# Affected component; usually one of "elastic-agent", "fleet-server", "filebeat", "metricbeat", "auditbeat", etc.
 component:
 
 # PR URL; optional; the PR number that added the changeset.
