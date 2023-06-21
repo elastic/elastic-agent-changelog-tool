@@ -1,0 +1,13 @@
+version: v0.6.2
+entries:
+    - kind: enhancement
+      summary: Add example components in fragement.
+      description: ""
+      component: elastic-agent-changelog-tool
+      pr:
+        - https://github.com/elastic/elastic-agent-changelog-tool/pull/145
+      issue: []
+      timestamp: 1687360796
+      file:
+        name: 1687360796-Add-example-components-in-fragement.yaml
+        checksum: def1e799d07755005679799c8cb88461bbef2f15
