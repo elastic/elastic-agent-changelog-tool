@@ -4,7 +4,8 @@
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: elastic-agent-system-metrics
+  name: elastic-agent-changelog-tool
+  description: Tooling to manage the changelog for beats, Elastic Agent and Fleet Server
 
 spec:
   type: tool
