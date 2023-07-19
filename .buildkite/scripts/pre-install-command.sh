@@ -12,6 +12,10 @@ with_go_junit_report() {
     go install github.com/jstemmer/go-junit-report/v2@latest
 }
 
+with_goreleaser() {
+    go install github.com/goreleaser/goreleaser@v1.6.3
+}
+
 # Required env variables:
 #   WORKSPACE
 #   SETUP_MAGE_VERSION

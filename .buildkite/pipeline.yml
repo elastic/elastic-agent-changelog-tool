@@ -1,7 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 env:
   SLACK_CHANNEL: '#elastic-agent-control-plane'
-  DOCKER_ELASTIC_SECRET: 'secret/observability-team/ci/docker-registry/prod'
   DOCKER_REGISTRY: 'docker.elastic.co'
 steps:
   - label: "Build"
@@ -21,3 +20,12 @@ steps:
       memory: "4G"
     artifact_paths:
       - "junit-*.xml"
+
+  - label: "Snapshot"
+    key: snapshot
+    command:
+      - ".buildkite/scripts/snapshot.sh"
+    agents:
+      image: golang:${GO_VERSION}
+      cpu: "8"
+      memory: "4G"
