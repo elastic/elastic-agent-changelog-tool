@@ -3,7 +3,7 @@ env:
   SLACK_CHANNEL: '#elastic-agent-control-plane'
   DOCKER_REGISTRY: 'docker.elastic.co'
 steps:
-  - label: "Build"
+  - label: ":buildkite: Build"
     command:
       - ".buildkite/scripts/build.sh"
     agents:
@@ -11,7 +11,8 @@ steps:
       cpu: "8"
       memory: "4G"
 
-  - label: "Test"
+  - label: ":linux: Test on linux"
+    key: test
     command:
       - ".buildkite/scripts/test.sh"
     agents:
@@ -21,7 +22,18 @@ steps:
     artifact_paths:
       - "junit-*.xml"
 
-  - label: "Snapshot"
+  - label: ":junit: Junit annotate"
+    plugins:
+      - junit-annotate#v2.4.1:
+          artifacts: "junit-*.xml"
+          fail-build-on-error: true
+    agents:
+      provider: "gcp" #junit plugin requires docker
+    depends_on:
+      - step: "test"
+        allow_failure: true
+
+  - label: ":buildkite: Snapshot"
     key: snapshot
     command:
       - ".buildkite/scripts/snapshot.sh"
@@ -29,3 +41,18 @@ steps:
       image: golang:${GO_VERSION}
       cpu: "8"
       memory: "4G"
+    depends_on:
+      - step: "test"
+        allow_failure: false
+
+  - label: ":buildkite: Release"
+    key: release
+    command:
+      - ".buildkite/scripts/release.sh"
+    agents:
+      image: golang:${GO_VERSION}
+      cpu: "8"
+      memory: "4G"
+    depends_on:
+      - step: "test"
+        allow_failure: false
