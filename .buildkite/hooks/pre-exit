@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-if [[ "$BUILDKITE_PIPELINE_SLUG" == "elastic-agent-changelog-tool" && "$BUILDKITE_STEP_KEY" == "snapshot" ]]; then
+if [[ "$BUILDKITE_PIPELINE_SLUG" == "elastic-agent-changelog-tool" && "$BUILDKITE_STEP_KEY" == "snapshot" ]] || \
+    [[ "$BUILDKITE_PIPELINE_SLUG" == "elastic-agent-changelog-tool" && "$BUILDKITE_STEP_KEY" == "release" ]]; then
     docker logout ${DOCKER_REGISTRY}
 fi
