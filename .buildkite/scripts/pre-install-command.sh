@@ -25,7 +25,7 @@ with_go() {
     ls ${WORKSPACE}/bin/ -l
     which gvm
     echo $go_version
-    eval "$(gvm $go_version)"
+    eval "$(gvm 1.17.9)"
     go version
 }
 
