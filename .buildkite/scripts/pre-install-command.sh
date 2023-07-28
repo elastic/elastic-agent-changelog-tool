@@ -22,6 +22,7 @@ with_go() {
     retry 5 curl -sL -o "${WORKSPACE}/bin/gvm" "${url}"
     ls ${WORKSPACE}/bin/ -l
     chmod +x "${WORKSPACE}/bin/gvm"
+    ls ${WORKSPACE}/bin/ -l
     eval "$(gvm $go_version)"
     go version
 }
