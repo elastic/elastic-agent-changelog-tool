@@ -24,6 +24,7 @@ with_go() {
     chmod +x "${WORKSPACE}/bin/gvm"
     ls ${WORKSPACE}/bin/ -l
     which gvm
+    echo $go_version
     eval "$(gvm $go_version)"
     go version
 }
