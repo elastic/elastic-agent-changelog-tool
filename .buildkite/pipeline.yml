@@ -1,5 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 env:
+  GVM_VERSION: 'v0.5.0'
   SLACK_CHANNEL: '#elastic-agent-control-plane'
   DOCKER_REGISTRY: 'docker.elastic.co'
 steps:
@@ -39,9 +40,7 @@ steps:
     command:
       - ".buildkite/scripts/snapshot.sh"
     agents:
-      image: golang:${GO_VERSION}
-      cpu: "8"
-      memory: "4G"
+      provider: "gcp"
     depends_on:
       - step: "test"
         allow_failure: false
@@ -52,9 +51,7 @@ steps:
     command:
       - ".buildkite/scripts/release.sh"
     agents:
-      image: golang:${GO_VERSION}
-      cpu: "8"
-      memory: "4G"
+      provider: "gcp"
     depends_on:
       - step: "test"
         allow_failure: false
