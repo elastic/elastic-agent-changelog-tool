@@ -20,7 +20,7 @@ with_go() {
     go_version=$1
     uname -m
     uname
-    url=$(get_gvm_link "${GVM_VERSION}")
+    url=$(get_gvm_link "${GVM}")
     echo $url
     retry 5 curl -sL -o "${WORKSPACE}/bin/gvm" "${url}"
     chmod +x "${WORKSPACE}/bin/gvm"
