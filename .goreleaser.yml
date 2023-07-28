@@ -8,9 +8,9 @@ builds:
       - -X github.com/elastic/elastic-agent-changelog-tool/internal/version.Tag={{.Tag}}
 dockers:
   - image_templates:
-    - "docker.elastic.co/observability-ci/{{.ProjectName}}"
-    - "docker.elastic.co/observability-ci/{{.ProjectName}}:{{ .Tag }}"
-    skip_push: false
+    - "docker.elastic.co/observability-ci/temp-{{.ProjectName}}"
+    - "docker.elastic.co/observability-ci/temp-{{.ProjectName}}:{{ .Tag }}"
+    skip_push: true
     build_flag_templates:
     - "--pull"
     - "--label=org.opencontainers.image.created={{.Date}}"
