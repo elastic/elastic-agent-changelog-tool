@@ -20,10 +20,9 @@ with_go() {
     go_version=$1
     url=$(get_gvm_link "${GVM_VERSION}")
     retry 5 curl -sL -o "${WORKSPACE}/bin/gvm" "${url}"
+    ls ${WORKSPACE}/bin/ -l
     chmod +x "${WORKSPACE}/bin/gvm"
     eval "$(gvm $go_version)"
-    echo $GOBIN
-    echo $GOPATH
     go version
 }
 
