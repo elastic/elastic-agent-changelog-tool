@@ -19,7 +19,9 @@ with_goreleaser() {
 with_go() {
     go_version=$1
     uname -m
+    uname
     url=$(get_gvm_link "${GVM_VERSION}")
+    echo $url
     retry 5 curl -sL -o "${WORKSPACE}/bin/gvm" "${url}"
     chmod +x "${WORKSPACE}/bin/gvm"
     ls ${WORKSPACE}/bin/ -l
