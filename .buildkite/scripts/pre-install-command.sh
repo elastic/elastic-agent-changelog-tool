@@ -35,6 +35,7 @@ get_gvm_link() {
     platform_type_lowercase="${platform_type,,}"
     arch_type="$(uname -m)"
     [[ ${arch_type} == "aarch64" ]] && arch_type="arm64" # gvm do not have 'aarch64' name for archetecture type
+    [[ ${arch_type} == "x86_64" ]] && arch_type="amd64"
     echo "https://github.com/andrewkroh/gvm/releases/download/${gvm_version}/gvm-${platform_type_lowercase}-${arch_type}"
 }
 
