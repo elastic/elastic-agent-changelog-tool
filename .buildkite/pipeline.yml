@@ -35,7 +35,7 @@ steps:
         allow_failure: true
 
   - label: ":buildkite: Snapshot"
-  # when { not { tag pattern: '.*', comparator: 'REGEXP' } }
+    if: build.tag == null
     key: snapshot
     command:
       - ".buildkite/scripts/snapshot.sh"
@@ -46,7 +46,7 @@ steps:
         allow_failure: false
 
   - label: ":buildkite: Release"
-  #  when { tag pattern: 'v\\d+\\.\\d+\\.\\d+.*', comparator: 'REGEXP' }
+    if: build.tag =~ /^v\d+\.\d+\.\d+.*$$/
     key: release
     command:
       - ".buildkite/scripts/release.sh"
