@@ -23,8 +23,8 @@ with_go() {
     chmod +x "${WORKSPACE}/bin/gvm"
     ls ${WORKSPACE}/bin/ -l
     eval "$(gvm $go_version)"
-    echo $GOPATH
-    export PATH="${PATH}:${GOPATH}:${GOBIN}"
+    go_path="$(go env GOPATH):$(go env GOPATH)/bin"
+    export PATH="${PATH}:${go_path}"
     go version
 }
 
