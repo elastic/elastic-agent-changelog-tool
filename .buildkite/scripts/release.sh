@@ -8,6 +8,5 @@ add_bin_path
 with_go "${GO_VERSION}"
 with_goreleaser
 
-echo "--- Release"
-goreleaser --help
-git help
+echo "--- Goreleaser Release"
+goreleaser release --snapshot #TODO remove snapshot

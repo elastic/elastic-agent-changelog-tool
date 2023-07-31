@@ -8,7 +8,5 @@ add_bin_path
 with_go "${GO_VERSION}"
 with_goreleaser
 
-echo "--- Snapshot"
-# goreleaser release --snapshot
-git rev-parse --is-shallow-repository
-git --no-pager tag
+echo "--- Goreleaser Snapshot"
+goreleaser release --snapshot
