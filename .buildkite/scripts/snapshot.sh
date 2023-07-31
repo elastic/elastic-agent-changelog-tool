@@ -9,4 +9,4 @@ with_go "${GO_VERSION}"
 with_goreleaser
 
 echo "--- Snapshot"
-goreleaser --help
+goreleaser release --snapshot

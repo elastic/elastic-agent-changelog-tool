@@ -10,3 +10,4 @@ with_goreleaser
 
 echo "--- Release"
 goreleaser --help
+git help
