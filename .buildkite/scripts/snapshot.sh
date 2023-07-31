@@ -9,4 +9,6 @@ with_go "${GO_VERSION}"
 with_goreleaser
 
 echo "--- Snapshot"
-goreleaser release --snapshot
+# goreleaser release --snapshot
+git rev-parse --is-shallow-repository
+git --no-pager tag
