@@ -1,7 +1,6 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/buildkite/pipeline-schema/main/schema.json
 env:
   GVM: 'v0.5.0'
-  SLACK_CHANNEL: '#elastic-agent-control-plane'
   DOCKER_REGISTRY: 'docker.elastic.co'
 steps:
   - label: ":buildkite: Build"
