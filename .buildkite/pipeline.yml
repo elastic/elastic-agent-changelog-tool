@@ -20,7 +20,21 @@ steps:
       cpu: "8"
       memory: "4G"
     artifact_paths:
+      - "tests-report.txt"
+
+  - label: ":buildkite: Prepare reports"
+    key: prepare-report
+    command:
+      - ".buildkite/scripts/prepare-report.sh"
+    agents:
+      image: golang:${GO_VERSION}
+      cpu: "8"
+      memory: "4G"
+    artifact_paths:
       - "junit-*.xml"
+    depends_on:
+      - step: "test"
+        allow_failure: true
 
   - label: ":junit: Junit annotate"
     plugins:
@@ -30,7 +44,7 @@ steps:
     agents:
       provider: "gcp" #junit plugin requires docker
     depends_on:
-      - step: "test"
+      - step: "prepare-report"
         allow_failure: true
 
   - label: ":buildkite: Snapshot"

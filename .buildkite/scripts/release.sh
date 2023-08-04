@@ -9,4 +9,4 @@ with_go "${GO_VERSION}"
 with_goreleaser
 
 echo "--- Goreleaser Release"
-goreleaser release --snapshot #TODO remove snapshot
+goreleaser release
