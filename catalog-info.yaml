@@ -52,7 +52,7 @@ spec:
       env:
         ELASTIC_PR_COMMENTS_ENABLED: "true"
         ELASTIC_SLACK_NOTIFICATIONS_ENABLED: "true"
-        SLACK_NOTIFICATIONS_CHANNEL: "#elastic-agent"
+        SLACK_NOTIFICATIONS_CHANNEL: "#ingest-notifications"
         SLACK_NOTIFICATIONS_ALL_BRANCHES: "true"
         SLACK_NOTIFICATIONS_ON_SUCCESS: "true"
       teams:
