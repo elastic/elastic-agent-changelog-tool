@@ -3,6 +3,9 @@ name: Pull request checks
 
 on: [pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   gomod:
     runs-on: ubuntu-latest
