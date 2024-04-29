@@ -12,7 +12,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.9.0
-	golang.org/x/oauth2 v0.15.0
+	golang.org/x/oauth2 v0.19.0
 	golang.org/x/text v0.14.0
 	gopkg.in/yaml.v3 v3.0.1
 )
@@ -20,7 +20,6 @@ require (
 require (
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
-	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
@@ -41,8 +40,6 @@ require (
 	golang.org/x/exp v0.0.0-20240416160154-fe59bbe5cc7f // indirect
 	golang.org/x/net v0.24.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect
-	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/protobuf v1.33.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
