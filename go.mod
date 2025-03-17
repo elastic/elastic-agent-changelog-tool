@@ -1,19 +1,20 @@
 module github.com/elastic/elastic-agent-changelog-tool
 
 go 1.21
+toolchain go1.24.1
 
 require (
 	github.com/OpenPeeDeeP/xdg v1.0.0
 	github.com/dnaeon/go-vcr v1.2.0
 	github.com/google/go-github/v32 v32.1.0
 	github.com/shurcooL/githubv4 v0.0.0-20220520033151-0b4e3294ff00
-	github.com/spf13/afero v1.11.0
+	github.com/spf13/afero v1.14.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/oauth2 v0.24.0
-	golang.org/x/text v0.21.0
+	golang.org/x/text v0.23.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
