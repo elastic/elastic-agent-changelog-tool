@@ -9,14 +9,14 @@ import (
 	"fmt"
 	"html/template"
 	"log"
+	"os"
 	"path"
+	"regexp"
 	"strings"
 
 	"github.com/elastic/elastic-agent-changelog-tool/internal/assets"
 	"github.com/spf13/afero"
 	"github.com/spf13/viper"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 type Renderer struct {
@@ -25,14 +25,16 @@ type Renderer struct {
 	// dest is the destination location where the changelog is written to
 	dest  string
 	templ string
+	repo  string
 }
 
-func NewRenderer(fs afero.Fs, c Changelog, dest string, templ string) *Renderer {
+func NewRenderer(fs afero.Fs, c Changelog, dest string, templ string, repo string) *Renderer {
 	return &Renderer{
 		changelog: c,
 		fs:        fs,
 		dest:      dest,
 		templ:     templ,
+		repo:      repo,
 	}
 }
 
@@ -47,6 +49,7 @@ func (r Renderer) Render() error {
 	type TemplateData struct {
 		Component string
 		Version   string
+		Repo      string
 		Changelog Changelog
 		Kinds     map[Kind]bool
 
@@ -62,15 +65,20 @@ func (r Renderer) Render() error {
 	}
 
 	td := TemplateData{
-		buildTitleByComponents(r.changelog.Entries), r.changelog.Version, r.changelog,
+		buildTitleByComponents(r.changelog.Entries), r.changelog.Version, r.repo, r.changelog,
 		collectKinds(r.changelog.Entries),
-		collectByKindMap(r.changelog.Entries, BreakingChange),
-		collectByKindMap(r.changelog.Entries, Deprecation),
-		collectByKindMap(r.changelog.Entries, BugFix),
+		// In Markdown, this goes to release notes
 		collectByKindMap(r.changelog.Entries, Enhancement),
 		collectByKindMap(r.changelog.Entries, Feature),
-		collectByKindMap(r.changelog.Entries, KnownIssue),
 		collectByKindMap(r.changelog.Entries, Security),
+		collectByKindMap(r.changelog.Entries, BugFix),
+		// In Markdown, this goes to breaking changes
+		collectByKindMap(r.changelog.Entries, BreakingChange),
+		// In Markdown, this goes to deprecations
+		collectByKindMap(r.changelog.Entries, Deprecation),
+		// In Markdown, this goes to known issues
+		collectByKindMap(r.changelog.Entries, KnownIssue),
+		// In Markdown... TBD
 		collectByKindMap(r.changelog.Entries, Upgrade),
 		collectByKindMap(r.changelog.Entries, Other),
 	}
@@ -81,42 +89,35 @@ func (r Renderer) Render() error {
 				return strings.Join(ids, "-")
 			},
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
-			"linkPRSource": func(component string, ids []string) string {
+			"linkPRSource": func(repo string, ids []string) string {
 				res := make([]string, len(ids))
-
 				for i, id := range ids {
-					res[i] = fmt.Sprintf("{%s-pull}%v[#%v]", component, id, id)
+					res[i] = getLink(id, r.repo, "pull", r.templ)
 				}
-
 				return strings.Join(res, " ")
 			},
 			// nolint:staticcheck // ignoring for now, supports for multiple component is not implemented
-			"linkIssueSource": func(component string, ids []string) string {
+			"linkIssueSource": func(repo string, ids []string) string {
 				res := make([]string, len(ids))
-
 				for i, id := range ids {
-					res[i] = fmt.Sprintf("{%s-issue}%v[#%v]", component, id, id)
+					res[i] = getLink(id, r.repo, "issues", r.templ)
 				}
-
 				return strings.Join(res, " ")
 			},
 			// Capitalize sentence and ensure ends with .
-			"beautify": func(s1 string) string {
-				s2 := strings.Builder{}
-				s2.WriteString(cases.Title(language.English).String(s1))
-				if !strings.HasSuffix(s1, ".") {
-					s2.WriteString(".")
+			"beautify": func(s string) string {
+				if s == "" {
+					return ""
 				}
-				return s2.String()
+				s = strings.ToUpper(string(s[0])) + s[1:]
+				if !strings.HasSuffix(s, ".") {
+					s += "."
+				}
+				return s
 			},
 			// Ensure components have section styling
 			"header2": func(s1 string) string {
-				s2 := strings.Builder{}
-				s2.WriteString(s1)
-				if !strings.HasSuffix(s1, "::") && s1 != "" {
-					s2.WriteString("::")
-				}
-				return s2.String()
+				return fmt.Sprintf("**%s**", s1)
 			},
 		}).
 		Parse(string(tpl))
@@ -131,10 +132,23 @@ func (r Renderer) Render() error {
 		panic(err)
 	}
 
-	outFile := path.Join(r.dest, fmt.Sprintf("%s.asciidoc", r.changelog.Version))
-	log.Printf("saving changelog in %s\n", outFile)
-
-	return afero.WriteFile(r.fs, outFile, data.Bytes(), changelogFilePerm)
+	outFile := func(template string) string {
+		if template == "markdown-index" {
+			return path.Join(r.dest, r.changelog.Version, "index.md")
+		} else if template == "markdown-breaking" {
+			return path.Join(r.dest, r.changelog.Version, "breaking.md")
+		} else if template == "markdown-deprecations" {
+			return path.Join(r.dest, r.changelog.Version, "deprecations.md")
+		} else if template == "markdown-known-issues" {
+			return path.Join(r.dest, r.changelog.Version, "known-issues.md")
+		} else {
+			return path.Join(r.dest, fmt.Sprintf("%s.asciidoc", r.changelog.Version))
+		}
+	}
+	if r.templ != "asciidoc-embedded" {
+		os.MkdirAll(path.Join(r.dest, r.changelog.Version), os.ModePerm)
+	}
+	return afero.WriteFile(r.fs, outFile(r.templ), data.Bytes(), changelogFilePerm)
 }
 
 func (r Renderer) Template() ([]byte, error) {
@@ -142,11 +156,20 @@ func (r Renderer) Template() ([]byte, error) {
 	var err error
 
 	if embeddedFileName, ok := assets.GetEmbeddedTemplates()[r.templ]; ok {
-		data, err = assets.AsciidocTemplate.ReadFile(embeddedFileName)
+		if r.templ == "markdown-index" {
+			data, err = assets.MarkdownIndexTemplate.ReadFile(embeddedFileName)
+		} else if r.templ == "markdown-breaking" {
+			data, err = assets.MarkdownBreakingTemplate.ReadFile(embeddedFileName)
+		} else if r.templ == "markdown-deprecations" {
+			data, err = assets.MarkdownDeprecationsTemplate.ReadFile(embeddedFileName)
+		} else if r.templ == "markdown-known-issues" {
+			data, err = assets.MarkdownKnownIssuesTemplate.ReadFile(embeddedFileName)
+		} else if r.templ == "asciidoc-embedded" {
+			data, err = assets.AsciidocTemplate.ReadFile(embeddedFileName)
+		}
 		if err != nil {
 			return []byte{}, fmt.Errorf("cannot read embedded template: %s %w", embeddedFileName, err)
 		}
-
 		return data, nil
 	}
 
@@ -156,6 +179,21 @@ func (r Renderer) Template() ([]byte, error) {
 	}
 
 	return data, nil
+}
+
+func getLink(id string, repo string, ghType string, templ string) string {
+	re := regexp.MustCompile(`\d+$`)
+	number := re.FindString(id)
+	if id == number {
+		id = fmt.Sprintf("https://github.com/elastic/%s/%s/%s", repo, ghType, id)
+	}
+	if templ == "asciidoc-embedded" {
+		// Format as AsciiDoc links
+		return fmt.Sprintf("%s[#%s]", id, number)
+	} else {
+		// Format as Markdown links
+		return fmt.Sprintf("[#%s](%s)", number, id)
+	}
 }
 
 func collectKinds(items []Entry) map[Kind]bool {

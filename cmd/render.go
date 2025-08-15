@@ -35,6 +35,7 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			dest := viper.GetString("changelog_destination")
 			renderedDest := viper.GetString("rendered_changelog_destination")
+			repo := viper.GetString("repo")
 
 			version, err := cmd.Flags().GetString("version")
 			if err != nil {
@@ -51,7 +52,7 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 				return fmt.Errorf("error loading changelog from file: %w", err)
 			}
 
-			r := changelog.NewRenderer(fs, c, renderedDest, template)
+			r := changelog.NewRenderer(fs, c, renderedDest, template, repo)
 
 			if err := r.Render(); err != nil {
 				return fmt.Errorf("cannot build asciidoc file: %w", err)

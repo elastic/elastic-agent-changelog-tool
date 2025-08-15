@@ -25,7 +25,7 @@ func Init() {
 	setConstants()
 
 	viper.AddConfigPath(viper.GetString("config_file"))
-	viper.SetConfigName("config")
+	viper.SetConfigName("config.changelog.yaml")
 	viper.SetConfigType("yaml")
 
 	// TODO: better error handling (skip missing file error)

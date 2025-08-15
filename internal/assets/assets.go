@@ -14,12 +14,28 @@ import (
 // These strings can be used in the config template field or renderer template flag
 func GetEmbeddedTemplates() embeddedTemplates {
 	return map[string]string{
-		"asciidoc-embedded": "asciidoc-template.asciidoc",
+		"asciidoc-embedded":     "asciidoc-template.asciidoc",
+		"markdown-index":        "markdown-index-template.md",
+		"markdown-breaking":     "markdown-breaking-template.md",
+		"markdown-deprecations": "markdown-deprecations-template.md",
+		"markdown-known-issues": "markdown-known-issues-template.md",
 	}
 }
 
 //go:embed asciidoc-template.asciidoc
 var AsciidocTemplate embed.FS
+
+//go:embed markdown-index-template.md
+var MarkdownIndexTemplate embed.FS
+
+//go:embed markdown-breaking-template.md
+var MarkdownBreakingTemplate embed.FS
+
+//go:embed markdown-deprecations-template.md
+var MarkdownDeprecationsTemplate embed.FS
+
+//go:embed markdown-known-issues-template.md
+var MarkdownKnownIssuesTemplate embed.FS
 
 type embeddedTemplates map[string]string
 

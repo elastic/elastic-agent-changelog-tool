@@ -1,4 +1,12 @@
 owner: elastic
 repo: elastic-agent-changelog-tool
-template: asciidoc-embedded
-components: [elastic-agent-changelog-tool]
+template:
+  - asciidoc-embedded
+  - markdown-breaking-template
+  - markdown-deprecations-template
+  - markdown-index-template
+  - markdown-known-issues-template
+components:
+  - beats
+  - elastic-agent
+  - fleet-server
