@@ -59,7 +59,7 @@ func setDefaults() {
 		viper.GetString("fragment_path")))
 
 	viper.SetDefault("changelog_destination", "changelog")
-	viper.SetDefault("rendered_changelog_destination", "changelog")
+	// viper.SetDefault("rendered_changelog_destination", "changelog")
 
 	viper.SetDefault("template", "asciidoc-embedded")
 }

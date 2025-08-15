@@ -1,5 +1,4 @@
 ## {{.Version}} [{{.Repo}}-{{.Version}}-breaking-changes]
-
 {{ if .BreakingChange -}}{{ range $k, $v := .BreakingChange }}{{ range $item := $v }}
 ::::{dropdown} {{ $item.Summary | beautify }}
 {{ if $item.Description }}{{ $item.Description }}{{ end }}
@@ -10,4 +9,6 @@ For more information, check {{ linkPRSource $item.Component $item.LinkedPR }}{{ 
 
 {{ if not $item.Action }}% {{ end }}**Action**<br>{{ if $item.Action }}{{ $item.Action }}{{ else }}_Add a description of the what action to take_{{ end }}
 ::::
-{{- end }}{{- end }}{{- end }}
+{{- end }}{{- end }}{{ else }}
+_No breaking changes._
+{{- end }}

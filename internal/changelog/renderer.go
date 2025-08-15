@@ -53,19 +53,27 @@ func (r Renderer) Render() error {
 		Changelog Changelog
 		Kinds     map[Kind]bool
 
+		// In Markdown, this goes to release notes
+		Enhancement map[string][]Entry
+		Feature     map[string][]Entry
+		Security    map[string][]Entry
+		BugFix      map[string][]Entry
+		// In Markdown, this goes to breaking changes
 		BreakingChange map[string][]Entry
-		Deprecation    map[string][]Entry
-		BugFix         map[string][]Entry
-		Enhancement    map[string][]Entry
-		Feature        map[string][]Entry
-		KnownIssue     map[string][]Entry
-		Security       map[string][]Entry
-		Upgrade        map[string][]Entry
-		Other          map[string][]Entry
+		// In Markdown, this goes to deprecations
+		Deprecation map[string][]Entry
+		// In Markdown, this goes to known issues
+		KnownIssue map[string][]Entry
+		// In Markdown... TBD
+		Upgrade map[string][]Entry
+		Other   map[string][]Entry
 	}
 
 	td := TemplateData{
-		buildTitleByComponents(r.changelog.Entries), r.changelog.Version, r.repo, r.changelog,
+		buildTitleByComponents(r.changelog.Entries),
+		r.changelog.Version,
+		r.repo,
+		r.changelog,
 		collectKinds(r.changelog.Entries),
 		// In Markdown, this goes to release notes
 		collectByKindMap(r.changelog.Entries, Enhancement),
@@ -114,6 +122,11 @@ func (r Renderer) Render() error {
 					s += "."
 				}
 				return s
+			},
+			// Indent lines
+			"indent": func(s string) string {
+				re := regexp.MustCompile(`\n|\r|^`)
+				return re.ReplaceAllString(s, "\n  ")
 			},
 			// Ensure components have section styling
 			"header2": func(s1 string) string {

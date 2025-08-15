@@ -11,5 +11,6 @@ For more information, check {{ linkPRSource $item.Component $item.LinkedPR }}{{ 
 {{ if not $item.Action }}% {{ end }}**Action**<br>{{ if $item.Action }}{{ $item.Action }}{{ else }}_Add a description of the what action to take_{{ end }}
 ::::
 {{- end }}{{- end }}
-{{ else }}_No deprecations._
+{{ else }}
+_No deprecations._
 {{- end }}
