@@ -128,6 +128,47 @@ func (r Renderer) Render() error {
 				re := regexp.MustCompile(`\n|\r|^`)
 				return re.ReplaceAllString(s, "\n  ")
 			},
+			"other_links": func() string {
+				var links []string
+				if len(td.KnownIssue) > 0 {
+					links = append(
+						links,
+						fmt.Sprintf(
+							"[Known issues](/release-notes/known-issues.md#%s-%s-known-issues)",
+							r.repo,
+							r.changelog.Version,
+						),
+					)
+				}
+				if len(td.BreakingChange) > 0 {
+					links = append(
+						links,
+						fmt.Sprintf(
+							"[Breaking changes](/release-notes/breaking-changes.md#%s-%s-breaking-changes)",
+							r.repo,
+							r.changelog.Version,
+						),
+					)
+				}
+				if len(td.Deprecation) > 0 {
+					links = append(
+						links,
+						fmt.Sprintf(
+							"[Deprecations](/release-notes/deprecations.md#%s-%s-deprecations)",
+							r.repo,
+							r.changelog.Version,
+						),
+					)
+				}
+				if len(links) > 0 {
+					return fmt.Sprintf(
+						"_This release also includes: %s._",
+						strings.Join(links, " and"),
+					)
+				} else {
+					return ""
+				}
+			},
 			// Ensure components have section styling
 			"header2": func(s1 string) string {
 				return fmt.Sprintf("**%s**", s1)
