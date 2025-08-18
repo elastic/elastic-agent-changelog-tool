@@ -39,7 +39,7 @@ func NewRenderer(fs afero.Fs, c Changelog, dest string, templ string, repo strin
 }
 
 func (r Renderer) Render() error {
-	log.Printf("render changelog for version: %s\n", r.changelog.Version)
+	log.Printf("render %s for version: %s\n", r.templ, r.changelog.Version)
 
 	tpl, err := r.Template()
 	if err != nil {
@@ -133,11 +133,7 @@ func (r Renderer) Render() error {
 				if len(td.KnownIssue) > 0 {
 					links = append(
 						links,
-						fmt.Sprintf(
-							"[Known issues](/release-notes/known-issues.md#%s-%s-known-issues)",
-							r.repo,
-							r.changelog.Version,
-						),
+						"[Known issues](/release-notes/known-issues.md)",
 					)
 				}
 				if len(td.BreakingChange) > 0 {

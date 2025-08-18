@@ -52,10 +52,24 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 				return fmt.Errorf("error loading changelog from file: %w", err)
 			}
 
-			r := changelog.NewRenderer(fs, c, renderedDest, template, repo)
-
-			if err := r.Render(); err != nil {
-				return fmt.Errorf("cannot build asciidoc file: %w", err)
+			if template == "asciidoc-embedded" {
+				r := changelog.NewRenderer(fs, c, renderedDest, template, repo)
+				if err := r.Render(); err != nil {
+					return fmt.Errorf("cannot build asciidoc file: %w", err)
+				}
+			} else if template == "markdown" {
+				r_index := changelog.NewRenderer(fs, c, renderedDest, "markdown-index", repo)
+				if err := r_index.Render(); err != nil {
+					return fmt.Errorf("cannot build asciidoc file: %w", err)
+				}
+				r_breaking := changelog.NewRenderer(fs, c, renderedDest, "markdown-breaking", repo)
+				if err := r_breaking.Render(); err != nil {
+					return fmt.Errorf("cannot build asciidoc file: %w", err)
+				}
+				r_deprecations := changelog.NewRenderer(fs, c, renderedDest, "markdown-deprecations", repo)
+				if err := r_deprecations.Render(); err != nil {
+					return fmt.Errorf("cannot build asciidoc file: %w", err)
+				}
 			}
 
 			return nil
