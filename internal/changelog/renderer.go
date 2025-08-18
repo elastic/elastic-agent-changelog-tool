@@ -189,8 +189,6 @@ func (r Renderer) Render() error {
 			return path.Join(r.dest, r.changelog.Version, "breaking.md")
 		} else if template == "markdown-deprecations" {
 			return path.Join(r.dest, r.changelog.Version, "deprecations.md")
-		} else if template == "markdown-known-issues" {
-			return path.Join(r.dest, r.changelog.Version, "known-issues.md")
 		} else {
 			return path.Join(r.dest, fmt.Sprintf("%s.asciidoc", r.changelog.Version))
 		}
@@ -212,8 +210,6 @@ func (r Renderer) Template() ([]byte, error) {
 			data, err = assets.MarkdownBreakingTemplate.ReadFile(embeddedFileName)
 		} else if r.templ == "markdown-deprecations" {
 			data, err = assets.MarkdownDeprecationsTemplate.ReadFile(embeddedFileName)
-		} else if r.templ == "markdown-known-issues" {
-			data, err = assets.MarkdownKnownIssuesTemplate.ReadFile(embeddedFileName)
 		} else if r.templ == "asciidoc-embedded" {
 			data, err = assets.AsciidocTemplate.ReadFile(embeddedFileName)
 		}
