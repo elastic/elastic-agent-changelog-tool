@@ -194,7 +194,11 @@ func (r Renderer) Render() error {
 		}
 	}
 	if r.templ != "asciidoc-embedded" {
-		os.MkdirAll(path.Join(r.dest, r.changelog.Version), os.ModePerm)
+		dir := path.Join(r.dest, r.changelog.Version)
+		err := os.MkdirAll(dir, os.ModePerm)
+		if err != nil {
+			return fmt.Errorf("error creating directory %s: %v", dir, err)
+		}
 	}
 	return afero.WriteFile(r.fs, outFile(r.templ), data.Bytes(), changelogFilePerm)
 }
