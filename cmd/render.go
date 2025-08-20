@@ -17,7 +17,8 @@ import (
 var RenderLongDescription = `Use this command to render the consolidated changelog.
 
 --version is required. Consolidated changelog version (x.y.z) in 'changelogs' folder
---file_type is required. Specify the file_type: 'asciidoc' or 'markdown'`
+--file_type is optional. Specify the file_type: 'asciidoc' or 'markdown'
+--template is optional. Specify full path to your template file or use predefined templates. Default: asciidoc-embedded`
 
 func RenderCmd(fs afero.Fs) *cobra.Command {
 	renderCmd := &cobra.Command{
@@ -42,6 +43,11 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 				return fmt.Errorf("error parsing flag 'file_type': %w", err)
 			}
 
+			template, err := cmd.Flags().GetString("template")
+			if err != nil {
+				return fmt.Errorf("error parsing flag 'template': %w", err)
+			}
+
 			c, err := changelog.FromFile(fs, fmt.Sprintf("./%s/%s.yaml", dest, version))
 			if err != nil {
 				return fmt.Errorf("error loading changelog from file: %w", err)
@@ -55,15 +61,20 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 			} else if file_type == "markdown" {
 				r_index := changelog.NewRenderer(fs, c, renderedDest, "markdown-index", repo)
 				if err := r_index.Render(); err != nil {
-					return fmt.Errorf("cannot build asciidoc file: %w", err)
+					return fmt.Errorf("cannot build markdown file: %w", err)
 				}
 				r_breaking := changelog.NewRenderer(fs, c, renderedDest, "markdown-breaking", repo)
 				if err := r_breaking.Render(); err != nil {
-					return fmt.Errorf("cannot build asciidoc file: %w", err)
+					return fmt.Errorf("cannot build markdown file: %w", err)
 				}
 				r_deprecations := changelog.NewRenderer(fs, c, renderedDest, "markdown-deprecations", repo)
 				if err := r_deprecations.Render(); err != nil {
-					return fmt.Errorf("cannot build asciidoc file: %w", err)
+					return fmt.Errorf("cannot build markdown file: %w", err)
+				}
+			} else {
+				r := changelog.NewRenderer(fs, c, renderedDest, template, repo)
+				if err := r.Render(); err != nil {
+					return fmt.Errorf("cannot build file: %w", err)
 				}
 			}
 
@@ -71,7 +82,8 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 		},
 	}
 
-	renderCmd.Flags().String("file_type", viper.GetString("file_type"), "The file type used to generate the changelog: `asciidoc` or `markdown`")
+	renderCmd.Flags().String("file_type", viper.GetString("file_type"), "The file type of the rendered release notes: `asciidoc` or `markdown`")
+	renderCmd.Flags().String("template", viper.GetString("template"), "The template used to generate the changelog")
 	renderCmd.Flags().String("version", "", "The version of the consolidated changelog being created")
 	err := renderCmd.MarkFlagRequired("version")
 	if err != nil {
