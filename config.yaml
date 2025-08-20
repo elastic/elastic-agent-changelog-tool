@@ -5,7 +5,6 @@ template:
   - markdown-breaking-template
   - markdown-deprecations-template
   - markdown-index-template
-  - markdown-known-issues-template
 components:
   - beats
   - elastic-agent

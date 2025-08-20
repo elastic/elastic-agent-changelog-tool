@@ -22,7 +22,6 @@ type Entry struct {
 	LinkedIssue []string `yaml:"issue"`
 	Impact      string   `yaml:"impact"`
 	Action      string   `yaml:"action"`
-	Workaround  string   `yaml:"workaround"`
 
 	Timestamp int64            `yaml:"timestamp"`
 	File      FragmentFileInfo `yaml:"file"`
@@ -40,7 +39,6 @@ func EntryFromFragment(f fragment.File) Entry {
 		LinkedIssue: []string{},
 		Impact:      f.Fragment.Impact,
 		Action:      f.Fragment.Action,
-		Workaround:  f.Fragment.Workaround,
 		Timestamp:   f.Timestamp,
 		File: FragmentFileInfo{
 			Name:     f.Name,

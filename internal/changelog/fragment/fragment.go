@@ -13,5 +13,4 @@ type Fragment struct {
 	Issue       string `yaml:"issue"`
 	Impact      string `yaml:"impact"`
 	Action      string `yaml:"action"`
-	Workaround  string `yaml:"workaround"`
 }
