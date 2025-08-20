@@ -113,7 +113,7 @@ There will be multiple entries, one for each files in `changelog/fragments`.
 From the root folder of the repository run:
 
 ```
-$ elastic-agent-changelog-tool render --version 0.1.0 --template markdown
+$ elastic-agent-changelog-tool render --version 0.1.0 --file_type markdown
 ```
 
 This will create three files:
@@ -127,7 +127,7 @@ This will create three files:
 From the root folder of the repository run:
 
 ```
-$ elastic-agent-changelog-tool render --version 0.1.0 --template asciidoc-embedded
+$ elastic-agent-changelog-tool render --version 0.1.0 --file_type asciidoc
 ```
 
 This will create `./changelog/0.1.0.asciidoc`.
