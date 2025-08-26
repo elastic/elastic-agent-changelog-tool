@@ -15,22 +15,22 @@ import (
 func GetEmbeddedTemplates() embeddedTemplates {
 	return map[string]string{
 		"asciidoc-embedded":     "asciidoc-template.asciidoc",
-		"markdown-index":        "markdown-index-template.md",
-		"markdown-breaking":     "markdown-breaking-template.md",
-		"markdown-deprecations": "markdown-deprecations-template.md",
+		"markdown-index":        "markdown-index-template.md.tmpl",
+		"markdown-breaking":     "markdown-breaking-template.md.tmpl",
+		"markdown-deprecations": "markdown-deprecations-template.md.tmpl",
 	}
 }
 
 //go:embed asciidoc-template.asciidoc
 var AsciidocTemplate embed.FS
 
-//go:embed markdown-index-template.md
+//go:embed markdown-index-template.md.tmpl
 var MarkdownIndexTemplate embed.FS
 
-//go:embed markdown-breaking-template.md
+//go:embed markdown-breaking-template.md.tmpl
 var MarkdownBreakingTemplate embed.FS
 
-//go:embed markdown-deprecations-template.md
+//go:embed markdown-deprecations-template.md.tmpl
 var MarkdownDeprecationsTemplate embed.FS
 
 type embeddedTemplates map[string]string

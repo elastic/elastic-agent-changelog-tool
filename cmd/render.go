@@ -17,7 +17,7 @@ import (
 var RenderLongDescription = `Use this command to render the consolidated changelog.
 
 --version is required. Consolidated changelog version (x.y.z) in 'changelogs' folder
---file_type is optional. Specify the file_type: 'asciidoc' or 'markdown'
+--file_type is optional. Specify the file_type: 'asciidoc' or 'markdown'. Default: markdown
 --template is optional. Specify full path to your template file or use predefined templates. Default: asciidoc-embedded`
 
 func RenderCmd(fs afero.Fs) *cobra.Command {

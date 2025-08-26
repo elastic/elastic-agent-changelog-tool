@@ -60,7 +60,7 @@ func setDefaults() {
 
 	viper.SetDefault("changelog_destination", "changelog")
 	viper.SetDefault("rendered_changelog_destination", "changelog")
-
+	viper.SetDefault("file_type", "markdown")
 	viper.SetDefault("template", "asciidoc-embedded")
 }
 
