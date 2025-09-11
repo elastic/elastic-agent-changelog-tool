@@ -25,7 +25,7 @@ func Init() {
 	setConstants()
 
 	viper.AddConfigPath(viper.GetString("config_file"))
-	viper.SetConfigName("config")
+	viper.SetConfigName("config.changelog.yaml")
 	viper.SetConfigType("yaml")
 
 	// TODO: better error handling (skip missing file error)
@@ -60,7 +60,7 @@ func setDefaults() {
 
 	viper.SetDefault("changelog_destination", "changelog")
 	viper.SetDefault("rendered_changelog_destination", "changelog")
-
+	viper.SetDefault("file_type", "markdown")
 	viper.SetDefault("template", "asciidoc-embedded")
 }
 

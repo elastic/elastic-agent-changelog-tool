@@ -1,4 +1,0 @@
-owner: elastic
-repo: elastic-agent-changelog-tool
-template: asciidoc-embedded
-components: [elastic-agent-changelog-tool]

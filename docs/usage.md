@@ -43,10 +43,8 @@ $ elastic-agent-changelog-tool build --version=next --owner <owner> --repo <repo
 
 then render the consolidated changelog with:
 ```
-$ elastic-agent-changelog-tool render --version=next --template <template>
+$ elastic-agent-changelog-tool render --version=next --file_type <asciidoc|markdown>
 ```
-
-The template value can be chosen from a predefined internal list of templates (`render --help`) or use a full path to your template file.
 
 An example is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).
 
@@ -82,9 +80,8 @@ $ elastic-agent-changelog-tool build --version=next --owner <owner> --repo <repo
 
 then render the consolidated changelog with:
 ```
-$ $ elastic-agent-changelog-tool render --version=next --template <template>
+$ elastic-agent-changelog-tool render --version=next --file_type <asciidoc|markdown>
 ```
-The template value can be chosen from a predefined internal list of templates (`render --help`) or use a full path to your template file.
 
 An example is [`../changelog/0.1.0.yaml`](../changelog/0.1.0.yaml).
 
@@ -97,8 +94,14 @@ The side effect is that the changelog will include all entries from latest stabl
 
 1. Create consolidated changelog with `$ elastic-agent-changelog-tool build --version <version> --owner <owner> --repo <repo>`;
 * This will create `./changelog/x.y.z.yaml`;
-2. Create rendered changelog with `$ elastic-agent-changelog-tool render --version <version> --template <template>`;
-* This will generate an asciidoc file in the `changelog/` directory;
+2. Create rendered changelog with `$ elastic-agent-changelog-tool render --version <version> --file_type <asciidoc|markdown>`;
+
+    Depending on the specified `file_type`, this will generate the following files:
+    * `markdown`:
+      * Release notes: `./changelog/<version>/index.md`
+      * Breaking changes: `./changelog/<version>/breaking.md`
+      * Deprecations: `./changelog/<version>/deprecations.md`
+    * `asciidoc`: `changelog/<version>.asciidoc`
 3. Use the rendered changelog.
 
 **Note**: we do not remove fragments, as they will be needed for the stable release version changelog.
@@ -111,30 +114,39 @@ The side effect is that the changelog will include all entries from latest stabl
 
 These steps require [GitHub Authentication](./github-authentication.md).
 
-* Wait for the last BC of the release. If another BC is generated after that or a patch version for a previous minor is released, you might need to restart the process.
-* Create a branch **from the commit of the BC**.
-* From the root folder of the repository run:
+1. Wait for the last BC of the release. If another BC is generated after that or a patch version for a previous minor is released, you might need to restart the process.
+1. Create a branch **from the commit of the BC**.
+1. From the root folder of the repository run:
 
-```
-$ elastic-agent-changelog-tool build --version x.y.z --owner <owner> --repo <repo>
-```
-* Where:
-  * `x.y.z` is the version to release.
-  * `owner` is the user / organization the repository to use belongs to. The default value is `elastic`.
-  * `repo` is the name of the repository containing the issues / PRs, etc. The default value is `elastic-agent`.
-* This will create `./changelog/x.y.z.yaml`.
-* From the root of the repository run:
-```
-$ elastic-agent-changelog-tool cleanup
-```
-* Commit the previous changes (consolidated changelod and removed files)
-* From the root folder of the repository run:
-```
-$ elastic-agent-changelog-tool render --version x.y.z --template <template>
-```
-* This will generate an asciidoc fragment in the `changelog/` directory.
-* Integrate the generated fragment into the changelog. If the changelog is stored in the same repository, commit the changes in this same branch.
-* Create a PR with the changes to the `x.y` branch.
+    ```
+    $ elastic-agent-changelog-tool build --version x.y.z --owner <owner> --repo <repo>
+    ```
+
+    Where:
+
+    * `x.y.z` is the version to release.
+    * `owner` is the user / organization the repository to use belongs to. The default value is `elastic`.
+    * `repo` is the name of the repository containing the issues / PRs, etc. The default value is `elastic-agent`.
+
+    This will create `./changelog/x.y.z.yaml`.
+1. From the root of the repository run:
+    ```
+    $ elastic-agent-changelog-tool cleanup
+    ```
+1. Commit the previous changes (consolidated changelod and removed files)
+1. From the root folder of the repository run:
+    ```
+    $ elastic-agent-changelog-tool render --version x.y.z --file_type <asciidoc|markdown>
+    ```
+
+    Depending on the specified `file_type`, this will generate the following files:
+    * `markdown`:
+      * Release notes: `./changelog/<version>/index.md`
+      * Breaking changes: `./changelog/<version>/breaking.md`
+      * Deprecations: `./changelog/<version>/deprecations.md`
+    * `asciidoc`: `changelog/<version>.asciidoc`
+1. Integrate the generated fragment into the changelog. If the changelog is stored in the same repository, commit the changes in this same branch.
+1. Create a PR with the changes to the `x.y` branch.
 
 
 ### On Release Day
