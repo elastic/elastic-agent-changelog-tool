@@ -1,0 +1,56 @@
+version: 0.7.0
+entries:
+    - kind: feature
+      summary: Default new fragment title to git branch name
+      description: |
+        New changelog fragments are often created while working inside a git branch. This change makes the title argument to the `new` sub-command optional, defaulting the title to the name of the current git branch.
+      component: ""
+      pr:
+        - https://github.com/elastic/elastic-agent-changelog-tool/pull/142
+      issue: []
+      timestamp: 1686835318
+      file:
+        name: 1686835318-new-title-optional.yaml
+        checksum: 83a654f503e76ae5fc77dcbdfd4bad36244b0d28
+    - kind: feature
+      summary: Remove single quote from file names
+      description: ""
+      component: ""
+      pr:
+        - https://github.com/elastic/elastic-agent-changelog-tool/pull/168
+      issue: []
+      timestamp: 1695368036
+      file:
+        name: 1695368036-remove-single-quote-from-file-names.yaml
+        checksum: 73af69dcab0549aaee2abb615c415aa6b92dc286
+    - kind: enhancement
+      summary: Update go version to 1.21.9 and dependencies
+      description: ""
+      component: ""
+      pr:
+        - https://github.com/elastic/elastic-agent-changelog-tool/pull/181
+      issue: []
+      timestamp: 1713993914
+      file:
+        name: 1713993914-Update-go-version-and-dependencies.yaml
+        checksum: cae29df4fd7ad3864b4752f58f05c596a53bf35f
+    - kind: feature
+      summary: Support outputting Markdown files.
+      description: |
+        Updates the `render` command to accept `--file_type` set to either `asciidoc` or `markdown`.
+
+        When set to `asciidoc`, it renders a single AsciiDoc file for a given version using the existing `asciidoc-embedded` template.
+
+        When set to `markdown`, it renders three Markdown files for a given version:
+
+        * Release notes: Creates an `index.md` file using `markdown-index-template`.
+        * Breaking changes: Creates a `breaking.md` file using `markdown-breaking-template`.
+        * Deprecations: Creates a `deprecations.md` file using `markdown-deprecations-template`.
+      component: ""
+      pr:
+        - https://github.com/elastic/elastic-agent-changelog-tool/pull/213
+      issue: []
+      timestamp: 1755717164
+      file:
+        name: 1755717164-markdown.yaml
+        checksum: 3713fe85263bd84ac018a8e3373d0b824d798ecb
