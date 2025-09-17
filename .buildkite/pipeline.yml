@@ -63,6 +63,8 @@ steps:
     key: release
     command:
       - ".buildkite/scripts/release.sh"
+    plugins:
+      - elastic/vault-github-token#v0.1.0:
     agents:
       provider: "gcp"
     depends_on:
