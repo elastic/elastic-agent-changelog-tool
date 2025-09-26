@@ -99,7 +99,7 @@ The side effect is that the changelog will include all entries from latest stabl
     Depending on the specified `file_type`, this will generate the following files:
     * `markdown`:
       * Release notes: `./changelog/<version>/index.md`
-      * Breaking changes: `./changelog/<version>/breaking.md`
+      * Breaking changes: `./changelog/<version>/breaking-changes.md`
       * Deprecations: `./changelog/<version>/deprecations.md`
     * `asciidoc`: `changelog/<version>.asciidoc`
 3. Use the rendered changelog.
@@ -142,7 +142,7 @@ These steps require [GitHub Authentication](./github-authentication.md).
     Depending on the specified `file_type`, this will generate the following files:
     * `markdown`:
       * Release notes: `./changelog/<version>/index.md`
-      * Breaking changes: `./changelog/<version>/breaking.md`
+      * Breaking changes: `./changelog/<version>/breaking-changes.md`
       * Deprecations: `./changelog/<version>/deprecations.md`
     * `asciidoc`: `changelog/<version>.asciidoc`
 1. Integrate the generated fragment into the changelog. If the changelog is stored in the same repository, commit the changes in this same branch.
