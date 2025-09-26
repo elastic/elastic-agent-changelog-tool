@@ -186,7 +186,7 @@ func (r Renderer) Render() error {
 		if template == "markdown-index" {
 			return path.Join(r.dest, r.changelog.Version, "index.md")
 		} else if template == "markdown-breaking" {
-			return path.Join(r.dest, r.changelog.Version, "breaking.md")
+			return path.Join(r.dest, r.changelog.Version, "breaking-changes.md")
 		} else if template == "markdown-deprecations" {
 			return path.Join(r.dest, r.changelog.Version, "deprecations.md")
 		} else {
@@ -208,19 +208,35 @@ func (r Renderer) Template() ([]byte, error) {
 	var err error
 
 	if embeddedFileName, ok := assets.GetEmbeddedTemplates()[r.templ]; ok {
-		if r.templ == "markdown-index" {
-			data, err = assets.MarkdownIndexTemplate.ReadFile(embeddedFileName)
-		} else if r.templ == "markdown-breaking" {
-			data, err = assets.MarkdownBreakingTemplate.ReadFile(embeddedFileName)
-		} else if r.templ == "markdown-deprecations" {
-			data, err = assets.MarkdownDeprecationsTemplate.ReadFile(embeddedFileName)
-		} else if r.templ == "asciidoc-embedded" {
-			data, err = assets.AsciidocTemplate.ReadFile(embeddedFileName)
+		var readFunc func(string) ([]byte, error)
+		switch r.templ {
+		case "markdown-index":
+			readFunc = assets.MarkdownIndexTemplate.ReadFile
+		case "markdown-breaking":
+			readFunc = assets.MarkdownBreakingTemplate.ReadFile
+		case "markdown-deprecations":
+			readFunc = assets.MarkdownDeprecationsTemplate.ReadFile
+		case "asciidoc-embedded":
+			readFunc = assets.AsciidocTemplate.ReadFile
 		}
-		if err != nil {
-			return []byte{}, fmt.Errorf("cannot read embedded template: %s %w", embeddedFileName, err)
+		if readFunc != nil {
+			data, err = readFunc(embeddedFileName)
+			if err != nil {
+				return nil, fmt.Errorf("cannot read embedded template: %s %w", embeddedFileName, err)
+			}
+			// If using the snippet/include model, update the includes
+			if strings.Contains(r.dest, "release-notes/_snippets") {
+				switch r.templ {
+				case "markdown-index":
+					addInclude(r.fs, r.changelog.Version, r.dest, "index")
+				case "markdown-breaking":
+					addInclude(r.fs, r.changelog.Version, r.dest, "breaking-changes")
+				case "markdown-deprecations":
+					addInclude(r.fs, r.changelog.Version, r.dest, "deprecations")
+				}
+			}
+			return data, nil
 		}
-		return data, nil
 	}
 
 	data, err = afero.ReadFile(r.fs, r.templ)
@@ -320,4 +336,52 @@ func buildTitleByComponents(entries []Entry) string {
 		}
 		return match
 	}
+}
+
+func addInclude(fs afero.Fs, version string, dest string, templ string) {
+	// Get minor version
+	re := regexp.MustCompile(`^\d+\.\d+`)
+	matches := re.FindStringSubmatch(version)
+	if len(matches) == 0 {
+		fmt.Printf("Could not get minor version from: %v\n", version)
+		return
+	}
+	minorVersion := matches[0]
+
+	// Get include directory
+	includeDirRe := regexp.MustCompile(`/release-notes/.+$`)
+	includeDirMatches := includeDirRe.FindStringSubmatch(dest)
+	if len(includeDirMatches) == 0 {
+		fmt.Printf("Could not derive include directory from: %v\n", dest)
+		return
+	}
+	includeDir := includeDirMatches[0]
+
+	// Get the snippet file listing all patches for the minor
+	minorFilePath := fmt.Sprintf("%s/%s/%s.md", dest, templ, minorVersion)
+	minorFileContent, err := afero.ReadFile(fs, minorFilePath)
+	// If no file exists for the specified minor:
+	// * Create the file
+	// * Include it in the snippet file listing all minors
+	if err != nil {
+		// Create the file
+		afero.WriteFile(fs, minorFilePath, nil, changelogFilePerm)
+		fmt.Printf("Created new include file: %s\n", minorFilePath)
+		// Include it in the snippet file listing all minors
+		templateTypeFilePath := fmt.Sprintf("%s/%s.md", dest, templ)
+		templateTypeFileContent, err := afero.ReadFile(fs, templateTypeFilePath)
+		if err != nil {
+			fmt.Printf("Could not get file: %s\n", templateTypeFilePath)
+			return
+		}
+		// Add the new minor version to the top of the existing content
+		newMinorVersionInclude := fmt.Sprintf(":::{include} %s/%s/%s.md\n:::", includeDir, templ, minorVersion)
+		newContent := fmt.Sprintf("%s\n\n%s", newMinorVersionInclude, templateTypeFileContent)
+		afero.WriteFile(fs, templateTypeFilePath, []byte(newContent), changelogFilePerm)
+	}
+
+	// Add new patch version to top of the existing content
+	newPatchVersionInclude := fmt.Sprintf(":::{include} %s/%s/%s.md\n:::", includeDir, version, templ)
+	newContent := fmt.Sprintf("%s\n\n%s", newPatchVersionInclude, minorFileContent)
+	afero.WriteFile(fs, minorFilePath, []byte(newContent), changelogFilePerm)
 }
