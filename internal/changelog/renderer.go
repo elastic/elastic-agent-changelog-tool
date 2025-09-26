@@ -338,50 +338,42 @@ func buildTitleByComponents(entries []Entry) string {
 	}
 }
 
-func addInclude(fs afero.Fs, version string, dest string, templ string) {
-	// Get minor version
-	re := regexp.MustCompile(`^\d+\.\d+`)
-	matches := re.FindStringSubmatch(version)
-	if len(matches) == 0 {
+func addInclude(fs afero.Fs, version, dest, templ string) {
+	// Extract minor version (e.g., "8.12" from "8.12.1")
+	minorVersion := regexp.MustCompile(`^\d+\.\d+`).FindString(version)
+	if minorVersion == "" {
 		fmt.Printf("Could not get minor version from: %v\n", version)
 		return
 	}
-	minorVersion := matches[0]
 
-	// Get include directory
-	includeDirRe := regexp.MustCompile(`/release-notes/.+$`)
-	includeDirMatches := includeDirRe.FindStringSubmatch(dest)
-	if len(includeDirMatches) == 0 {
+	// Extract include directory (e.g., "/release-notes/...")
+	includeDir := regexp.MustCompile(`/release-notes/.+$`).FindString(dest)
+	if includeDir == "" {
 		fmt.Printf("Could not derive include directory from: %v\n", dest)
 		return
 	}
-	includeDir := includeDirMatches[0]
 
-	// Get the snippet file listing all patches for the minor
 	minorFilePath := fmt.Sprintf("%s/%s/%s.md", dest, templ, minorVersion)
+	templateTypeFilePath := fmt.Sprintf("%s/%s.md", dest, templ)
+
+	// Read or create the minor file
 	minorFileContent, err := afero.ReadFile(fs, minorFilePath)
-	// If no file exists for the specified minor:
-	// * Create the file
-	// * Include it in the snippet file listing all minors
 	if err != nil {
 		// Create the file
-		afero.WriteFile(fs, minorFilePath, nil, changelogFilePerm)
-		fmt.Printf("Created new include file: %s\n", minorFilePath)
-		// Include it in the snippet file listing all minors
-		templateTypeFilePath := fmt.Sprintf("%s/%s.md", dest, templ)
-		templateTypeFileContent, err := afero.ReadFile(fs, templateTypeFilePath)
-		if err != nil {
-			fmt.Printf("Could not get file: %s\n", templateTypeFilePath)
-			return
+		if err := afero.WriteFile(fs, minorFilePath, nil, changelogFilePerm); err == nil {
+			fmt.Printf("Created new include file: %s\n", minorFilePath)
 		}
-		// Add the new minor version to the top of the existing content
-		newMinorVersionInclude := fmt.Sprintf(":::{include} %s/%s/%s.md\n:::", includeDir, templ, minorVersion)
-		newContent := fmt.Sprintf("%s\n\n%s", newMinorVersionInclude, templateTypeFileContent)
-		afero.WriteFile(fs, templateTypeFilePath, []byte(newContent), changelogFilePerm)
+		// Prepend new minor version include to the template type file (e.g. "breaking-changes")
+		if templateTypeFileContent, err := afero.ReadFile(fs, templateTypeFilePath); err == nil {
+			newMinorInclude := fmt.Sprintf(":::{include} %s/%s/%s.md\n:::", includeDir, templ, minorVersion)
+			newContent := fmt.Sprintf("%s\n\n%s", newMinorInclude, templateTypeFileContent)
+			afero.WriteFile(fs, templateTypeFilePath, []byte(newContent), changelogFilePerm)
+		}
+		minorFileContent = nil // ensure it's empty for next step
 	}
 
-	// Add new patch version to top of the existing content
-	newPatchVersionInclude := fmt.Sprintf(":::{include} %s/%s/%s.md\n:::", includeDir, version, templ)
-	newContent := fmt.Sprintf("%s\n\n%s", newPatchVersionInclude, minorFileContent)
+	// Prepend new patch version include to the minor file
+	newPatchInclude := fmt.Sprintf(":::{include} %s/%s/%s.md\n:::", includeDir, version, templ)
+	newContent := fmt.Sprintf("%s\n\n%s", newPatchInclude, minorFileContent)
 	afero.WriteFile(fs, minorFilePath, []byte(newContent), changelogFilePerm)
 }
