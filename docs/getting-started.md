@@ -119,7 +119,7 @@ $ elastic-agent-changelog-tool render --version 0.1.0 --file_type markdown
 This will create three files:
 
 * `./changelog/0.1.0/index.md`
-* `./changelog/0.1.0/breaking.md`
+* `./changelog/0.1.0/breaking-changes.md`
 * `./changelog/0.1.0/deprecations.md`
 
 ### AsciiDoc
