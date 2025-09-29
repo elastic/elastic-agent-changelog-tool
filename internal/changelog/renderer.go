@@ -361,13 +361,15 @@ func addInclude(fs afero.Fs, version, dest, templ string) {
 	if err != nil {
 		// Create the file
 		if err := afero.WriteFile(fs, minorFilePath, nil, changelogFilePerm); err == nil {
-			fmt.Printf("Created new include file: %s\n", minorFilePath)
+			fmt.Printf("Created new empty snippet file: %s\n", minorFilePath)
 		}
 		// Prepend new minor version include to the template type file (e.g. "breaking-changes")
 		if templateTypeFileContent, err := afero.ReadFile(fs, templateTypeFilePath); err == nil {
 			newMinorInclude := fmt.Sprintf(":::{include} %s/%s/%s.md\n:::", includeDir, templ, minorVersion)
 			newContent := fmt.Sprintf("%s\n\n%s", newMinorInclude, templateTypeFileContent)
-			afero.WriteFile(fs, templateTypeFilePath, []byte(newContent), changelogFilePerm)
+			if err := afero.WriteFile(fs, templateTypeFilePath, []byte(newContent), changelogFilePerm); err == nil {
+				fmt.Printf("Updated snippet file: %s\n", templateTypeFilePath)
+			}
 		}
 		minorFileContent = nil // ensure it's empty for next step
 	}
@@ -375,5 +377,7 @@ func addInclude(fs afero.Fs, version, dest, templ string) {
 	// Prepend new patch version include to the minor file
 	newPatchInclude := fmt.Sprintf(":::{include} %s/%s/%s.md\n:::", includeDir, version, templ)
 	newContent := fmt.Sprintf("%s\n\n%s", newPatchInclude, minorFileContent)
-	afero.WriteFile(fs, minorFilePath, []byte(newContent), changelogFilePerm)
+	if err := afero.WriteFile(fs, minorFilePath, []byte(newContent), changelogFilePerm); err == nil {
+		fmt.Printf("Updated snippet file: %s\n", minorFilePath)
+	}
 }
