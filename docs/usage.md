@@ -99,7 +99,7 @@ The side effect is that the changelog will include all entries from latest stabl
     Depending on the specified `file_type`, this will generate the following files:
     * `markdown`:
       * Release notes: `./changelog/<version>/index.md`
-      * Breaking changes: `./changelog/<version>/breaking.md`
+      * Breaking changes: `./changelog/<version>/breaking-changes.md`
       * Deprecations: `./changelog/<version>/deprecations.md`
     * `asciidoc`: `changelog/<version>.asciidoc`
 3. Use the rendered changelog.
@@ -133,19 +133,26 @@ These steps require [GitHub Authentication](./github-authentication.md).
     ```
     $ elastic-agent-changelog-tool cleanup
     ```
-1. Commit the previous changes (consolidated changelod and removed files)
+1. Commit the previous changes (consolidated changelog and removed files)
 1. From the root folder of the repository run:
     ```
     $ elastic-agent-changelog-tool render --version x.y.z --file_type <asciidoc|markdown>
     ```
 
-    Depending on the specified `file_type`, this will generate the following files:
-    * `markdown`:
-      * Release notes: `./changelog/<version>/index.md`
-      * Breaking changes: `./changelog/<version>/breaking.md`
-      * Deprecations: `./changelog/<version>/deprecations.md`
-    * `asciidoc`: `changelog/<version>.asciidoc`
-1. Integrate the generated fragment into the changelog. If the changelog is stored in the same repository, commit the changes in this same branch.
+    >IMPORTANT: Use `file_type` `markdown` for 9.x versions and `asciidoc` for 8.x versions.
+
+    The files that are generated depend on the specified `file_type`. The destination directory depends on the `rendered_changelog_destination` defined in the the repo's `config.changelog.yaml`. If no `rendered_changelog_destination` is specified, it will be added to the `changelog` directory.
+
+    * `markdown`: These files will be created:
+      * Release notes: `<rendered_changelog_destination>/<version>/index.md`
+      * Breaking changes: `<rendered_changelog_destination>/<version>/breaking-changes.md`
+      * Deprecations: `<rendered_changelog_destination>/<version>/deprecations.md`
+
+      If the `rendered_changelog_destination` is set to `release-notes/_snippets`, the related `_snippets` files will automatically be updated.
+
+    * `asciidoc`: There will be one file created, `<rendered_changelog_destination>/<version>.asciidoc`, and you will need to integrate the generated content into the changelog.
+
+1. If the changelog is stored in the same repository, commit the changes in this same branch.
 1. Create a PR with the changes to the `x.y` branch.
 
 
