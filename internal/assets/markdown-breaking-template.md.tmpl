@@ -1,7 +1,8 @@
 ## {{.Version}} [{{.Repo}}-{{.Version}}-breaking-changes]
-{{ if .BreakingChange -}}{{ range $k, $v := .BreakingChange }}{{ range $item := $v }}
+{{ if .BreakingChange -}}{{ range $k, $v := .BreakingChange }}{{ $k | header2 }}{{ range $item := $v }}
+
 ::::{dropdown} {{ $item.Summary | beautify }}
-{{ if $item.Description }}{{ $item.Description }}{{ end }}
+{{ if $item.Description }}{{ $item.Description }}{{ else }}% Describe the functionality that changed{{ end }}
 
 For more information, check {{ linkPRSource $item.Component $item.LinkedPR }}{{ linkIssueSource $item.Component $item.LinkedIssue }}.
 

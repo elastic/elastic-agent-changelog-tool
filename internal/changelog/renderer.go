@@ -159,15 +159,35 @@ func (r Renderer) Render() error {
 				if len(links) > 0 {
 					return fmt.Sprintf(
 						"_This release also includes: %s._",
-						strings.Join(links, " and"),
+						strings.Join(links, " and "),
 					)
 				} else {
 					return ""
 				}
 			},
 			// Ensure components have section styling
-			"header2": func(s1 string) string {
-				return fmt.Sprintf("**%s**", s1)
+			"header2": func(s string) string {
+				if s == "" || s == r.repo {
+					return ""
+				}
+				s = strings.ToUpper(string(s[0])) + s[1:]
+				s = strings.ReplaceAll(s, "-", " ")
+				return fmt.Sprintf("\n\n**%s**", s)
+			},
+			"combine": func(map1 map[string][]Entry, map2 map[string][]Entry) map[string][]Entry {
+				combinedMap := make(map[string][]Entry)
+
+				// Start with a copy of map1 entries
+				for k, v := range map1 {
+					combinedMap[k] = append([]Entry{}, v...)
+				}
+
+				// Merge entries from map2, appending to any existing entries
+				for k, v := range map2 {
+					combinedMap[k] = append(combinedMap[k], v...)
+				}
+
+				return combinedMap
 			},
 		}).
 		Parse(string(tpl))
