@@ -1,8 +1,8 @@
 ## {{.Version}} [{{.Repo}}-{{.Version}}-deprecations]
-{{ if .Deprecation -}}{{ range $k, $v := .Deprecation }}{{ range $item := $v }}
+{{ if .Deprecation -}}{{ range $k, $v := .Deprecation }}{{ $k | header2 }}{{ range $item := $v }}
 
 ::::{dropdown} {{ $item.Summary | beautify }}
-{{ if $item.Description }}{{ $item.Description }}{{ end }}
+{{ if $item.Description }}{{ $item.Description }}{{ else }}% Describe the functionality that was deprecated{{ end }}
 
 For more information, check {{ linkPRSource $item.Component $item.LinkedPR }}{{ linkIssueSource $item.Component $item.LinkedIssue }}.
 

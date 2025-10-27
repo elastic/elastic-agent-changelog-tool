@@ -24,6 +24,7 @@ When generating Markdown files, at a minimum you should set the following settin
 | `owner` (required) | `elastic` | The owner of the GitHub repo. |
 | `repo` (required) | ‒ | The name of the GitHub repo. |
 | `rendered_changelog_destination` | `changelog` | The directory where you want to put the generated files.<br><br>When generating Markdown files, this should probably be `docs/release-notes/_snippets`. |
+| `subsections` | `false` | Whether to show `component`s as subsections in rendered release notes. This should be set to `true` in repos with multiple `component`s (for example, Beats). |
 
 ## Supported Environment Variables
 

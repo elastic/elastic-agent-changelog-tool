@@ -23,18 +23,20 @@ type Renderer struct {
 	changelog Changelog
 	fs        afero.Fs
 	// dest is the destination location where the changelog is written to
-	dest  string
-	templ string
-	repo  string
+	dest        string
+	templ       string
+	repo        string
+	subsections bool
 }
 
-func NewRenderer(fs afero.Fs, c Changelog, dest string, templ string, repo string) *Renderer {
+func NewRenderer(fs afero.Fs, c Changelog, dest string, templ string, repo string, subsections bool) *Renderer {
 	return &Renderer{
-		changelog: c,
-		fs:        fs,
-		dest:      dest,
-		templ:     templ,
-		repo:      repo,
+		changelog:   c,
+		fs:          fs,
+		dest:        dest,
+		templ:       templ,
+		repo:        repo,
+		subsections: subsections,
 	}
 }
 
@@ -47,11 +49,12 @@ func (r Renderer) Render() error {
 	}
 
 	type TemplateData struct {
-		Component string
-		Version   string
-		Repo      string
-		Changelog Changelog
-		Kinds     map[Kind]bool
+		Component   string
+		Version     string
+		Repo        string
+		Changelog   Changelog
+		Kinds       map[Kind]bool
+		Subsections bool
 
 		// In Markdown, this goes to release notes
 		Enhancement map[string][]Entry
@@ -75,6 +78,7 @@ func (r Renderer) Render() error {
 		r.repo,
 		r.changelog,
 		collectKinds(r.changelog.Entries),
+		r.subsections,
 		// In Markdown, this goes to release notes
 		collectByKindMap(r.changelog.Entries, Enhancement),
 		collectByKindMap(r.changelog.Entries, Feature),
@@ -159,15 +163,33 @@ func (r Renderer) Render() error {
 				if len(links) > 0 {
 					return fmt.Sprintf(
 						"_This release also includes: %s._",
-						strings.Join(links, " and"),
+						strings.Join(links, " and "),
 					)
 				} else {
 					return ""
 				}
 			},
 			// Ensure components have section styling
-			"header2": func(s1 string) string {
-				return fmt.Sprintf("**%s**", s1)
+			"header2": func(s string) string {
+				if r.subsections {
+					s = strings.ToUpper(string(s[0])) + s[1:]
+					s = strings.ReplaceAll(s, "-", " ")
+					return fmt.Sprintf("\n\n**%s**", s)
+				} else {
+					return ""
+				}
+			},
+			"combine": func(map1 map[string][]Entry, map2 map[string][]Entry) map[string][]Entry {
+				combinedMap := make(map[string][]Entry)
+				// Start with a copy of map1 entries
+				for k, v := range map1 {
+					combinedMap[k] = append([]Entry{}, v...)
+				}
+				// Merge entries from map2, appending to any existing entries
+				for k, v := range map2 {
+					combinedMap[k] = append(combinedMap[k], v...)
+				}
+				return combinedMap
 			},
 		}).
 		Parse(string(tpl))

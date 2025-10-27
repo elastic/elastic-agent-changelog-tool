@@ -23,6 +23,7 @@ func TestRenderer(t *testing.T) {
 	filename := "0.0.0.yaml"
 	src := "testdata"
 	dest := viper.GetString("changelog_destination")
+	subsections := viper.GetBool("subsections")
 
 	t.Log("building changelog from test fragments")
 	builder := changelog.NewBuilder(fs, filename, "0.0.0", src, dest)
@@ -34,7 +35,7 @@ func TestRenderer(t *testing.T) {
 	c, err := changelog.FromFile(fs, inFile)
 	require.NoError(t, err)
 
-	r := changelog.NewRenderer(fs, c, dest, "asciidoc-embedded", "elastic-agent")
+	r := changelog.NewRenderer(fs, c, dest, "asciidoc-embedded", "elastic-agent", subsections)
 
 	err = r.Render()
 	require.Nil(t, err)

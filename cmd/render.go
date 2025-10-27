@@ -23,7 +23,7 @@ var RenderLongDescription = `Use this command to render the consolidated changel
 func RenderCmd(fs afero.Fs) *cobra.Command {
 	renderCmd := &cobra.Command{
 		Use:   "render",
-		Short: "Render a changelog in an asciidoc file",
+		Short: "Render a changelog in an AsciiDoc or Markdown file",
 		Long:  RenderLongDescription,
 		Args: func(cmd *cobra.Command, args []string) error {
 			return nil
@@ -32,6 +32,7 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 			dest := viper.GetString("changelog_destination")
 			renderedDest := viper.GetString("rendered_changelog_destination")
 			repo := viper.GetString("repo")
+			subsections := viper.GetBool("subsections")
 
 			version, err := cmd.Flags().GetString("version")
 			if err != nil {
@@ -54,25 +55,25 @@ func RenderCmd(fs afero.Fs) *cobra.Command {
 			}
 
 			if file_type == "asciidoc" {
-				r := changelog.NewRenderer(fs, c, renderedDest, "asciidoc-embedded", repo)
+				r := changelog.NewRenderer(fs, c, renderedDest, "asciidoc-embedded", repo, subsections)
 				if err := r.Render(); err != nil {
 					return fmt.Errorf("cannot build asciidoc file: %w", err)
 				}
 			} else if file_type == "markdown" {
-				r_index := changelog.NewRenderer(fs, c, renderedDest, "markdown-index", repo)
+				r_index := changelog.NewRenderer(fs, c, renderedDest, "markdown-index", repo, subsections)
 				if err := r_index.Render(); err != nil {
 					return fmt.Errorf("cannot build markdown file: %w", err)
 				}
-				r_breaking := changelog.NewRenderer(fs, c, renderedDest, "markdown-breaking", repo)
+				r_breaking := changelog.NewRenderer(fs, c, renderedDest, "markdown-breaking", repo, subsections)
 				if err := r_breaking.Render(); err != nil {
 					return fmt.Errorf("cannot build markdown file: %w", err)
 				}
-				r_deprecations := changelog.NewRenderer(fs, c, renderedDest, "markdown-deprecations", repo)
+				r_deprecations := changelog.NewRenderer(fs, c, renderedDest, "markdown-deprecations", repo, subsections)
 				if err := r_deprecations.Render(); err != nil {
 					return fmt.Errorf("cannot build markdown file: %w", err)
 				}
 			} else {
-				r := changelog.NewRenderer(fs, c, renderedDest, template, repo)
+				r := changelog.NewRenderer(fs, c, renderedDest, template, repo, subsections)
 				if err := r.Render(); err != nil {
 					return fmt.Errorf("cannot build file: %w", err)
 				}
