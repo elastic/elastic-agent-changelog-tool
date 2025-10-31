@@ -6,7 +6,6 @@ package changelog
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"net/url"
@@ -44,7 +43,6 @@ func NewBuilder(fs afero.Fs, filename, version, src, dest string) *Builder {
 }
 
 var changelogFilePerm = os.FileMode(0660)
-var errNoFragments = errors.New("no fragments found in the source folder")
 
 func (b Builder) Build(owner, repo string) error {
 	log.Printf("building changelog for version: %s\n", b.changelog.Version)
@@ -52,6 +50,9 @@ func (b Builder) Build(owner, repo string) error {
 
 	var files []string
 	err := afero.Walk(b.fs, b.src, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 		if info.IsDir() && info.Name() == "fixtures" {
 			return filepath.SkipDir
 		}
@@ -59,11 +60,7 @@ func (b Builder) Build(owner, repo string) error {
 		return collectFragment(b.fs, path, info, err, &files)
 	})
 	if err != nil {
-		return fmt.Errorf("cannot walk path %s: %w", b.src, err)
-	}
-
-	if len(files) == 0 {
-		return errNoFragments
+		log.Printf("no fragment directory found %s: %s", b.src, err)
 	}
 
 	for _, file := range files {
@@ -86,6 +83,10 @@ func (b Builder) Build(owner, repo string) error {
 	graphqlClient := github.NewGraphQLClient(hc)
 
 	log.Println("Verifying entries:")
+
+	if len(b.changelog.Entries) == 0 {
+		log.Printf("no entries for version %s", b.changelog.Version)
+	}
 
 	for i, entry := range b.changelog.Entries {
 		// Filling empty PR fields

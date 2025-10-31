@@ -108,8 +108,6 @@ The side effect is that the changelog will include all entries from latest stabl
 
 ## I'm the release manager
 
-> NOTE: This instructions are for the 0.2.0 milestone (when ready). As more features and automation is added the process will become simpler.
-
 ### Preparing the changelog
 
 These steps require [GitHub Authentication](./github-authentication.md).
@@ -126,9 +124,13 @@ These steps require [GitHub Authentication](./github-authentication.md).
 
     * `x.y.z` is the version to release.
     * `owner` is the user / organization the repository to use belongs to. The default value is `elastic`.
-    * `repo` is the name of the repository containing the issues / PRs, etc. The default value is `elastic-agent`.
+    * `repo` is the name of the repository containing the issues and PRs. The default value is `elastic-agent`.
+
+    >NOTE: If the repo you're targeting has an `owner` and `repo` defined in a `config.changelog.yaml` file, you do not need to specify them when running the command.
 
     This will create `./changelog/x.y.z.yaml`.
+
+    >NOTE: If there are no changes included in the release (there are no changelog fragment files), the changelog file will be generated with an empty array of entries.
 1. From the root of the repository run:
     ```
     $ elastic-agent-changelog-tool cleanup
@@ -140,6 +142,7 @@ These steps require [GitHub Authentication](./github-authentication.md).
     ```
 
     >IMPORTANT: Use `file_type` `markdown` for 9.x versions and `asciidoc` for 8.x versions.
+    >If the repo you're targeting has a `file_type` defined in a `config.changelog.yaml` file, you do not need to specify it when running the command.
 
     The files that are generated depend on the specified `file_type`. The destination directory depends on the `rendered_changelog_destination` defined in the the repo's `config.changelog.yaml`. If no `rendered_changelog_destination` is specified, it will be added to the `changelog` directory.
 
