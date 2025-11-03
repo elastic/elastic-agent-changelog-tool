@@ -1,0 +1,70 @@
+name: Generate release notes
+
+on:
+  workflow_call:
+    inputs:
+      bc_commit_sha:
+        description: 'Commit SHA for the build candidate'
+        type: string
+        required: true
+      version:
+        description: 'Version to be released (for example, `9.2.1`)'
+        type: string
+        required: true
+      product:
+        description: 'Product name (for example, `Elastic Agent`)'
+        type: string
+        required: true
+      labels:
+        description: 'Comma-separated list of GitHub labels to add to the PR'
+        type: string
+        required: true
+      release_manager:
+        description: 'GitHub user who triggered the workflow'
+        type: string
+        required: true
+jobs:
+  build-release-notes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.bc_commit_sha }}
+      - name: Generate release notes
+        run: |
+          GOBIN=$PWD/bin go install github.com/elastic/elastic-agent-changelog-tool@latest
+          ./bin/elastic-agent-changelog-tool build --version "${VERSION}"
+          ./bin/elastic-agent-changelog-tool cleanup
+          ./bin/elastic-agent-changelog-tool render --version "${VERSION}"
+        env:
+          VERSION: ${{ inputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get minor
+        id: get-minor
+        uses: actions/github-script@v8
+        with:
+          script: return "${{ inputs.version }}".replace(/^(\d+\.\d+).+$/m, "$1")
+          result-encoding: string
+      - name: Open PR
+        uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e #v7.0.8
+        with:
+          commit-message: add the ${{ inputs.version }} ${{ inputs.product }} release notes
+          branch: ${{ inputs.version }}-release-notes
+          base: ${{ steps.get-minor.outputs.result }}
+          add-paths: |
+            changelog/
+            docs/
+          labels: ${{ inputs.labels }}
+          title: "Add ${{ inputs.product }} ${{ inputs.version }} release notes"
+          body: |
+            Adds ${{ inputs.product }} ${{ inputs.version }} release notes.
+
+            ## Checklist
+
+            - [ ] @${{ inputs.release_manager }} review this PR to make sure the correct items are included
+            - [ ] @elastic/ingest-docs-team review the language
+            - [ ] @${{ inputs.release_manager }} merge on release day
