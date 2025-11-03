@@ -66,5 +66,5 @@ jobs:
             ## Checklist
 
             - [ ] @${{ inputs.release_manager }} review this PR to make sure the correct items are included
-            - [ ] @elastic/ingest-docs-team review the language
+            - [ ] @elastic/ingest-docs review the language
             - [ ] @${{ inputs.release_manager }} merge on release day
