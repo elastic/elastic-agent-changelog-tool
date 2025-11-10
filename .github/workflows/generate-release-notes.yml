@@ -27,13 +27,18 @@ jobs:
   build-release-notes:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v5
         with:
           ref: ${{ inputs.bc_commit_sha }}
+      - name: Fetch ephemeral GitHub token
+        id: fetch-ephemeral-token
+        uses: elastic/ci-gh-actions/fetch-github-token@v1.0.0
+        with:
+          vault-instance: "ci-prod"
       - name: Generate release notes
         run: |
           GOBIN=$PWD/bin go install github.com/elastic/elastic-agent-changelog-tool@latest
@@ -42,7 +47,7 @@ jobs:
           ./bin/elastic-agent-changelog-tool render --version "${VERSION}"
         env:
           VERSION: ${{ inputs.version }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.fetch-ephemeral-token.outputs.token }}
       - name: Get minor
         id: get-minor
         uses: actions/github-script@v8
@@ -52,6 +57,7 @@ jobs:
       - name: Open PR
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e #v7.0.8
         with:
+          token: ${{ steps.fetch-ephemeral-token.outputs.token }}
           commit-message: add the ${{ inputs.version }} ${{ inputs.product }} release notes
           branch: ${{ inputs.version }}-release-notes
           base: ${{ steps.get-minor.outputs.result }}
