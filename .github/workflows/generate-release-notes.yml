@@ -59,7 +59,7 @@ jobs:
         with:
           token: ${{ steps.fetch-ephemeral-token.outputs.token }}
           commit-message: add the ${{ inputs.version }} ${{ inputs.product }} release notes
-          branch: ${{ inputs.version }}-release-notes
+          branch: release-notes-${{ inputs.version }}
           base: ${{ steps.get-minor.outputs.result }}
           add-paths: |
             changelog/
