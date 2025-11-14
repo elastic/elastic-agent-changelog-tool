@@ -43,7 +43,7 @@ jobs:
         run: |
           GOBIN=$PWD/bin go install github.com/elastic/elastic-agent-changelog-tool@latest
           ./bin/elastic-agent-changelog-tool build --version "${VERSION}"
-          ./bin/elastic-agent-changelog-tool cleanup
+          ./bin/elastic-agent-changelog-tool cleanup || true
           ./bin/elastic-agent-changelog-tool render --version "${VERSION}"
         env:
           VERSION: ${{ inputs.version }}
