@@ -19,6 +19,11 @@ on:
         description: 'Comma-separated list of GitHub labels to add to the PR'
         type: string
         required: true
+      branching_model:
+        description: 'The branch from which content is published to the docs site'
+        type: string
+        required: true
+        default: '`main`'
       release_manager:
         description: 'GitHub user who triggered the workflow'
         type: string
@@ -74,3 +79,6 @@ jobs:
             - [ ] @${{ inputs.release_manager }} review this PR to make sure the correct items are included
             - [ ] @elastic/ingest-docs review the language
             - [ ] @${{ inputs.release_manager }} merge on release day
+
+            **IMPORTANT**
+            Merge any backport or forwardport PRs as soon as possible. In this repo, we publish from the ${{ inputs.branching_model }} branch. The changes in this PR will not be available on the docs site until they are added to the ${{ inputs.branching_model }} branch.
