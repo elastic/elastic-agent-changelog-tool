@@ -171,7 +171,7 @@ func (r Renderer) Render() error {
 			},
 			// Ensure components have section styling
 			"header2": func(s string) string {
-				if r.subsections {
+				if r.subsections && len(s) > 0 {
 					s = strings.ToUpper(string(s[0])) + s[1:]
 					s = strings.ReplaceAll(s, "-", " ")
 					return fmt.Sprintf("\n\n**%s**", s)

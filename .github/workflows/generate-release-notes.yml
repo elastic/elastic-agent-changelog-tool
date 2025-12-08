@@ -59,6 +59,41 @@ jobs:
         with:
           script: return "${{ inputs.version }}".replace(/^(\d+\.\d+).+$/m, "$1")
           result-encoding: string
+      - name: Make checklist body
+        id: make-checklist
+        uses: actions/github-script@v8
+        with:
+          script: |
+            if (/^8\./m.test("${{ inputs.version }}")) {
+              if ("${{ github.repository }}" === "colleenmcginnis/beats") {
+                return process.env.BEATS_8
+              } else {
+                return process.env.EA_FLEET_8
+              }
+            } else if (/^9\./m.test("${{ inputs.version }}")) {
+              return process.env.BEATS_EA_FLEET_9
+            } else {
+              return ""
+            }
+          result-encoding: string
+        env:
+          EA_FLEET_8: |
+            - [ ] @${{ inputs.release_manager }} review this PR to make sure the correct items are included
+            - [ ] @elastic/ingest-docs review the language
+            - [ ] @elastic/ingest-docs open a PR the ingest-docs repo combining the Elastic Agent and Fleet Server release notes targeting the `8.19` branch
+            - [ ] @${{ inputs.release_manager }} merge on release day
+            - [ ] @elastic/ingest-docs merge PR in the ingest-docs repo
+          BEATS_8: |
+            - [ ] @${{ inputs.release_manager }} review this PR to make sure the correct items are included
+            - [ ] @elastic/ingest-docs review the language
+            - [ ] @elastic/ingest-docs copy generated content to the `CHANGELOG.asciidoc` file
+            - [ ] @${{ inputs.release_manager }} merge on release day
+          BEATS_EA_FLEET_9: |
+            - [ ] @${{ inputs.release_manager }} review this PR to make sure the correct items are included
+            - [ ] @elastic/ingest-docs review the language
+            - [ ] @${{ inputs.release_manager }} merge on release day
+            - [ ] @${{ inputs.release_manager }} merge any backport or forwardport PRs as soon as possible
+                * Note: In this repo, we publish from the ${{ inputs.branching_model }} branch. The changes in this PR will not be available on the docs site until they are added to the ${{ inputs.branching_model }} branch.
       - name: Open PR
         uses: peter-evans/create-pull-request@271a8d0340265f705b14b6d32b9829c1cb33d45e #v7.0.8
         with:
@@ -76,9 +111,4 @@ jobs:
 
             ## Checklist
 
-            - [ ] @${{ inputs.release_manager }} review this PR to make sure the correct items are included
-            - [ ] @elastic/ingest-docs review the language
-            - [ ] @${{ inputs.release_manager }} merge on release day
-
-            **IMPORTANT**
-            Merge any backport or forwardport PRs as soon as possible. In this repo, we publish from the ${{ inputs.branching_model }} branch. The changes in this PR will not be available on the docs site until they are added to the ${{ inputs.branching_model }} branch.
+            ${{ steps.make-checklist.outputs.result }}
