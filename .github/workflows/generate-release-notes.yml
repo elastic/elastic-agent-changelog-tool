@@ -64,13 +64,13 @@ jobs:
         uses: actions/github-script@v8
         with:
           script: |
-            if (/^8\./m.test("${{ inputs.version }}")) {
+            if (/^8\./.test("${{ inputs.version }}")) {
               if ("${{ github.repository }}" === "elastic/beats") {
                 return process.env.BEATS_8
               } else {
                 return process.env.EA_FLEET_8
               }
-            } else if (/^9\./m.test("${{ inputs.version }}")) {
+            } else if (/^9\./.test("${{ inputs.version }}")) {
               return process.env.BEATS_EA_FLEET_9
             } else {
               return ""
@@ -80,7 +80,7 @@ jobs:
           EA_FLEET_8: |
             - [ ] @${{ inputs.release_manager }} review this PR to make sure the correct items are included
             - [ ] @elastic/ingest-docs review the language
-            - [ ] @elastic/ingest-docs open a PR the ingest-docs repo combining the Elastic Agent and Fleet Server release notes targeting the `8.19` branch
+            - [ ] @elastic/ingest-docs open a PR in the ingest-docs repo combining the Elastic Agent and Fleet Server release notes targeting the `${{ steps.get-minor.outputs.result }}` branch
             - [ ] @${{ inputs.release_manager }} merge on release day
             - [ ] @elastic/ingest-docs merge PR in the ingest-docs repo
           BEATS_8: |
