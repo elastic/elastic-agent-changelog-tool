@@ -65,7 +65,7 @@ jobs:
         with:
           script: |
             if (/^8\./m.test("${{ inputs.version }}")) {
-              if ("${{ github.repository }}" === "colleenmcginnis/beats") {
+              if ("${{ github.repository }}" === "elastic/beats") {
                 return process.env.BEATS_8
               } else {
                 return process.env.EA_FLEET_8
