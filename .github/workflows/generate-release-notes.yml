@@ -82,7 +82,7 @@ jobs:
             - [ ] @elastic/ingest-docs review the language
             - [ ] @elastic/ingest-docs open a PR in the ingest-docs repo combining the Elastic Agent and Fleet Server release notes targeting the `${{ steps.get-minor.outputs.result }}` branch
             - [ ] @${{ inputs.release_manager }} merge on release day
-            - [ ] @elastic/ingest-docs merge PR in the ingest-docs repo
+            - [ ] @elastic/ingest-docs merge PR in the ingest-docs repo. No forward or backports are needed.
           BEATS_8: |
             - [ ] @${{ inputs.release_manager }} review this PR to make sure the correct items are included
             - [ ] @elastic/ingest-docs review the language
