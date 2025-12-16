@@ -172,12 +172,14 @@ func (r Renderer) Render() error {
 			// Ensure components have section styling
 			"header2": func(s string) string {
 				if r.subsections {
+					if s == "" {
+						return "\n\n% No `component` defined"
+					}
 					s = strings.ToUpper(string(s[0])) + s[1:]
 					s = strings.ReplaceAll(s, "-", " ")
 					return fmt.Sprintf("\n\n**%s**", s)
-				} else {
-					return ""
 				}
+				return ""
 			},
 			"combine": func(map1 map[string][]Entry, map2 map[string][]Entry) map[string][]Entry {
 				combinedMap := make(map[string][]Entry)
