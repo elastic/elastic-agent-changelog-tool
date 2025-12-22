@@ -8,20 +8,22 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+
+	"github.com/google/go-github/v32/github"
 )
 
-// FindFilesInPR searches for changes files in a PR that match a given pattern.
+// FindFileInPR searches for changes files in a PR that match a given pattern and return it.
 // NOTE: it does not check for multiple files matching, a single match is enough.
-func FindFileInPR(ctx context.Context, c *Client, owner, repo string, pr int, pattern string) (bool, error) {
+func FindFileInPR(ctx context.Context, c *Client, owner, repo string, pr int, pattern string) (bool, error, *github.CommitFile) {
 	files, resp, err := c.PullRequests.ListFiles(ctx, owner, repo, pr, nil)
 	if err != nil {
-		return false, fmt.Errorf("cannot list files in pr: %w", err)
+		return false, fmt.Errorf("cannot list files in pr: %w", err), nil
 	}
 
 	if resp.StatusCode != 200 {
 		return false, fmt.Errorf("response not OK while listing files in PR(%s): %+v",
 			fmt.Sprintf("%s/%s#%d", owner, repo, pr),
-			resp)
+			resp), nil
 	}
 
 	for _, f := range files {
@@ -36,10 +38,10 @@ func FindFileInPR(ctx context.Context, c *Client, owner, repo string, pr int, pa
 			}
 
 			if found {
-				return true, nil
+				return true, nil, f
 			}
 		}
 	}
 
-	return false, nil
+	return false, nil, nil
 }

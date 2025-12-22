@@ -8,12 +8,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
 	"strconv"
 
+	"github.com/elastic/elastic-agent-changelog-tool/internal/changelog/fragment"
 	"github.com/elastic/elastic-agent-changelog-tool/internal/github"
 	"github.com/spf13/afero"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"gopkg.in/yaml.v3"
 )
 
 var errPrCheckCmdMissingArg = errors.New("pr-has-fragment command requires pr number argument")
@@ -66,7 +71,7 @@ func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
 
 			pattern := fmt.Sprintf("%s/*", viper.GetString("fragment_path"))
 
-			found, err := github.FindFileInPR(ctx, c, owner, repo, pr, pattern)
+			found, err, file := github.FindFileInPR(ctx, c, owner, repo, pr, pattern)
 			if err != nil {
 				return err
 			}
@@ -74,6 +79,29 @@ func PrHasFragmentCommand(appFs afero.Fs) *cobra.Command {
 				return fmt.Errorf("fragment not present in PR %d, to resolve this do one of the following:\n"+
 					"1) add a fragment using the 'new' command\n"+
 					"2) add a label (one of: %q) to skip validation", pr, labels)
+			}
+
+			// Check that the fragment has the required fields
+			if file != nil && file.Filename != nil {
+				var fragment fragment.Fragment
+				response, err := http.Get(*file.RawURL)
+
+				if err != nil {
+					return err
+				}
+
+				responseData, err := io.ReadAll(response.Body)
+				if err != nil {
+					return err
+				}
+
+				if err := yaml.Unmarshal(responseData, &fragment); err != nil {
+					return err
+				}
+
+				if fragment.Component == "" || fragment.Kind == "" || fragment.Summary == "" {
+					return fmt.Errorf("fragment %s is missing one of the required fields (component, kind, summary)", *file.Filename)
+				}
 			}
 
 			return nil
