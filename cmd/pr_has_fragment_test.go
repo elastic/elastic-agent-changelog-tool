@@ -41,13 +41,14 @@ func TestPrHasFragmentCmd_oneArg(t *testing.T) {
 	c.SetOut(b)
 	c.SetErr(io.Discard)
 
-	c.SetArgs([]string{"--repo", "elastic-agent-changelog-tool", "29"})
+	c.SetArgs([]string{"--repo", "elastic-agent-changelog-tool", "145"})
 
 	err := c.Execute()
 	require.Nil(t, err)
 }
 
-func TestPrHasFragmentCmd_oneArgFailCase(t *testing.T) {
+// Fail because no fragment present
+func TestPrHasFragmentCmd_oneArgFailCaseNoPresent(t *testing.T) {
 	log.SetOutput(io.Discard)
 
 	settings.Init()
@@ -60,6 +61,25 @@ func TestPrHasFragmentCmd_oneArgFailCase(t *testing.T) {
 	c.SetErr(io.Discard)
 
 	c.SetArgs([]string{"--repo", "elastic-agent-changelog-tool", "33"})
+
+	err := c.Execute()
+	require.Error(t, err)
+}
+
+// Fail because fragment missing required field
+func TestPrHasFragmentCmd_oneArgFailCaseField(t *testing.T) {
+	log.SetOutput(io.Discard)
+
+	settings.Init()
+
+	fs := afero.NewMemMapFs()
+	c := cmd.PrHasFragmentCommand(fs)
+
+	b := new(bytes.Buffer)
+	c.SetOut(b)
+	c.SetErr(io.Discard)
+
+	c.SetArgs([]string{"--repo", "elastic-agent-changelog-tool", "29"})
 
 	err := c.Execute()
 	require.Error(t, err)

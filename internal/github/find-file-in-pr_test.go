@@ -22,9 +22,10 @@ func TestFindFileInPR(t *testing.T) {
 
 	// This is a PR merged with changelog fragments:
 	// https://github.com/elastic/elastic-agent-changelog-tool/pull/29
-	res, err := github.FindFileInPR(ctx, c, "elastic", "elastic-agent-changelog-tool", 29, "changelog/fragments/*")
+	res, err, file := github.FindFileInPR(ctx, c, "elastic", "elastic-agent-changelog-tool", 29, "changelog/fragments/*")
 	require.NoError(t, err)
 	require.True(t, res)
+	require.NotNil(t, file)
 }
 
 func TestFindFileInPR_failureCase(t *testing.T) {
@@ -36,9 +37,10 @@ func TestFindFileInPR_failureCase(t *testing.T) {
 
 	// This is a PR without changelog fragments:
 	// https://github.com/elastic/elastic-agent-changelog-tool/pull/33
-	res, err := github.FindFileInPR(ctx, c, "elastic", "elastic-agent-changelog-tool", 33, "changelog/fragments/*")
+	res, err, file := github.FindFileInPR(ctx, c, "elastic", "elastic-agent-changelog-tool", 33, "changelog/fragments/*")
 	require.NoError(t, err)
 	require.False(t, res)
+	require.Nil(t, file)
 }
 
 func TestFindFileInPR_PrIsNotFound(t *testing.T) {
@@ -49,7 +51,8 @@ func TestFindFileInPR_PrIsNotFound(t *testing.T) {
 	ctx := context.Background()
 
 	// This is a purposedly a PR that do not exists
-	res, err := github.FindFileInPR(ctx, c, "elastic", "elastic-agent-changelog-tool", -1, "changelog/fragments/*")
+	res, err, file := github.FindFileInPR(ctx, c, "elastic", "elastic-agent-changelog-tool", -1, "changelog/fragments/*")
 	require.Error(t, err)
 	require.False(t, res)
+	require.Nil(t, file)
 }
