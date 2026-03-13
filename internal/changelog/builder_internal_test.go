@@ -13,6 +13,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func Test_GetLatestCommitHash_notFound(t *testing.T) {
+	// A file that does not exist in the repo's git history at changelog/fragments/
+	// should return an error rather than an empty string.
+	_, err := GetLatestCommitHash("file-that-does-not-exist-in-git-history.yaml")
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "no commit found")
+}
+
 func Test_collectFragment(t *testing.T) {
 	testFs := afero.NewCopyOnWriteFs(afero.NewOsFs(), afero.NewMemMapFs())
 

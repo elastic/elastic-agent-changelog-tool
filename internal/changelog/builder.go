@@ -235,9 +235,12 @@ func CreateEventLink(linkType, owner, repo, eventID string) string {
 }
 
 func GetLatestCommitHash(fileName string) (string, error) {
-	response, err := exec.Command("git", "log", "--diff-filter=A", "--format=%H", "changelog/fragments/"+fileName).Output()
+	// Use -- to ensure the argument is treated as a file path, not a revision,
+	// which prevents git from exiting with an error on newer versions when the
+	// file does not exist in the repository.
+	response, err := exec.Command("git", "log", "--diff-filter=A", "--format=%H", "--", "changelog/fragments/"+fileName).Output()
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("no commit found for file %s: %w", fileName, err)
 	}
 
 	hash := strings.ReplaceAll(string(response), "\n", "")
