@@ -46,9 +46,9 @@ func TestFillEmptyPRField(t *testing.T) {
 }
 
 // TestFillEmptyPRField_multipleResults verifies that FillEmptyPRField returns
-// multiple PRs when a commit appears in several backport PRs. Build should NOT
-// auto-populate the fragment's pr field in this case — it skips and logs a
-// message asking the user to fill in the field manually.
+// multiple PRs when a commit appears in several backport PRs. Build sets all
+// of them on the entry and logs a message so the user can verify and trim the
+// list if needed.
 func TestFillEmptyPRField_multipleResults(t *testing.T) {
 	r, hc := githubtest.GetHttpClient(t)
 	defer r.Stop() //nolint:errcheck
@@ -58,6 +58,8 @@ func TestFillEmptyPRField_multipleResults(t *testing.T) {
 	prIDs, err := changelog.FillEmptyPRField("fe25c73907336fc462d5e6e059d3cd86512484fe", "elastic", "beats", c)
 	require.NoError(t, err)
 	require.Greater(t, len(prIDs), 1, "expected multiple PRs when commit appears in several backport PRs")
+	require.ElementsMatch(t, []string{
+		"https://github.com/elastic/beats/pull/30979", "https://github.com/elastic/beats/pull/31279"}, prIDs)
 }
 
 func TestFillEmptyPRFieldBadHash(t *testing.T) {

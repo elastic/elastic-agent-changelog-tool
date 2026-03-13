@@ -105,8 +105,7 @@ func (b Builder) Build(owner, repo string) error {
 			}
 
 			if len(prIDs) > 1 {
-				log.Printf("%s: multiple PRs found (%v), skipping automatic PR association - please fill in the pr field in the fragment manually", entry.File.Name, prIDs)
-				continue
+				log.Printf("%s: multiple PRs found (%v), please verify and remove any that should not be included", entry.File.Name, prIDs)
 			}
 
 			b.changelog.Entries[i].LinkedPR = prIDs
