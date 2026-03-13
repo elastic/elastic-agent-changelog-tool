@@ -105,7 +105,8 @@ func (b Builder) Build(owner, repo string) error {
 			}
 
 			if len(prIDs) > 1 {
-				log.Printf("%s: multiple PRs found, please remove all but one of them", entry.File.Name)
+				log.Printf("%s: multiple PRs found (%v), skipping automatic PR association - please fill in the pr field in the fragment manually", entry.File.Name, prIDs)
+				continue
 			}
 
 			b.changelog.Entries[i].LinkedPR = prIDs
@@ -239,7 +240,12 @@ func GetLatestCommitHash(fileName string) (string, error) {
 		return "", err
 	}
 
-	return strings.ReplaceAll(string(response), "\n", ""), nil
+	hash := strings.ReplaceAll(string(response), "\n", "")
+	if hash == "" {
+		return "", fmt.Errorf("no commit found for file %s", fileName)
+	}
+
+	return hash, nil
 }
 
 func FindIssues(graphqlClient *github.ClientGraphQL, ctx context.Context, owner, name string, prURL string, issuesLen int) ([]string, error) {

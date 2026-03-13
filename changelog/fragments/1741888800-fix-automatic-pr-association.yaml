@@ -1,0 +1,46 @@
+# REQUIRED
+# Kind can be one of:
+# - breaking-change: a change to previously-documented behavior
+# - deprecation: functionality that is being removed in a later release
+# - bug-fix: fixes a problem in a previous version
+# - enhancement: extends functionality but does not break or fix existing behavior
+# - feature: new functionality
+# - known-issue: problems that we are aware of in a given version
+# - security: impacts on the security of a product or a user's deployment.
+# - upgrade: important information for someone upgrading from a prior version
+# - other: does not fit into any of the other categories
+kind: bug-fix
+
+# REQUIRED for all kinds
+# Change summary; a 80ish characters long description of the change.
+summary: Fix automatic PR association incorrectly assigning same PR list to all fragments
+
+# REQUIRED for breaking-change, deprecation, known-issue
+# Long description; in case the summary is not enough to describe the change
+# this field accommodate a description without length limits.
+description: |
+  When fragments did not include an explicit pr field, the builder would call
+  ListPullRequestsWithCommit which can return multiple PRs (the original plus all
+  backport/cherry-pick PRs). The builder was assigning this entire list to the
+  fragment. Since many fragments may share the same commit hash (committed
+  together), this caused all such fragments to receive the same incorrect list of
+  PRs.
+
+  The fix has two parts:
+  1. GetLatestCommitHash now returns an error when git log finds no commit for the
+     fragment file, preventing a call to the GitHub API with an empty commit hash.
+  2. When multiple PRs are found for a commit, automatic PR association is skipped
+     and a log message instructs the user to fill in the pr field manually in the
+     fragment.
+
+# REQUIRED for all kinds
+# Affected component; usually one of "elastic-agent", "fleet-server", "filebeat", "metricbeat", "auditbeat", "all", etc.
+component: elastic-agent-changelog-tool
+
+# AUTOMATED
+# OPTIONAL to manually add other PR URLs
+# pr: https://github.com/owner/repo/1234
+
+# AUTOMATED
+# OPTIONAL to manually add other issue URLs
+# issue: https://github.com/owner/repo/1234
