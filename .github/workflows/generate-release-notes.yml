@@ -41,7 +41,7 @@ jobs:
           ref: ${{ inputs.bc_commit_sha }}
       - name: Fetch ephemeral GitHub token
         id: fetch-ephemeral-token
-        uses: elastic/ci-gh-actions/fetch-github-token@v1.0.0
+        uses: elastic/ci-gh-actions/fetch-github-token@v1.5.3
         with:
           vault-instance: "ci-prod"
       - name: Generate release notes
