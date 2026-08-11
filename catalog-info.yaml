@@ -9,7 +9,7 @@ metadata:
 
 spec:
   type: tool
-  owner: group:Streams
+  owner: group:streams
   system: platform-ingest
   lifecycle: production
 
@@ -26,7 +26,7 @@ metadata:
 
 spec:
   type: buildkite-pipeline
-  owner: group:Streams
+  owner: group:streams
   system: platform-ingest
   implementation:
     apiVersion: buildkite.elastic.dev/v1
@@ -56,7 +56,7 @@ spec:
         SLACK_NOTIFICATIONS_ALL_BRANCHES: "true"
         SLACK_NOTIFICATIONS_ON_SUCCESS: "true"
       teams:
-        Streams:
+        streams:
           access_level: MANAGE_BUILD_AND_READ
         everyone:
           access_level: READ_ONLY
