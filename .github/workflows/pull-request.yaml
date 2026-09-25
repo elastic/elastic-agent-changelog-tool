@@ -11,12 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: install Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v6
         with:
-          go-version-file: .go-version
+          go-version-file: go.mod
 
       - name: check go.mod
         # tidy go mod and check for differences
@@ -26,12 +26,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: install Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v6
         with:
-          go-version-file: .go-version
+          go-version-file: go.mod
 
       - name: check format
         # exit with 0 only if gofmt returns 0 lines
@@ -41,12 +41,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: install Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v6
         with:
-          go-version-file: .go-version
+          go-version-file: go.mod
 
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v2
@@ -72,12 +72,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: install Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v6
         with:
-          go-version-file: .go-version
+          go-version-file: go.mod
 
       - name: check license
         # -d returns files without proper header
@@ -89,12 +89,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: install Go
-        uses: actions/setup-go@v3
+        uses: actions/setup-go@v6
         with:
-          go-version-file: .go-version
+          go-version-file: go.mod
 
       - name: check fragments
         run: |
