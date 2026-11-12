@@ -1,6 +1,6 @@
 module github.com/elastic/elastic-agent-changelog-tool
 
-go 1.24
+go 1.27.4
 
 require (
 	github.com/OpenPeeDeeP/xdg v1.0.0
